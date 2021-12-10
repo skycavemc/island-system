@@ -3,7 +3,7 @@ version: 3.0.0
 author: Hakuyamu
 api-version: 1.17
 main: de.leonheuer.skycave.islandsystem.IslandSystem
-depends:
+depend:
   - WorldEdit
   - WorldGuard
 
