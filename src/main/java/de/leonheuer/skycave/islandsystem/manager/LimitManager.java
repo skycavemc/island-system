@@ -9,6 +9,7 @@ import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.models.IslandCount;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -23,8 +24,10 @@ public class LimitManager {
 
     public LimitManager(IslandSystem main) {
         this.main = main;
+    }
 
-        RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(Bukkit.getWorld("skybeeisland")));
+    public void start(World world) {
+        RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
         if (rm == null) {
             return;
         }

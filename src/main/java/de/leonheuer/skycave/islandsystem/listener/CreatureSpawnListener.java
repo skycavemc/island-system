@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.util.Utils;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -18,7 +19,8 @@ public class CreatureSpawnListener implements Listener {
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        if (event.getLocation().getWorld() != Utils.getInselWorld()) {
+        World world = event.getLocation().getWorld();
+        if (world == null || !world.getName().equals("skybeeisland")) {
             return;
         }
 
