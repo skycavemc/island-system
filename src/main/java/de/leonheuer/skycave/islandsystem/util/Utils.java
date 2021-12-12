@@ -199,8 +199,11 @@ public class Utils {
     @Nullable
     public static ProtectedRegion getIslandRegionAt(Location loc) {
         RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld()));
-        ApplicableRegionSet set = rm.getApplicableRegions(BukkitAdapter.asBlockVector(loc));
+        if (rm == null) {
+            return null;
+        }
 
+        ApplicableRegionSet set = rm.getApplicableRegions(BukkitAdapter.asBlockVector(loc));
         if (set.getRegions().size() == 0) {
             return null;
         }
