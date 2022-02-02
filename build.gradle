@@ -3,38 +3,33 @@ plugins {
 }
 
 group 'de.leonheuer.skycave'
-version '1.0.1-SNAPSHOT'
+version '1.0.2-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven {
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-        content {
-            includeGroup 'org.bukkit'
-            includeGroup 'org.spigotmc'
-        }
-    }
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
     maven { url = 'https://maven.enginehub.org/repo/' }
+    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
 }
 
 dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT'
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.7-SNAPSHOT'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.6-SNAPSHOT'
     compileOnly 'com.googlecode.json-simple:json-simple:1.1.1'
+    compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
 }
 
 test {
     useJUnitPlatform()
 }
 
+def encoding = "UTF-8"
 compileJava {
-    compileJava.options.encoding = "UTF-8"
-    compileTestJava.options.encoding = "UTF-8"
-    javadoc.options.encoding = "UTF-8"
+    compileJava.options.encoding = encoding
+    compileTestJava.options.encoding = encoding
+    javadoc.options.encoding = encoding
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }

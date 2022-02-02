@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class IslandSystem extends JavaPlugin {
 
-    public static final String PREFIX = "&8❙ &fSky&6Bee&fIsland &8» ";
+    public static final String PREFIX = "&8❙ &6SB&fInseln &8» ";
     private WarpsConfig warpsConfig;
     private GameConfig gameConfig;
     private CacheConfig cacheConfig;
