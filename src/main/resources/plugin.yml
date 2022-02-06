@@ -1,22 +1,18 @@
 name: IslandSystem
-version: 3.0.0
+version: 1.0.2
 author: Hakuyamu
-api-version: 1.17
+api-version: 1.18
 main: de.leonheuer.skycave.islandsystem.IslandSystem
-depend:
-  - WorldEdit
-  - WorldGuard
+depend: [ WorldEdit, WorldGuard, Multiverse-Core ]
 
 commands:
   sbadmin:
-    description: sbadmin command
     permission: skycave.islands.command
-    permission-message: "§8❙ §fSky§6Bee§fIsland §8» §cDu hast keine Rechte für diesen Befehl."
   sb:
     description: sb command
 
 permissions:
-  skycave.islands.command:
-    description: command permission
-  skycave.islands.alert:
-    description: alert permission
+  skycave.islands:
+    children:
+      - command
+      - alert

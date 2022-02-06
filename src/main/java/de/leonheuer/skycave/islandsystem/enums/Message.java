@@ -159,7 +159,7 @@ public enum Message {
      */
     SB_SUBCOMMAND_WARP_NOEXIST("&cDer Warp {warp} existiert nicht."),
     SB_SUBCOMMAND_WARP_SUCCESS("&aDu wurdest zu {warp} teleportiert."),
-    SB_SUBCOMMAND_WARP_MISSING("&7Verfügbare Warps: &e{warps}"),
+    SB_SUBCOMMAND_WARP_MISSING("&7Verfügbare Warps: &a{warps}"),
 
     /**
      * SBAdmin_Subcommand_setwarp
