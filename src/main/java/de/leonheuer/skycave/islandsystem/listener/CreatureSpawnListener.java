@@ -3,9 +3,11 @@ package de.leonheuer.skycave.islandsystem.listener;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
+import de.leonheuer.skycave.islandsystem.manager.LimitManager;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
@@ -17,15 +19,14 @@ public class CreatureSpawnListener implements Listener {
         this.main = main;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        World world = event.getLocation().getWorld();
-        if (world == null || !world.getName().equals("skybeeisland")) {
+        if (event.isCancelled()) {
             return;
         }
 
-        ProtectedRegion islandRegion = Utils.getIslandRegionAt(event.getEntity().getLocation());
-        if (islandRegion == null) {
+        World world = event.getLocation().getWorld();
+        if (!world.getName().equals("skybeeisland")) {
             return;
         }
 
@@ -34,11 +35,17 @@ public class CreatureSpawnListener implements Listener {
             return;
         }
 
-        main.getLimitManager().incEntityCount(islandRegion, event.getEntityType());
-        int count = main.getLimitManager().getEntityCount(islandRegion, event.getEntityType());
+        ProtectedRegion region = Utils.getIslandRegionAt(event.getLocation());
+        if (region == null) {
+            return;
+        }
+
+        LimitManager lm = main.getLimitManager();
+        int count = lm.getEntityCount(region.getId(), event.getEntityType());
         if (count >= limit) {
             event.setCancelled(true);
-            main.getLimitManager().decEntityCount(islandRegion, event.getEntityType());
+        } else {
+            lm.addToMap(lm.getEntityCountMap(), region.getId(), event.getEntityType());
         }
     }
 

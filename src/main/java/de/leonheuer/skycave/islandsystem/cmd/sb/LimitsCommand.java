@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 public class LimitsCommand {
 
     public LimitsCommand(Player player, String[] args) {
-        player.openInventory(Utils.getLimitGui());
+        Utils.getLimitGui().show(player);
     }
 
 }

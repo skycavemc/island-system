@@ -15,8 +15,10 @@ public class WorldLoadListener implements Listener {
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        if (event.getWorld().getName().equals("skybeeisland")) {
+        if (main.getIslandWorld() == null && event.getWorld().getName().equals("skybeeisland")) {
             main.getLimitManager().start(event.getWorld());
+            main.setIslandWorld(event.getWorld());
+            main.getLogger().info("§2Island world loaded.");
         }
     }
 

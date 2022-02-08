@@ -7,6 +7,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class InselConfig {
@@ -46,8 +48,8 @@ public class InselConfig {
 
 
         insel.options().copyDefaults(true);
-        insel.options().header("NICHT ÄNDERN DAS KANN DIE DATEI ZERSTÖREN");
-        insel.options().copyHeader(true);
+        insel.options().setHeader(List.of("Ändern von Werten kann zu Nichtfunktion des Plugins führen."));
+        insel.options().parseComments(true);
         try {
             insel.save(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
         } catch (IOException e) {

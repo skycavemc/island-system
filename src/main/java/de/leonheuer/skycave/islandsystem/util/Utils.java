@@ -20,30 +20,24 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.leonheuer.mcguiapi.gui.GUI;
+import de.leonheuer.mcguiapi.utils.ItemBuilder;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimitType;
 import de.leonheuer.skycave.islandsystem.models.InselID;
-import de.leonheuer.skycave.islandsystem.models.ItemBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class Utils {
 
@@ -57,38 +51,42 @@ public class Utils {
         return YamlConfiguration.loadConfiguration(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
     }
 
-    public static boolean saveInsel(String rg, FileConfiguration file) {
+    public static void saveInsel(String rg, FileConfiguration file) {
         try {
             file.save(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return true;
     }
 
     public static InselID getLastInternID() {
-        String[] l = cache.getString("lastinternid").split(";");
-        return new InselID(Integer.parseInt(l[0]), Integer.parseInt(l[1]));
+        String id = cache.getString("lastinternid");
+        if (id != null) {
+            String[] idParts = id.split(";");
+            return new InselID(Integer.parseInt(idParts[0]), Integer.parseInt(idParts[1]));
+        }
+        return null;
     }
 
     public static int getLastID() {
         return cache.getInt("lastid");
     }
 
-    public static boolean setLastInternID() {
-        String[] l = cache.getString("lastinternid").split(";");
-        InselID get = new InselID(Integer.parseInt(l[0]), Integer.parseInt(l[1]));
-        InselID neu = getNextInselID(get);
-        cache.set("lastinternid", neu.getXanInt() + ";" + neu.getZanInt());
+    public static void setLastInternID() {
+        InselID oldId = getLastInternID();
+        if (oldId == null) {
+            return;
+        }
+        InselID newId = getNextInselID(oldId);
+        cache.set("lastinternid", newId.getXanInt() + ";" + oldId.getZanInt());
         try {
             cache.save(new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return true;
     }
 
-    public static boolean addLastID() {
+    public static void addLastID() {
         int f = cache.getInt("lastid") + 1;
         cache.set("lastid", f);
         try {
@@ -96,7 +94,6 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return true;
     }
 
     public static InselID getNextInselID(InselID id) {
@@ -167,10 +164,17 @@ public class Utils {
     public static void printSchematic(Integer x, Integer z, File schematic) {
         Clipboard cc = null;
         ClipboardFormat format = ClipboardFormats.findByFile(schematic);
+        if (format == null) {
+            return;
+        }
         try (ClipboardReader reader = format.getReader(new FileInputStream(schematic))) {
             cc = reader.read();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (cc == null) {
+            return;
         }
 
         BlockVector3 ctxESBlockVector2 = BlockVector3.at(x, 64, z);
@@ -188,11 +192,14 @@ public class Utils {
 
     public static ProtectedRegion protectedRegion(WorldGuardPlatform wgp, Integer x, Integer z, Integer grosse, String rgName) {
         RegionManager rm = wgp.getRegionContainer().get(BukkitAdapter.adapt(getInselWorld()));
+        if (rm == null) {
+            return null;
+        }
+
         BlockVector3 min2 = BlockVector3.at(x - grosse, 0, z - grosse);
         BlockVector3 max2 = BlockVector3.at(x + grosse, 255, z + grosse);
         ProtectedCuboidRegion pr = new ProtectedCuboidRegion(rgName, min2, max2);
         rm.addRegion(pr);
-
         return rm.getRegion(rgName);
     }
 
@@ -218,52 +225,93 @@ public class Utils {
         return result;
     }
 
-    public static Inventory getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
-        Inventory gui = Bukkit.createInventory(null, 27, "§6§lSB§f-§lInsel §cLimits");
-        List<EntityLimit> limits = Arrays.stream(EntityLimit.values())
-                .filter(entityLimit -> entityLimit.getLimitType() == limitType)
-                .sorted((limit1, limit2) -> String.CASE_INSENSITIVE_ORDER.compare(limit1.getType().toString(), limit2.getType().toString()))
-                .collect(Collectors.toList());
+    public static GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
+        GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
+        List<EntityLimit> limits = new ArrayList<>();
+        for (EntityLimit l : EntityLimit.values()) {
+            if (l.getLimitType() != limitType) {
+                continue;
+            }
+            limits.add(l);
+        }
+        Collections.sort(limits);
+
+        int i = 0;
         if (region == null) {
-            limits.forEach(limit -> gui.addItem(new ItemBuilder(limit.getSpawnegg(), 1,
-                    "§e" + entityTypeToString(limit.getType()) + " §6(" + limit.getLimit() + ")"
-            ).getItem()));
+            for (EntityLimit l : limits) {
+                gui.set(i, new ItemBuilder(l.getSpawnegg(), 1)
+                                .name("§e" + entityTypeToString(l.getType()) + " §6(" + l.getLimit() + ")")
+                                .getResult(),
+                        (event) -> event.setCancelled(true));
+                i++;
+            }
         } else {
-            limits.forEach(limit -> {
-                int count = main.getLimitManager().getEntityCount(region, limit.getType());
-                String color = "§a";
-                if (count >= limit.getLimit()) {
+            for (EntityLimit l : limits) {
+                int count = main.getLimitManager().getEntityCount(region.getId(), l.getType());
+
+                String color;
+                if (count >= l.getLimit()) {
                     color = "§c";
+                } else {
+                    color = "§a";
                 }
-                gui.addItem(new ItemBuilder(limit.getSpawnegg(), 1,
-                        "§e" + entityTypeToString(limit.getType()) + " " + color + "(" +
-                                main.getLimitManager().getEntityCount(region, limit.getType()) +
-                                "/" + limit.getLimit() + ")"
-                ).getItem());
-            });
+
+                gui.set(i, new ItemBuilder(l.getSpawnegg(), 1)
+                                .name("§e" + entityTypeToString(l.getType()) + " " + color + "(" + count + "/" + l.getLimit() + ")")
+                                .getResult(),
+                        (event) -> event.setCancelled(true));
+                i++;
+            }
         }
 
-        for (int i = 18; i < 27; i++) {
-            gui.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1, "§0").getItem());
+        for (int j = 18; j < 27; j++) {
+            gui.set(j, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1)
+                            .name("§0")
+                            .getResult(),
+                    (event) -> event.setCancelled(true));
         }
-        gui.setItem(26, new ItemBuilder(Material.OAK_DOOR, 1, "§cZurück").getItem());
+        gui.set(26, new ItemBuilder(Material.OAK_DOOR, 1)
+                        .name("§cZurück")
+                        .getResult(),
+                (event) -> {
+                    event.setCancelled(true);
+                    Player player = (Player) event.getWhoClicked();
+                    getLimitGui().show((Player) event.getWhoClicked());
+                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+                });
 
         return gui;
     }
 
-    public static Inventory getLimitGui() {
-        Inventory gui = Bukkit.createInventory(null, 27, "§6§lSB§f-§lInsel §cLimits");
-        AtomicInteger slot = new AtomicInteger(9);
-        Arrays.stream(EntityLimitType.values()).forEach(entityLimit -> {
-            gui.setItem(slot.get(), new ItemBuilder(entityLimit.getMat(), 1, "§6§l" + entityLimit.getName()).getItem());
-            slot.getAndIncrement();
-        });
-        for (int i = 0; i < 9; i++) {
-            gui.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1, "§0").getItem());
+    public static GUI getLimitGui() {
+        GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
+
+        int i = 9;
+        for (EntityLimitType t : EntityLimitType.values()) {
+            gui.set(i, new ItemBuilder(t.getMat(), 1)
+                            .name("§6§l" + t.getName())
+                            .getResult(),
+                    (event) -> {
+                        event.setCancelled(true);
+                        Player player = (Player) event.getWhoClicked();
+                        ProtectedRegion region = Utils.getIslandRegionAt(player.getLocation());
+                        getLimitGui(region, t).show(player);
+                        player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+                    });
+            i++;
         }
-        for (int i = 18; i < 27; i++) {
-            gui.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1, "§0").getItem());
+        for (int j = 0; j < 9; j++) {
+            gui.set(j, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1)
+                            .name("§0")
+                            .getResult(),
+                    (event) -> event.setCancelled(true));
+        }
+        for (int j = 18; j < 27; j++) {
+            gui.set(j, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1)
+                            .name("§0")
+                            .getResult(),
+                    (event) -> event.setCancelled(true));
         }
         return gui;
     }
