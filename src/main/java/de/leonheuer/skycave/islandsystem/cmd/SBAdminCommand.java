@@ -91,7 +91,7 @@ public class SBAdminCommand implements TabExecutor {
                 case "create", "setowner", "trust", "untrust" -> {
                     for (Player other : Bukkit.getOnlinePlayers()) {
                         if (player.canSee(other)) {
-                            arguments.add(player.getName());
+                            arguments.add(other.getName());
                         }
                     }
                     StringUtil.copyPartialMatches(args[1], arguments, completions);

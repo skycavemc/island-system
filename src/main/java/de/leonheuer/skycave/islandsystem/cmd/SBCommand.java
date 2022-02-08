@@ -91,19 +91,16 @@ public class SBCommand implements TabExecutor {
 
             StringUtil.copyPartialMatches(args[0], arguments, completions);
         } else if (args.length == 2) {
-            switch (args[1]) {
-                case "trust":
-                case "untrust":
-                case "kick":
+            switch (args[0]) {
+                case "trust", "untrust", "kick" -> {
                     for (Player other : Bukkit.getOnlinePlayers()) {
                         if (player.canSee(other)) {
-                            arguments.add(player.getName());
+                            arguments.add(other.getName());
                         }
                     }
-                    break;
-                case "warp":
-                    StringUtil.copyPartialMatches(args[1], main.getWarpsConfig().getWarps(), completions);
-                    break;
+                    StringUtil.copyPartialMatches(args[1], arguments, completions);
+                }
+                case "warp" -> StringUtil.copyPartialMatches(args[1], main.getWarpsConfig().getWarps(), completions);
             }
         }
 
