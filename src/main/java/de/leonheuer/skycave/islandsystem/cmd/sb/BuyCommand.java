@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class BuyCommand {
 
-    public BuyCommand(Player player, String[] args) {
+    public BuyCommand(Player player) {
         for (String str : Utils.game.getStringList("info.kaufen")) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', str));
         }

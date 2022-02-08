@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,7 @@ public class SBAdminCommand implements TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String arg, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String arg, String[] args) {
 
         if (!(sender instanceof Player player)) {
             sender.sendMessage("Du musst ein Spieler sein!");
@@ -33,15 +34,15 @@ public class SBAdminCommand implements TabExecutor {
         if (args.length >= 1) {
             switch (args[0].toLowerCase()) {
                 case "create" -> new CreateAdminCommand(player, args, main);
-                case "setowner" -> new SetownerAdminCommand(player, args);
-                case "setspawn" -> new SetspawnAdminCommand(player, args);
+                case "setowner" -> new SetownerAdminCommand(player, args, main);
+                case "setspawn" -> new SetspawnAdminCommand(player, main);
                 case "tp" -> new TPAdminCommand(player, args);
-                case "trust" -> new TrustAdminCommand(player, args);
-                case "untrust" -> new UntrustAdminCommand(player, args);
-                case "setradius" -> new SetradiusAdminCommand(player, args);
+                case "trust" -> new TrustAdminCommand(player, args, main);
+                case "untrust" -> new UntrustAdminCommand(player, args, main);
+                case "setradius" -> new SetradiusAdminCommand(player, args, main);
                 case "setwarp" -> new SetWarpAdminCommand(player, args, main);
                 case "delwarp" -> new DelWarpAdminCommand(player, args, main);
-                case "info" -> new InfoAdminCommand(player, args);
+                case "info" -> new InfoAdminCommand(player, main);
                 default -> sendHelp(player);
             }
         } else {
@@ -67,7 +68,7 @@ public class SBAdminCommand implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         Player player = (Player) sender;
         List<String> arguments = new ArrayList<>();
         List<String> completions = new ArrayList<>();

@@ -1,13 +1,13 @@
 package de.leonheuer.skycave.islandsystem.models;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.util.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,8 @@ import java.util.UUID;
 
 public class Insel {
 
-    private final RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(Bukkit.getWorld("skybeeisland")));
+    private final IslandSystem main = JavaPlugin.getPlugin(IslandSystem.class);
+    private final RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(main.getIslandWorld()));
     private String ID;
 
     public Insel(String id) {

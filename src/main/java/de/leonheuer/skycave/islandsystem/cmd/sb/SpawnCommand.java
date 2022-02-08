@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 public class SpawnCommand {
 
-    public SpawnCommand(Player player, String[] args) {
+    public SpawnCommand(Player player) {
         player.teleport(new InselTP("sc_spawn").getSpawnInsel());
     }
 }

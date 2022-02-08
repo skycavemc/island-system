@@ -2,12 +2,11 @@ package de.leonheuer.skycave.islandsystem.cmd.sbadmin;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,14 +14,16 @@ import org.bukkit.entity.Player;
 
 public class SetradiusAdminCommand {
 
-
-    public SetradiusAdminCommand(Player player, String[] args) {
+    public SetradiusAdminCommand(Player player, String[] args, IslandSystem main) {
         if (args.length >= 2) {
             if (Utils.getInselWorld().getName().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
-                WorldGuardPlatform wgp = WorldGuard.getInstance().getPlatform();
-                RegionManager ctxRM1 = wgp.getRegionContainer().get(BukkitAdapter.adapt(player.getWorld()));
-                ApplicableRegionSet set = ctxRM1.getApplicableRegions(BukkitAdapter.asBlockVector(player.getLocation()));
+                RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(Utils.getInselWorld()));
+                if (rm == null || player.getLocation().getWorld() != Utils.getInselWorld()) {
+                    player.sendMessage(Message.MISC_NOINWORLD.getString().get());
+                    return;
+                }
 
+                ApplicableRegionSet set = rm.getApplicableRegions(BukkitAdapter.asBlockVector(player.getLocation()));
                 for (ProtectedRegion r : set.getRegions()) {
                     if (r.getParent() == null) {
                         int g;
@@ -69,9 +70,8 @@ public class SetradiusAdminCommand {
                         } catch (ProtectedRegion.CircularInheritanceException e) {
                             player.sendMessage("Error 1");
                         }
-                        RegionManager ctxRM2 = wgp.getRegionContainer().get(BukkitAdapter.adapt(Utils.getInselWorld()));
-                        ctxRM2.removeRegion(r.getId());
-                        ctxRM2.addRegion(cr);
+                        rm.removeRegion(r.getId());
+                        rm.addRegion(cr);
                         FileConfiguration i = Utils.getInsel(cr.getId());
                         i.set("insel.radius", g);
                         i.set("insel.start.x", (x - g));

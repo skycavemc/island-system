@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,7 @@ public class SBCommand implements TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
 
         if (!(sender instanceof Player player)) {
             sender.sendMessage("Du musst ein Spieler sein!");
@@ -32,18 +33,18 @@ public class SBCommand implements TabExecutor {
 
         if (args.length >= 1) {
             switch (args[0].toLowerCase()) {
-                case "buy" -> new BuyCommand(player, args);
-                case "trust" -> new TrustCommand(player, args);
-                case "untrust" -> new UntrustCommand(player, args);
-                case "setspawn" -> new SetspawnCommand(player, args);
+                case "buy" -> new BuyCommand(player);
+                case "trust" -> new TrustCommand(player, args, main);
+                case "untrust" -> new UntrustCommand(player, args,  main);
+                case "setspawn" -> new SetspawnCommand(player, main);
                 case "tp" -> new TPCommand(player, args);
-                case "spawn" -> new SpawnCommand(player, args);
-                case "team" -> new TeamCommand(player, args);
-                case "info" -> new InfoCommand(player, args);
-                case "list" -> new ListCommand(player, args);
-                case "kick" -> new KickCommand(player, args);
+                case "spawn" -> new SpawnCommand(player);
+                case "team" -> new TeamCommand(player, main);
+                case "info" -> new InfoCommand(player, main);
+                case "list" -> new ListCommand(player);
+                case "kick" -> new KickCommand(player, args, main);
                 case "warp" -> new WarpCommand(player, args, main);
-                case "limits" -> new LimitsCommand(player, args);
+                case "limits" -> new LimitsCommand(player);
                 default -> sendHelp(player);
             }
         } else {
@@ -69,7 +70,7 @@ public class SBCommand implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         Player player = (Player) sender;
         List<String> arguments = new ArrayList<>();
         List<String> completions = new ArrayList<>();

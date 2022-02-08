@@ -190,8 +190,8 @@ public class Utils {
         }
     }
 
-    public static ProtectedRegion protectedRegion(WorldGuardPlatform wgp, Integer x, Integer z, Integer grosse, String rgName) {
-        RegionManager rm = wgp.getRegionContainer().get(BukkitAdapter.adapt(getInselWorld()));
+    public static ProtectedRegion protectedRegion(Integer x, Integer z, Integer grosse, String rgName) {
+        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(getInselWorld()));
         if (rm == null) {
             return null;
         }
@@ -205,7 +205,7 @@ public class Utils {
 
     @Nullable
     public static ProtectedRegion getIslandRegionAt(Location loc) {
-        RegionManager rm = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld()));
+        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld()));
         if (rm == null) {
             return null;
         }

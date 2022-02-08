@@ -1,7 +1,5 @@
 package de.leonheuer.skycave.islandsystem.cmd.sbadmin;
 
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -20,8 +18,6 @@ import java.io.File;
 
 public class CreateAdminCommand {
 
-    WorldGuardPlatform wgp = WorldGuard.getInstance().getPlatform();
-
     public CreateAdminCommand(Player player, String[] args, IslandSystem main) {
         if (args.length >= 4) {
             if (args[1].equalsIgnoreCase("spawn")) {
@@ -31,7 +27,10 @@ public class CreateAdminCommand {
                 if (file.exists()) {
                     Utils.printSchematic(0, 0, file);
 
-                    ProtectedRegion rg = Utils.protectedRegion(wgp, 0, 0, 1000, "sc_spawn");
+                    ProtectedRegion rg = Utils.protectedRegion(0, 0, 1000, "sc_spawn");
+                    if (rg == null) {
+                        return;
+                    }
                     rg.setFlag(Flags.LEAF_DECAY, StateFlag.State.DENY);
                     rg.setFlag(Flags.MOB_SPAWNING, StateFlag.State.DENY);
 
@@ -66,10 +65,13 @@ public class CreateAdminCommand {
                         } else {
                             if (file.exists()) {
                                 player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_WAIT.getString().get());
-                                InselID getID = Utils.getLastInternID();
+                                InselID id = Utils.getLastInternID();
+                                if (id == null) {
+                                    return;
+                                }
 
-                                Integer x = getID.getXanInt() * 4000;
-                                Integer z = getID.getZanInt() * 4000;
+                                Integer x = id.getXanInt() * 4000;
+                                Integer z = id.getZanInt() * 4000;
 
                                 Utils.printSchematic(x, z, file);
 
@@ -82,11 +84,11 @@ public class CreateAdminCommand {
                                     a = "0";
                                 }
 
-                                Utils.protectedRegion(wgp, x, z, grosse, "sc_" + a + b + Utils.getLastID()).getOwners().addPlayer(player.getUniqueId());
+                                Utils.protectedRegion(x, z, grosse, "sc_" + a + b + Utils.getLastID()).getOwners().addPlayer(player.getUniqueId());
 
-                                new InselConfig("sc_" + a + b + Utils.getLastID(), getID, player.getUniqueId(), grosse);
+                                new InselConfig("sc_" + a + b + Utils.getLastID(), id, player.getUniqueId(), grosse);
 
-                                Location loc2 = new Location(Utils.getInselWorld(), ((getID.getXanInt() * 4000)), (64 + 2), ((getID.getZanInt() * 4000)));
+                                Location loc2 = new Location(Utils.getInselWorld(), ((id.getXanInt() * 4000)), (64 + 2), ((id.getZanInt() * 4000)));
                                 Utils.getInselWorld().spawnEntity(loc2, EntityType.VILLAGER);
                                 loc2.setX(loc2.getX() + 1);
                                 Utils.getInselWorld().spawnEntity(loc2, EntityType.VILLAGER);
