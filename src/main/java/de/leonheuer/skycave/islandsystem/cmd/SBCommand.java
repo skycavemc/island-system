@@ -87,6 +87,7 @@ public class SBCommand implements TabExecutor {
             arguments.add("spawn");
             arguments.add("warp");
             arguments.add("limits");
+            arguments.add("kick");
 
             StringUtil.copyPartialMatches(args[0], arguments, completions);
         } else if (args.length == 2) {
