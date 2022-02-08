@@ -91,7 +91,7 @@ public class SBCommand implements TabExecutor {
 
             StringUtil.copyPartialMatches(args[0], arguments, completions);
         } else if (args.length == 2) {
-            switch (args[0]) {
+            switch (args[1]) {
                 case "trust":
                 case "untrust":
                 case "kick":
