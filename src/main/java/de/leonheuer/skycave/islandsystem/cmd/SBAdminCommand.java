@@ -33,16 +33,16 @@ public class SBAdminCommand implements TabExecutor {
 
         if (args.length >= 1) {
             switch (args[0].toLowerCase()) {
-                case "create" -> new CreateAdminCommand(player, args, main);
-                case "setowner" -> new SetownerAdminCommand(player, args, main);
-                case "setspawn" -> new SetspawnAdminCommand(player, main);
-                case "tp" -> new TPAdminCommand(player, args);
-                case "trust" -> new TrustAdminCommand(player, args, main);
-                case "untrust" -> new UntrustAdminCommand(player, args, main);
-                case "setradius" -> new SetradiusAdminCommand(player, args, main);
-                case "setwarp" -> new SetWarpAdminCommand(player, args, main);
-                case "delwarp" -> new DelWarpAdminCommand(player, args, main);
-                case "info" -> new InfoAdminCommand(player, main);
+                case "create" -> new CreateAdmin(player, args, main);
+                case "setowner" -> new SetOwnerAdmin(player, args, main);
+                case "setspawn" -> new SetSpawnAdmin(player);
+                case "tp" -> new TPAdmin(player, args);
+                case "trust" -> new TrustAdminCommand(player, args);
+                case "untrust" -> new UntrustAdminCommand(player, args);
+                case "setradius" -> new SetradiusAdmin(player, args, main);
+                case "setwarp" -> new SetWarpAdmin(player, args, main);
+                case "delwarp" -> new DelWarpAdmin(player, args, main);
+                case "info" -> new InfoAdmin(player);
                 default -> sendHelp(player);
             }
         } else {

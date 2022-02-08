@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 
-public class TPAdminCommand {
+public class TPAdmin {
 
-    public TPAdminCommand(Player player, String[] args) {
+    public TPAdmin(Player player, String[] args) {
         if (args.length >= 2) {
             if (args.length >= 3) {
                 if (args[2].equalsIgnoreCase("zentrum")) {

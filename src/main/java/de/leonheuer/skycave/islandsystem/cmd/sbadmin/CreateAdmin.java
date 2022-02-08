@@ -16,9 +16,9 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 
-public class CreateAdminCommand {
+public class CreateAdmin {
 
-    public CreateAdminCommand(Player player, String[] args, IslandSystem main) {
+    public CreateAdmin(Player player, String[] args, IslandSystem main) {
         if (args.length >= 4) {
             if (args[1].equalsIgnoreCase("spawn")) {
                 player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_WAIT.getString().get());

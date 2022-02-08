@@ -13,6 +13,7 @@ public enum Message {
     COMING_SOON("&cDiese Funktion ist erst in Zukunft verfügbar!"),
     PLAYER_NOFOUND("&cDer Spieler {player} existiert nicht!"),
     PLAYER_NOONLINE("&cDer Spieler {player} ist nicht online!"),
+    NOT_ON_ISLAND("&cDu befindest dich auf keiner SB-Insel."),
 
     /**
      * Command_sbadmin
@@ -129,7 +130,7 @@ public enum Message {
      */
     SB_SUBCOMMAND_KICK_SYNTAX("&e/sb kick <Spieler>"),
     SB_SUBCOMMAND_KICK_ERFOLG("&aDer Spieler &2{player} &awurde von der Insel gekickt!"),
-    SB_SUBCOMMAND_KICK_TOOTHER("&cDu wurdest von der Insel gekickt!"),
+    SB_SUBCOMMAND_KICK_TOOTHER("&c{player} hat dich von seiner Insel gekickt!"),
     SB_SUBCOMMAND_KICK_NOYOU("&cDu kannst dich nicht selbst kicken!"),
     SB_SUBCOMMAND_KICK_NOMEMBER("&cDieser Spieler ist ein Mitglied!"),
     SB_SUBCOMMAND_KICK_NOONISLAND("&cDer Spieler muss sich auf deiner Insel befinden!"),

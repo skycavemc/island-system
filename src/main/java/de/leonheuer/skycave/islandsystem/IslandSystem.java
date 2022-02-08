@@ -1,5 +1,6 @@
 package de.leonheuer.skycave.islandsystem;
 
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import de.leonheuer.mcguiapi.gui.GUIFactory;
@@ -26,6 +27,7 @@ public class IslandSystem extends JavaPlugin {
     private CacheConfig cacheConfig;
     private RegionContainer regionContainer;
     private GUIFactory guiFactory;
+    private MultiverseCore multiverse;
     private LimitManager limitManager;
     private World islandWorld;
 
@@ -36,6 +38,7 @@ public class IslandSystem extends JavaPlugin {
         warpsConfig = new WarpsConfig();
         regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         guiFactory = new GUIFactory(this);
+        multiverse = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
 
         limitManager = new LimitManager(this);
         islandWorld = getServer().getWorld("skybeeisland");
@@ -79,6 +82,10 @@ public class IslandSystem extends JavaPlugin {
 
     public GUIFactory getGuiFactory() {
         return guiFactory;
+    }
+
+    public MultiverseCore getMultiverse() {
+        return multiverse;
     }
 
     public LimitManager getLimitManager() {

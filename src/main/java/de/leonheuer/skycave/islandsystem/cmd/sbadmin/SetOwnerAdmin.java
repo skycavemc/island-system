@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
 
 import java.util.Set;
 
-public class SetownerAdminCommand {
+public class SetOwnerAdmin {
 
-    public SetownerAdminCommand(Player player, String[] args, IslandSystem main) {
+    public SetOwnerAdmin(Player player, String[] args, IslandSystem main) {
         if (args.length >= 2) {
             if (Utils.getInselWorld().getName().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
                 RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(player.getWorld()));

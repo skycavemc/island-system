@@ -4,9 +4,9 @@ import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import org.bukkit.entity.Player;
 
-public class DelWarpAdminCommand {
+public class DelWarpAdmin {
 
-    public DelWarpAdminCommand(Player player, String[] args, IslandSystem main) {
+    public DelWarpAdmin(Player player, String[] args, IslandSystem main) {
         if (args.length >= 2) {
             if (main.getWarpsConfig().isSet(args[1].toLowerCase())) {
                 main.getWarpsConfig().removeWarp(args[1].toLowerCase());
