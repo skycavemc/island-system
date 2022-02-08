@@ -7,9 +7,9 @@ import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class TrustAdminCommand {
+public class TrustAdmin {
 
-    public TrustAdminCommand(Player player, String[] args) {
+    public TrustAdmin(Player player, String[] args) {
         if (args.length >= 2) {
             if (player.getLocation().getWorld().getName().equals("skybeeisland")) {
                 ProtectedRegion r = Utils.getIslandRegionAt(player.getLocation());

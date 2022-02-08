@@ -8,9 +8,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-public class UntrustAdminCommand {
+public class UntrustAdmin {
 
-    public UntrustAdminCommand(Player player, String[] args) {
+    public UntrustAdmin(Player player, String[] args) {
         if (args.length >= 2) {
             if (player.getLocation().getWorld().getName().equals("skybeeisland")) {
                 ProtectedRegion r = Utils.getIslandRegionAt(player.getLocation());

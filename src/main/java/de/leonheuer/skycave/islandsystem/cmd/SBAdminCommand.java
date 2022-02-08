@@ -37,8 +37,8 @@ public class SBAdminCommand implements TabExecutor {
                 case "setowner" -> new SetOwnerAdmin(player, args, main);
                 case "setspawn" -> new SetSpawnAdmin(player);
                 case "tp" -> new TPAdmin(player, args);
-                case "trust" -> new TrustAdminCommand(player, args);
-                case "untrust" -> new UntrustAdminCommand(player, args);
+                case "trust" -> new TrustAdmin(player, args);
+                case "untrust" -> new UntrustAdmin(player, args);
                 case "setradius" -> new SetradiusAdmin(player, args, main);
                 case "setwarp" -> new SetWarpAdmin(player, args, main);
                 case "delwarp" -> new DelWarpAdmin(player, args, main);

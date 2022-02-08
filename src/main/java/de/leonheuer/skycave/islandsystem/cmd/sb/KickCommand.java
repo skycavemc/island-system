@@ -61,9 +61,9 @@ public class KickCommand {
 
         if (r.contains(BukkitAdapter.asBlockVector(other.getLocation()))) {
             Location spawn = main.getMultiverse().getMVWorldManager()
-                    .getMVWorld(main.getIslandWorld()).getSpawnLocation();
+                    .getMVWorld("Builder").getSpawnLocation();
             other.teleport(spawn);
-            player.sendMessage(Message.SB_SUBCOMMAND_KICK_TOOTHER.getString()
+            other.sendMessage(Message.SB_SUBCOMMAND_KICK_TOOTHER.getString()
                     .replace("{player}", player.getName()).get());
             player.sendMessage(Message.SB_SUBCOMMAND_KICK_ERFOLG.getString().replace("{player}", args[1]).get());
             return;
