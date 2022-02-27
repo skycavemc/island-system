@@ -5,16 +5,15 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.config.InselConfig;
+import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.enums.Message;
-import de.leonheuer.skycave.islandsystem.models.InselID;
-import de.leonheuer.skycave.islandsystem.models.InselTP;
+import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.IOException;
 
 public class CreateAdmin {
 
@@ -25,7 +24,7 @@ public class CreateAdmin {
 
                 File file = new File(main.getDataFolder(), "sbInsel_Spawn.schem");
                 if (file.exists()) {
-                    Utils.printSchematic(0, 0, file);
+                    Utils.printSchematic(0, 64, 0, file);
 
                     ProtectedRegion rg = Utils.protectedRegion(0, 0, 1000, "sc_spawn");
                     if (rg == null) {
@@ -39,75 +38,59 @@ public class CreateAdmin {
                     player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_MISSING_SCHEMATIC.getString().get());
                 }
             } else {
-
                 Player other = Bukkit.getPlayerExact(args[1]);
-
-                if (other != null) {
-
-                    int grosse;
-                    try {
-                        grosse = Integer.parseInt(args[2]);
-                    } catch (NumberFormatException e) {
-                        player.sendMessage(Message.NO_NUMMER.getString().get());
-                        return;
-                    }
-                    if (!(grosse <= 1500 && grosse > 0)) {
-                        player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OUTOFRANGE.getString().get());
-                        return;
-                    }
-
-                    if (player.canSee(other)) {
-
-                        File file = Utils.getSchematic(args[3]);
-
-                        if (file == null) {
-                            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_TYPEERROR.getString().get());
-                        } else {
-                            if (file.exists()) {
-                                player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_WAIT.getString().get());
-                                InselID id = Utils.getLastInternID();
-                                if (id == null) {
-                                    return;
-                                }
-
-                                Integer x = id.getXanInt() * 4000;
-                                Integer z = id.getZanInt() * 4000;
-
-                                Utils.printSchematic(x, z, file);
-
-                                String a = "";
-                                String b = "";
-                                if (Utils.getLastID() < 100) {
-                                    if (Utils.getLastID() < 10) {
-                                        b = "0";
-                                    }
-                                    a = "0";
-                                }
-
-                                Utils.protectedRegion(x, z, grosse, "sc_" + a + b + Utils.getLastID()).getOwners().addPlayer(player.getUniqueId());
-
-                                new InselConfig("sc_" + a + b + Utils.getLastID(), id, player.getUniqueId(), grosse);
-
-                                Location loc2 = new Location(Utils.getInselWorld(), ((id.getXanInt() * 4000)), (64 + 2), ((id.getZanInt() * 4000)));
-                                Utils.getInselWorld().spawnEntity(loc2, EntityType.VILLAGER);
-                                loc2.setX(loc2.getX() + 1);
-                                Utils.getInselWorld().spawnEntity(loc2, EntityType.VILLAGER);
-
-                                player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_FERTIG.getString().replace("{isid}", "" + Utils.getLastID()).get());
-                                other.teleport((new InselTP("sc_" + a + b + Utils.getLastID())).getTP());
-                                player.teleport((new InselTP("sc_" + a + b + Utils.getLastID())).getTP());
-                                Utils.addLastID();
-                                Utils.setLastInternID();
-                            } else {
-                                player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_MISSING_SCHEMATIC.getString().get());
-                            }
-                        }
-                    } else {
-                        player.sendMessage(Message.PLAYER_NOONLINE.getString().replace("{player}", args[1]).get());
-                    }
-                } else {
+                if (other == null || !player.canSee(other)) {
                     player.sendMessage(Message.PLAYER_NOONLINE.getString().replace("{player}", args[1]).get());
+                    return;
                 }
+
+                int radius;
+                try {
+                    radius = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    player.sendMessage(Message.NO_NUMMER.getString().get());
+                    return;
+                }
+
+                if (radius > 1500 || radius < 100) {
+                    player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OUTOFRANGE.getString().get());
+                    return;
+                }
+
+                IslandTemplate template = IslandTemplate.fromString(args[3]);
+                if (template == null) {
+                    player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_TYPEERROR.getString().get());
+                    return;
+                }
+                if (!template.getFile().exists()) {
+                    player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_MISSING_SCHEMATIC.getString().get());
+                    return;
+                }
+
+                player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_WAIT.getString().get());
+                Island island;
+                try {
+                    island = Island.create(Utils.getLastID(), radius, template);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR.getString().get());
+                    return;
+                }
+                if (island == null) {
+                    player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR.getString().get());
+                    return;
+                }
+                ProtectedRegion region = island.getRegion();
+                if (region == null) {
+                    player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR.getString().get());
+                    return;
+                }
+
+                region.getOwners().addPlayer(other.getUniqueId());
+
+                player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_FERTIG.getString().replace("{isid}", "" + Utils.getLastID()).get());
+                other.teleport(island.getCenterLocation());
+                player.teleport(island.getCenterLocation());
             }
         } else {
             player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_SYNTAX.getString().get());

@@ -4,7 +4,6 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
@@ -13,9 +12,7 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -25,13 +22,14 @@ import de.leonheuer.mcguiapi.utils.ItemBuilder;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimitType;
-import de.leonheuer.skycave.islandsystem.models.InselID;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -41,17 +39,18 @@ import java.util.*;
 
 public class Utils {
 
-    public static final FileConfiguration game = YamlConfiguration.loadConfiguration(
+    public static final FileConfiguration GAME_CONFIG = YamlConfiguration.loadConfiguration(
             new File("plugins/SkyBeeIslandSystem/", "game.yml"));
-    public static final FileConfiguration cache = YamlConfiguration.loadConfiguration(
+    public static final FileConfiguration CACHE_CONFIG = YamlConfiguration.loadConfiguration(
             new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
 
-    public static FileConfiguration getInsel(String rg) {
+    @Contract("_ -> new")
+    public static @NotNull FileConfiguration getInsel(String rg) {
         return YamlConfiguration.loadConfiguration(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
     }
 
-    public static void saveInsel(String rg, FileConfiguration file) {
+    public static void saveInsel(String rg, @NotNull FileConfiguration file) {
         try {
             file.save(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
         } catch (IOException e) {
@@ -59,73 +58,21 @@ public class Utils {
         }
     }
 
-    public static InselID getLastInternID() {
-        String id = cache.getString("lastinternid");
-        if (id != null) {
-            String[] idParts = id.split(";");
-            return new InselID(Integer.parseInt(idParts[0]), Integer.parseInt(idParts[1]));
-        }
-        return null;
-    }
-
     public static int getLastID() {
-        return cache.getInt("lastid");
-    }
-
-    public static void setLastInternID() {
-        InselID oldId = getLastInternID();
-        if (oldId == null) {
-            return;
-        }
-        InselID newId = getNextInselID(oldId);
-        cache.set("lastinternid", newId.getXanInt() + ";" + oldId.getZanInt());
-        try {
-            cache.save(new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return CACHE_CONFIG.getInt("lastid");
     }
 
     public static void addLastID() {
-        int f = cache.getInt("lastid") + 1;
-        cache.set("lastid", f);
+        int f = CACHE_CONFIG.getInt("lastid") + 1;
+        CACHE_CONFIG.set("lastid", f);
         try {
-            cache.save(new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
+            CACHE_CONFIG.save(new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static InselID getNextInselID(InselID id) {
-        int absX = Math.abs(id.getXanInt());
-        int absY = Math.abs(id.getZanInt());
-        if (absX > absY) {
-            if (id.getXanInt() > 0) {
-                return new InselID(id.getXanInt(), id.getZanInt() + 1);
-            } else {
-                return new InselID(id.getXanInt(), id.getZanInt() - 1);
-            }
-        } else if (absY > absX) {
-            if (id.getZanInt() > 0) {
-                return new InselID(id.getXanInt() - 1, id.getZanInt());
-            } else {
-                return new InselID(id.getXanInt() + 1, id.getZanInt());
-            }
-        } else {
-            if (id.getXanInt() == id.getZanInt() && id.getXanInt() > 0) {
-                return new InselID(id.getXanInt(), id.getZanInt() + 1);
-            }
-            if (id.getXanInt() == absX) {
-                return new InselID(id.getXanInt(), id.getZanInt() + 1);
-            }
-            if (id.getZanInt() == absY) {
-                return new InselID(id.getXanInt(), id.getZanInt() - 1);
-            }
-            return new InselID(id.getXanInt() + 1, id.getZanInt());
-        }
-    }
-
-    public static WorldGuardPlugin getWorldGuard() {
+    public static @Nullable WorldGuardPlugin getWorldGuard() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 
         if (!(plugin instanceof WorldGuardPlugin)) {
@@ -138,59 +85,39 @@ public class Utils {
         return Bukkit.getWorld("skybeeisland");
     }
 
-    public static File getSchematic(String schem) {
-        String schematic;
-
-        switch (schem) {
-            case "Blume":
-                schematic = "sbInsel_Blume.schem";
-                break;
-            case "Eis":
-                schematic = "sbInsel_Eis.schem";
-                break;
-            case "Pilz":
-                schematic = "sbInsel_Pilz.schem";
-                break;
-            case "Wüste":
-                schematic = "sbInsel_Wuste.schem";
-                break;
-            default:
-                return null;
-        }
-
-        return new File("plugins/SkyBeeIslandSystem", schematic);
-    }
-
-    public static void printSchematic(Integer x, Integer z, File schematic) {
-        Clipboard cc = null;
+    public static boolean printSchematic(int x, int y, int z, File schematic) {
         ClipboardFormat format = ClipboardFormats.findByFile(schematic);
         if (format == null) {
-            return;
+            return false;
         }
+
+        Clipboard cc;
         try (ClipboardReader reader = format.getReader(new FileInputStream(schematic))) {
             cc = reader.read();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-
         if (cc == null) {
-            return;
+            return false;
         }
 
-        BlockVector3 ctxESBlockVector2 = BlockVector3.at(x, 64, z);
+        BlockVector3 location = BlockVector3.at(x, y, z);
         EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
-                .world(new BukkitWorld(getInselWorld()))
+                .world(BukkitAdapter.adapt(getInselWorld()))
                 .maxBlocks(-1)
                 .build();
         try {
-            Operation operation = new ClipboardHolder(cc).createPaste(editSession).to(ctxESBlockVector2).build();
+            Operation operation = new ClipboardHolder(cc).createPaste(editSession).to(location).build();
             Operations.complete(operation);
         } catch (WorldEditException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    public static ProtectedRegion protectedRegion(Integer x, Integer z, Integer grosse, String rgName) {
+    public static @Nullable ProtectedRegion protectedRegion(int x, int z, int grosse, String rgName) {
         RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(getInselWorld()));
         if (rm == null) {
             return null;
@@ -204,7 +131,7 @@ public class Utils {
     }
 
     @Nullable
-    public static ProtectedRegion getIslandRegionAt(Location loc) {
+    public static ProtectedRegion getIslandRegionAt(@NotNull Location loc) {
         RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld()));
         if (rm == null) {
             return null;
@@ -215,17 +142,15 @@ public class Utils {
             return null;
         }
 
-        ProtectedRegion result = null;
         for (ProtectedRegion region : set.getRegions()) {
-            if (region.getId().matches("^[s][c][_]\\d{3}$")) {
-                result = region;
-                break;
+            if (IslandUtils.isValidName(region.getId())) {
+                return region;
             }
         }
-        return result;
+        return null;
     }
 
-    public static GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
+    public static @NotNull GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
         List<EntityLimit> limits = new ArrayList<>();
@@ -284,7 +209,7 @@ public class Utils {
         return gui;
     }
 
-    public static GUI getLimitGui() {
+    public static @NotNull GUI getLimitGui() {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
         int i = 9;
@@ -316,7 +241,7 @@ public class Utils {
         return gui;
     }
 
-    public static String entityTypeToString(EntityType type) {
+    public static String entityTypeToString(@NotNull EntityType type) {
         StringJoiner sj = new StringJoiner(" ");
         String[] partial = type.toString().split("_");
         Arrays.stream(partial).forEach(part -> {
