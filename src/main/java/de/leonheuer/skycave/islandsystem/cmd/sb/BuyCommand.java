@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class BuyCommand {
+    // TODO buy themselves
 
     public BuyCommand(Player player) {
         for (String str : Utils.GAME_CONFIG.getStringList("info.kaufen")) {

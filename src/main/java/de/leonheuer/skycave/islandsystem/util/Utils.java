@@ -12,7 +12,6 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -27,8 +26,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,25 +41,13 @@ public class Utils {
     public static final FileConfiguration CACHE_CONFIG = YamlConfiguration.loadConfiguration(
             new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
-
-    @Contract("_ -> new")
-    public static @NotNull FileConfiguration getInsel(String rg) {
-        return YamlConfiguration.loadConfiguration(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
-    }
-
-    public static void saveInsel(String rg, @NotNull FileConfiguration file) {
-        try {
-            file.save(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public static final World ISLAND_WORLD = Bukkit.getWorld(main.getIslandWorld().getUID());
 
     public static int getLastID() {
         return CACHE_CONFIG.getInt("lastid");
     }
 
-    public static void addLastID() {
+    public static void increaseLastID() {
         int f = CACHE_CONFIG.getInt("lastid") + 1;
         CACHE_CONFIG.set("lastid", f);
         try {
@@ -70,19 +55,6 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static @Nullable WorldGuardPlugin getWorldGuard() {
-        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
-
-        if (!(plugin instanceof WorldGuardPlugin)) {
-            return null;
-        }
-        return (WorldGuardPlugin) plugin;
-    }
-
-    public static World getInselWorld() {
-        return Bukkit.getWorld("skybeeisland");
     }
 
     public static boolean printSchematic(int x, int y, int z, File schematic) {
@@ -104,7 +76,7 @@ public class Utils {
 
         BlockVector3 location = BlockVector3.at(x, y, z);
         EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
-                .world(BukkitAdapter.adapt(getInselWorld()))
+                .world(BukkitAdapter.adapt(ISLAND_WORLD))
                 .maxBlocks(-1)
                 .build();
         try {
@@ -117,17 +89,17 @@ public class Utils {
         return true;
     }
 
-    public static @Nullable ProtectedRegion protectedRegion(int x, int z, int grosse, String rgName) {
-        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(getInselWorld()));
+    public static @Nullable ProtectedRegion protectedRegion(int x, int z, int radius, String region) {
+        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(ISLAND_WORLD));
         if (rm == null) {
             return null;
         }
 
-        BlockVector3 min2 = BlockVector3.at(x - grosse, 0, z - grosse);
-        BlockVector3 max2 = BlockVector3.at(x + grosse, 255, z + grosse);
-        ProtectedCuboidRegion pr = new ProtectedCuboidRegion(rgName, min2, max2);
+        BlockVector3 min2 = BlockVector3.at(x - radius, 0, z - radius);
+        BlockVector3 max2 = BlockVector3.at(x + radius, 255, z + radius);
+        ProtectedCuboidRegion pr = new ProtectedCuboidRegion(region, min2, max2);
         rm.addRegion(pr);
-        return rm.getRegion(rgName);
+        return rm.getRegion(region);
     }
 
     @Nullable
@@ -165,7 +137,7 @@ public class Utils {
         int i = 0;
         if (region == null) {
             for (EntityLimit l : limits) {
-                gui.set(i, new ItemBuilder(l.getSpawnegg(), 1)
+                gui.set(i, new ItemBuilder(l.getSpawnEgg(), 1)
                                 .name("§e" + entityTypeToString(l.getType()) + " §6(" + l.getLimit() + ")")
                                 .getResult(),
                         (event) -> event.setCancelled(true));
@@ -182,7 +154,7 @@ public class Utils {
                     color = "§a";
                 }
 
-                gui.set(i, new ItemBuilder(l.getSpawnegg(), 1)
+                gui.set(i, new ItemBuilder(l.getSpawnEgg(), 1)
                                 .name("§e" + entityTypeToString(l.getType()) + " " + color + "(" + count + "/" + l.getLimit() + ")")
                                 .getResult(),
                         (event) -> event.setCancelled(true));
@@ -249,6 +221,18 @@ public class Utils {
             sj.add(part);
         });
         return sj.toString();
+    }
+
+    public static String locationAsString(Location location) {
+        return location.getX() + ", " +
+                location.getY() + ", " +
+                location.getZ();
+    }
+
+    public static String locationAsString(BlockVector3 location) {
+        return location.getX() + ", " +
+                location.getY() + ", " +
+                location.getZ();
     }
 
 }

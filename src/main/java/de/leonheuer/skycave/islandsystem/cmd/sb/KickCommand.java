@@ -5,20 +5,20 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
-import de.leonheuer.skycave.islandsystem.models.Insel;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class KickCommand {
+    // TODO
 
     public KickCommand(Player player, String[] args, IslandSystem main) {
         if (args.length < 2) {
             player.sendMessage(Message.SB_SUBCOMMAND_KICK_SYNTAX.getString().get());
             return;
         }
-        if (!Utils.getInselWorld().getName().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
+        if (!Utils.ISLAND_WORLD.getName().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
             player.sendMessage(Message.MISC_NOINWORLD.getString().get());
             return;
         }
@@ -54,7 +54,7 @@ public class KickCommand {
             player.sendMessage(Message.SB_SUBCOMMAND_KICK_NOMEMBER.getString().get());
             return;
         }
-        if (!player.getLocation().getWorld().getName().equals(Utils.getInselWorld().getName())) {
+        if (!player.getLocation().getWorld().getName().equals(Utils.ISLAND_WORLD.getName())) {
             player.sendMessage(Message.SB_SUBCOMMAND_KICK_NOONISLAND.getString().get());
             return;
         }

@@ -1,48 +1,54 @@
 package de.leonheuer.skycave.islandsystem.cmd.sbadmin;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
-import de.leonheuer.skycave.islandsystem.models.Insel;
-import de.leonheuer.skycave.islandsystem.util.Utils;
+import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
+import java.util.UUID;
 
 public class SetOwnerAdmin {
 
     public SetOwnerAdmin(Player player, String[] args, IslandSystem main) {
-        if (args.length >= 2) {
-            if (Utils.getInselWorld().getName().equalsIgnoreCase(player.getLocation().getWorld().getName())) {
-                RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(player.getWorld()));
-                if (rm == null) {
-                    player.sendMessage(Message.MISC_NOINWORLD.getString().get());
-                    return;
-                }
-
-                Set<ProtectedRegion> regions = rm.getApplicableRegions(
-                        BukkitAdapter.asBlockVector(player.getLocation())
-                ).getRegions();
-                for (ProtectedRegion r : regions) {
-                    if (r.getParent() == null) {
-                        Insel insel = new Insel(r.getId());
-                        Player other = Bukkit.getPlayerExact(args[1]);
-                        if (other != null && player.canSee(other)) {
-                            insel.setOwner(other.getUniqueId());
-                            player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETOWNER_ERFOLG.getString().replace("{player}", args[1]).get());
-                        } else {
-                            player.sendMessage(Message.PLAYER_NOONLINE.getString().replace("{player}", args[1]).get());
-                        }
-                    }
-                }
-            } else {
-                player.sendMessage(Message.MISC_NOINWORLD.getString().get());
-            }
-        } else {
+        if (args.length < 2) {
             player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETOWNER_SYNTAX.getString().get());
+            return;
         }
+
+        if (player.getLocation().getWorld() == main.getIslandWorld()) {
+            player.sendMessage(Message.MISC_NOINWORLD.getString().get());
+            return;
+        }
+
+        Island island = Island.at(player.getLocation());
+        if (island == null) {
+            player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
+            return;
+        }
+
+        ProtectedRegion region = island.getRegion();
+        if (region == null) {
+            player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
+            return;
+        }
+
+        OfflinePlayer other = Bukkit.getOfflinePlayerIfCached(args[1]);
+        if (other == null) {
+            player.sendMessage(Message.PLAYER_NOFOUND.getString().replace("{player}", args[1]).get());
+            return;
+        }
+        UUID uuid = other.getUniqueId();
+
+        if (region.getOwners().contains(uuid)) {
+            player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETOWNER_ALREADY.getString().replace("{player}", args[1]).get());
+            return;
+        }
+
+        region.getOwners().removeAll();
+        region.getOwners().addPlayer(uuid);
+        player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETOWNER_ERFOLG.getString().replace("{player}", args[1]).get());
     }
 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class SBAdminCommand implements TabExecutor {
 
     private final IslandSystem main;
@@ -37,12 +38,13 @@ public class SBAdminCommand implements TabExecutor {
                 case "setowner" -> new SetOwnerAdmin(player, args, main);
                 case "setspawn" -> new SetSpawnAdmin(player);
                 case "tp" -> new TPAdmin(player, args);
-                case "trust" -> new TrustAdmin(player, args);
-                case "untrust" -> new UntrustAdmin(player, args);
-                case "setradius" -> new SetradiusAdmin(player, args, main);
+                case "trust" -> new TrustAdmin(player, args, main);
+                case "untrust" -> new UntrustAdmin(player, args, main);
+                case "setradius" -> new SetRadiusAdmin(player, args, main);
                 case "setwarp" -> new SetWarpAdmin(player, args, main);
                 case "delwarp" -> new DelWarpAdmin(player, args, main);
-                case "info" -> new InfoAdmin(player);
+                case "info" -> new InfoAdmin(player, main);
+                // TODO import command
                 default -> sendHelp(player);
             }
         } else {
@@ -64,6 +66,7 @@ public class SBAdminCommand implements TabExecutor {
         player.sendMessage(Message.CMD_SBADMIN_HELP_TP.getString().get(false));
         player.sendMessage(Message.CMD_SBADMIN_HELP_SETWARP.getString().get(false));
         player.sendMessage(Message.CMD_SBADMIN_HELP_DELWARP.getString().get(false));
+        // TODO import command
         player.sendMessage(Message.CMD_SBADMIN_HELP_ENDTITEL.getString().get(false));
     }
 
@@ -84,6 +87,7 @@ public class SBAdminCommand implements TabExecutor {
             arguments.add("setwarp");
             arguments.add("delwarp");
             arguments.add("info");
+            // TODO import command
 
             StringUtil.copyPartialMatches(args[0], arguments, completions);
         } else if (args.length == 2) {

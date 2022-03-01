@@ -1,6 +1,7 @@
 package de.leonheuer.skycave.islandsystem.enums;
 
-import de.leonheuer.skycave.islandsystem.models.FormattableString;
+import de.leonheuer.skycave.islandsystem.models.ColoredStringBuilder;
+
 
 public enum Message {
 
@@ -25,7 +26,7 @@ public enum Message {
     CMD_SBADMIN_HELP_TRUST("&e/sbadmin trust <Spieler> &8- &7&oFügt einen Spieler zur Insel hinzu"),
     CMD_SBADMIN_HELP_UNTRUST("&e/sbadmin untrust <Spieler> &8- &7&oEntfernt einen Spieler von der Insel"),
     CMD_SBADMIN_HELP_SETSPAWN("&e/sbadmin setspawn &8- &7&oSetzt den Spawnpunkt der Insel um"),
-    CMD_SBADMIN_HELP_TP("&e/sbadmin tp <Inselnummer> [Zentrum] &8- &7&oTeleportiert dich zu einer Insel"),
+    CMD_SBADMIN_HELP_TP("&e/sbadmin tp <Inselnummer> [center] &8- &7&oTeleportiert dich zu einer Insel, optional ins Zentrum"),
     CMD_SBADMIN_HELP_SETWARP("&e/sbadmin setwarp <Name> &8- &7&oSetzt einen Warp Punkt"),
     CMD_SBADMIN_HELP_DELWARP("&e/sbadmin delwarp <Name> &8- &7&oEntfernt einen Warp Punkt"),
     CMD_SBADMIN_HELP_INFO("&e/sbadmin info &8- &7&oLiefert Infos zur Insel"),
@@ -84,6 +85,7 @@ public enum Message {
      */
     SBADMIN_SUBCOMMAND_SETOWNER_SYNTAX("&e/sbadmin setowner <Spieler>"),
     SBADMIN_SUBCOMMAND_SETOWNER_ERFOLG("&aDer neue Besitzer ist nun {player}!"),
+    SBADMIN_SUBCOMMAND_SETOWNER_ALREADY("&c{player} ist bereits der Besitzer!"),
 
     /**
      * SBAdmin_Subcommand_tp
@@ -140,8 +142,13 @@ public enum Message {
      * SBAdmin_Subcommand_info
      */
     SBADMIN_SUBCOMMAND_INFO_TITEL("&8~~~~ &2Info für Insel Nummer {nummer} &8~~~~"),
-    SBADMIN_SUBCOMMAND_INFO_OWNER("&7Besitzer: &b{player}"),
+    SBADMIN_SUBCOMMAND_INFO_OWNER("&7Besitzer: &b{owner}"),
     SBADMIN_SUBCOMMAND_INFO_MEMBER("&7Mitglieder: &b{member}"),
+    SBADMIN_SUBCOMMAND_INFO_RADIUS("&2Radius: &b{radius}"),
+    SBADMIN_SUBCOMMAND_INFO_SPAWN_LOC("&aSpawn: &b{spawn}"),
+    SBADMIN_SUBCOMMAND_INFO_CENTER_LOC("&aZentrum: &b{center}"),
+    SBADMIN_SUBCOMMAND_INFO_START_LOC("&aAnfang: &b{start}"),
+    SBADMIN_SUBCOMMAND_INFO_END_LOC("&aEnde: &b{end}"),
     SBADMIN_SUBCOMMAND_INFO_SPAWN("&cDu befindest dich auf der Spawn-Insel!"),
 
     /**
@@ -189,8 +196,8 @@ public enum Message {
         this.string = string;
     }
 
-    public FormattableString getString() {
-        return new FormattableString(string);
+    public ColoredStringBuilder getString() {
+        return new ColoredStringBuilder(string);
     }
 
 }

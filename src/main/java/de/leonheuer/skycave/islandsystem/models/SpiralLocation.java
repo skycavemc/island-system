@@ -2,6 +2,7 @@ package de.leonheuer.skycave.islandsystem.models;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import de.leonheuer.skycave.islandsystem.IslandSystem;
 import org.jetbrains.annotations.NotNull;
 
 public class SpiralLocation {
@@ -33,24 +34,16 @@ public class SpiralLocation {
         return x;
     }
 
-    public int getX(int radius) {
-        return x * radius * 2;
-    }
-
     public int getZ() {
         return z;
     }
 
-    public int getZ(int radius) {
-        return z * radius * 2;
-    }
-
     public BlockVector3 getStartVector(int radius) {
-        return BlockVector3.at(getX(radius) - radius, 0, getZ(radius) - radius);
+        return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE - radius, -64, x * IslandSystem.ISLAND_DISTANCE - radius);
     }
 
     public BlockVector3 getEndVector(int radius) {
-        return BlockVector3.at(getX(radius) + radius, 255, getZ(radius) + radius);
+        return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE + radius, 320, x * IslandSystem.ISLAND_DISTANCE + radius);
     }
 
     public ProtectedCuboidRegion asRegion(String name, int radius) {

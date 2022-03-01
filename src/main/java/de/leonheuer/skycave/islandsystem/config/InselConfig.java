@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class InselConfig {
+    // TODO add importer
 
     public InselConfig(String rg, SpiralLocation spiralLocation, UUID owner, int radius) {
         FileConfiguration insel = YamlConfiguration.loadConfiguration(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));

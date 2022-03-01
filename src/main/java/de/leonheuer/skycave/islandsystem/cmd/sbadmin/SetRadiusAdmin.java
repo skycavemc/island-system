@@ -4,17 +4,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
+public class SetRadiusAdmin {
 
-public class UntrustAdmin {
-
-    public UntrustAdmin(Player player, String[] args, IslandSystem main) {
+    public SetRadiusAdmin(Player player, String[] args, IslandSystem main) {
         if (args.length < 2) {
-            player.sendMessage(Message.SB_SUBCOMMAND_UNTRUST_SYNTAX.getString().get());
+            player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETRADIUS_SYNTAX.getString().get());
             return;
         }
 
@@ -35,19 +31,19 @@ public class UntrustAdmin {
             return;
         }
 
-        OfflinePlayer other = Bukkit.getOfflinePlayerIfCached(args[1]);
-        if (other == null) {
-            player.sendMessage(Message.PLAYER_NOFOUND.getString().replace("{player}", args[1]).get());
+        int radius;
+        try {
+            radius = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            player.sendMessage(Message.NO_NUMMER.getString().get());
             return;
         }
-        UUID uuid = other.getUniqueId();
 
-        if (region.getMembers().contains(uuid)) {
-            region.getMembers().removePlayer(uuid);
-            player.sendMessage(Message.SB_SUBCOMMAND_UNTRUST_ERFOLG.getString()
-                    .replace("{player}", other.getName()).get());
-        } else {
-            player.sendMessage(Message.SB_SUBCOMMAND_UNTRUST_BEREITS.getString().get());
+        if (radius > 1500 || radius < 100) {
+            player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETRADIUS_OUTOFRANGE.getString().get());
+            return;
         }
+        island.setRadius(radius);
+        player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETRADIUS_ERFOLG.getString().get());
     }
 }

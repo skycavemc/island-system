@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 
+@SuppressWarnings("unused")
 public class WorldLoadListener implements Listener {
 
     private final IslandSystem main;

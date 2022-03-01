@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class SBCommand implements TabExecutor {
 
     private final IslandSystem main;
@@ -34,12 +35,12 @@ public class SBCommand implements TabExecutor {
         if (args.length >= 1) {
             switch (args[0].toLowerCase()) {
                 case "buy" -> new BuyCommand(player);
-                case "trust" -> new TrustCommand(player, args);
-                case "untrust" -> new UntrustCommand(player, args);
+                case "trust" -> new TrustCommand(player, args, main);
+                case "untrust" -> new UntrustCommand(player, args, main);
                 case "setspawn" -> new SetspawnCommand(player);
                 case "tp" -> new TPCommand(player, args);
                 case "spawn" -> new SpawnCommand(player);
-                case "team" -> new TeamCommand(player);
+                case "team" -> new TeamCommand(player, main);
                 case "info" -> new InfoCommand(player);
                 case "list" -> new ListCommand(player);
                 case "kick" -> new KickCommand(player, args, main);

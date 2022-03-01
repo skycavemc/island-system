@@ -82,13 +82,13 @@ public enum EntityLimit {
 
     private final EntityType type;
     private final int limit;
-    private final Material spawnegg;
+    private final Material spawnEgg;
     private final EntityLimitType limitType;
 
-    EntityLimit(EntityType type, int limit, Material spawnegg, EntityLimitType limitType) {
+    EntityLimit(EntityType type, int limit, Material spawnEgg, EntityLimitType limitType) {
         this.type = type;
         this.limit = limit;
-        this.spawnegg = spawnegg;
+        this.spawnEgg = spawnEgg;
         this.limitType = limitType;
     }
 
@@ -109,8 +109,8 @@ public enum EntityLimit {
         return limit;
     }
 
-    public Material getSpawnegg() {
-        return spawnegg;
+    public Material getSpawnEgg() {
+        return spawnEgg;
     }
 
     public EntityLimitType getLimitType() {

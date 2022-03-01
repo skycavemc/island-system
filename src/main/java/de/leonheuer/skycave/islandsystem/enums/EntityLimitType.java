@@ -20,15 +20,6 @@ public enum EntityLimitType {
         this.mat = mat;
     }
 
-    public static EntityLimitType getByMat(Material mat) {
-        for (EntityLimitType limitType : EntityLimitType.values()) {
-            if (limitType.getMat() == mat) {
-                return limitType;
-            }
-        }
-        return null;
-    }
-
     public String getName() {
         return name;
     }

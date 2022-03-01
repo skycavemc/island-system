@@ -32,7 +32,8 @@ public class Island {
     private YamlConfiguration config;
     private File file;
 
-    public Island(int id, int radius, Location spawn, LocalDateTime created,
+    // For internal use only
+    private Island(int id, int radius, Location spawn, LocalDateTime created,
                   YamlConfiguration config, File file) {
         this.id = id;
         this.spiralLocation = SpiralLocation.of(id);
@@ -43,37 +44,85 @@ public class Island {
         this.file = file;
     }
 
+    // For internal use only
     private Island(int id, int radius) {
         this.id = id;
         spiralLocation = SpiralLocation.of(id);
         this.radius = radius;
     }
 
+    /**
+     * Gets the unique serial ID of the island.
+     * @return The id
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Gets the relative location in the spiral pattern of islands.
+     * @return The spiral location
+     */
     public SpiralLocation getSpiralLocation() {
         return spiralLocation;
     }
 
+    /**
+     * Gets the radius of the island.
+     * @return The radius
+     */
     public int getRadius() {
         return radius;
     }
 
+    /**
+     * Sets the radius of the island and automatically adjusts the region size.
+     * @param radius The new radius
+     */
     public void setRadius(int radius) {
+        RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionManager rm = rc.get(BukkitAdapter.adapt(Utils.ISLAND_WORLD));
+        if (rm == null) {
+            return;
+        }
+
         this.radius = radius;
+        ProtectedRegion oldRegion = rm.getRegion(getName());
+        ProtectedRegion newRegion = spiralLocation.asRegion(getName(), radius);
+        if (oldRegion != null) {
+            newRegion.copyFrom(oldRegion);
+            rm.removeRegion(getName());
+        }
+        rm.addRegion(newRegion);
+        save();
     }
 
-    @Nullable
+    /**
+     * Gets the spawn location that has been set for the island.
+     * @return The spawn location
+     */
+    @NotNull
     public Location getSpawn() {
+        if (spawn == null) {
+            return getCenterLocation();
+        }
         return spawn;
     }
 
+    /**
+     * Sets the spawn location of the island.
+     * @param spawn The new spawn location
+     */
     public void setSpawn(Location spawn) {
         this.spawn = spawn;
+        save();
     }
 
+    /**
+     * Gets the timestamp of when the island has been created.
+     * @return The timestamp as LocalDateTime
+     */
+    @NotNull
     public LocalDateTime getCreated() {
         if (created == null) {
             created = LocalDateTime.now();
@@ -81,19 +130,33 @@ public class Island {
         return created;
     }
 
+    /**
+     * Gets the name of this island, usually following the pattern sc_??? where ??? is the id with leading zeros.
+     * Example: id = 43, name = sc_043
+     * @return The name
+     */
     public String getName() {
         return IslandUtils.idToName(id);
     }
 
+    /**
+     * Gets the center location of the island.
+     * @return The center location
+     */
     public Location getCenterLocation() {
-        return new Location(Utils.getInselWorld(),
-                spiralLocation.getX(radius), 64, spiralLocation.getZ(radius), 0, 1);
+        return new Location(Utils.ISLAND_WORLD,
+                spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
+                spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, 0, 1);
     }
 
+    /**
+     * Gets the WorldGuard region of this island. Use this to set the owner, add/remove members etc.
+     * @return The region
+     */
     @Nullable
     public ProtectedRegion getRegion() {
         RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager rm = rc.get(BukkitAdapter.adapt(Utils.getInselWorld()));
+        RegionManager rm = rc.get(BukkitAdapter.adapt(Utils.ISLAND_WORLD));
         if (rm == null) {
             return null;
         }
@@ -101,11 +164,19 @@ public class Island {
     }
 
     @Nullable
-    private ProtectedRegion createRegion() {
+    private ProtectedRegion createRegion(boolean override) {
         RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager rm = rc.get(BukkitAdapter.adapt(Utils.getInselWorld()));
+        RegionManager rm = rc.get(BukkitAdapter.adapt(Utils.ISLAND_WORLD));
         if (rm == null) {
             return null;
+        }
+
+        if (rm.hasRegion(getName())) {
+            if (override) {
+                rm.removeRegion(getName());
+            } else {
+                return rm.getRegion(getName());
+            }
         }
 
         ProtectedCuboidRegion region = spiralLocation.asRegion(getName(), radius);
@@ -115,18 +186,19 @@ public class Island {
 
     private boolean generateDefaultIsland(@NotNull IslandTemplate template) {
         boolean success = Utils.printSchematic(
-                spiralLocation.getX(radius), 64, spiralLocation.getZ(radius), template.getFile());
+                spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
+                spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, template.getFile());
         if (success) {
             Location villagerLocation = getCenterLocation();
-            Utils.getInselWorld().spawnEntity(villagerLocation.add(0, 2, 0), EntityType.VILLAGER);
-            Utils.getInselWorld().spawnEntity(villagerLocation.add(1, 2, 0), EntityType.VILLAGER);
+            Utils.ISLAND_WORLD.spawnEntity(villagerLocation.add(0, 2, 0), EntityType.VILLAGER);
+            Utils.ISLAND_WORLD.spawnEntity(villagerLocation.add(1, 2, 0), EntityType.VILLAGER);
         }
         return success;
     }
 
-    public boolean save() {
+    private void save() {
         if (file == null || config == null) {
-            return false;
+            return;
         }
 
         config.set("radius", radius);
@@ -136,9 +208,7 @@ public class Island {
             config.save(file);
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
-        return true;
     }
 
     @Nullable
@@ -164,7 +234,7 @@ public class Island {
         if (!island.generateDefaultIsland(template)) {
             return null;
         }
-        if (island.createRegion() == null) {
+        if (island.createRegion(true) == null) {
             return null;
         }
         config.set("id", id);
@@ -172,8 +242,17 @@ public class Island {
         config.set("spawn", island.getSpawn());
         config.set("creation_timestamp", island.getCreated().toString());
         config.save(file);
-        Utils.addLastID();
+        Utils.increaseLastID();
         return island;
+    }
+
+    @Nullable
+    public static Island at(Location location) {
+        ProtectedRegion r = Utils.getIslandRegionAt(location);
+        if (r == null) {
+            return null;
+        }
+        return Island.load(IslandUtils.nameToId(r.getId()));
     }
 
     @Nullable

@@ -2,12 +2,10 @@ package de.leonheuer.skycave.islandsystem.manager;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
-import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;

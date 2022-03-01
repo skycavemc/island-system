@@ -3,20 +3,21 @@ package de.leonheuer.skycave.islandsystem.models;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import org.bukkit.ChatColor;
 
-public class FormattableString {
+@SuppressWarnings("unused")
+public class ColoredStringBuilder {
 
     private String result;
 
-    public FormattableString(String base) {
+    public ColoredStringBuilder(String base) {
         result = base;
     }
 
-    public FormattableString replace(String from, String to) {
+    public ColoredStringBuilder replace(String from, String to) {
         result = result.replace(from, to);
         return this;
     }
 
-    public FormattableString replaceAll(String from, String to) {
+    public ColoredStringBuilder replaceAll(String from, String to) {
         result = result.replaceAll(from, to);
         return this;
     }

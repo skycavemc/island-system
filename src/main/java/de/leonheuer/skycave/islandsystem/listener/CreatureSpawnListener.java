@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
+@SuppressWarnings("unused")
 public class CreatureSpawnListener implements Listener {
 
     private final IslandSystem main;

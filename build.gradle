@@ -21,6 +21,7 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
     compileOnly 'com.onarandombox.multiversecore:Multiverse-Core:4.3.1'
     implementation 'com.github.heuerleon:mcguiapi:v1.0.1'
+    // TODO add bentobox api for checking challenges
 }
 
 test {
