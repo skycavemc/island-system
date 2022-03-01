@@ -77,7 +77,6 @@ public enum Message {
     SBADMIN_SUBCOMMAND_CREATE_MISSING_SCHEMATIC("&cInsel Schematic wurde nicht gefunden!"),
     SBADMIN_SUBCOMMAND_CREATE_ERROR("&cBei der Schematic liegt ein Fehler vor!"),
     SBADMIN_SUBCOMMAND_CREATE_TYPEERROR("&cUnbekannter Inseltyp! Wähle zwischen: Blume, Eis, Pilz, Wüste"),
-    SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR("&cEin unbekannter Fehler ist aufgetreten."),
 
     /**
      * SBAdmin_Subcommand_setowner

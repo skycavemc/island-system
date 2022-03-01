@@ -2,18 +2,16 @@ package de.leonheuer.skycave.islandsystem.manager;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
-import de.leonheuer.skycave.islandsystem.models.Island;
-import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +46,7 @@ public class LimitManager {
                 }
 
                 for (ProtectedRegion r : regions) {
-                    if (!IslandUtils.isValidName(r.getId())) {
+                    if (!r.getId().matches("^[s][c][_]\\d{3}$")) {
                         continue;
                     }
                     addToMap(newMap, r.getId(), e.getType());
