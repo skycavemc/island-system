@@ -84,9 +84,9 @@ public class CreateAdmin {
                                     a = "0";
                                 }
 
-                                Utils.protectedRegion(x, z, grosse, "sc_" + a + b + Utils.getLastID()).getOwners().addPlayer(player.getUniqueId());
+                                Utils.protectedRegion(x, z, grosse, "sc_" + a + b + Utils.getLastID()).getOwners().addPlayer(other.getUniqueId());
 
-                                new InselConfig("sc_" + a + b + Utils.getLastID(), id, player.getUniqueId(), grosse);
+                                new InselConfig("sc_" + a + b + Utils.getLastID(), id, other.getUniqueId(), grosse);
 
                                 Location loc2 = new Location(Utils.getInselWorld(), ((id.getXanInt() * 4000)), (64 + 2), ((id.getZanInt() * 4000)));
                                 Utils.getInselWorld().spawnEntity(loc2, EntityType.VILLAGER);

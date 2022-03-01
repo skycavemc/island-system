@@ -31,11 +31,9 @@ public class InfoAdmin {
 
             player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_OWNER.getString().replace("{player}", Bukkit.getOfflinePlayer(insel.getOwner()).getName()).get(false));
 
-            if (countMember == 1) {
-                player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_MEMBER.getString().get(false));
-            } else {
+            if (countMember >= 1) {
                 player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_MEMBER.getString()
-                        .replace("{member}", message.substring(0, (message.length() - 2))).get(false));
+                        .replace("{member}", message.toString()).get(false));
             }
         } else {
             player.sendMessage(Message.MISC_NOINWORLD.getString().get());

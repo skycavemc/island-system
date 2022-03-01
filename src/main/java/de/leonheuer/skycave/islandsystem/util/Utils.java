@@ -13,9 +13,7 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -78,7 +76,7 @@ public class Utils {
             return;
         }
         InselID newId = getNextInselID(oldId);
-        cache.set("lastinternid", newId.getXanInt() + ";" + oldId.getZanInt());
+        cache.set("lastinternid", newId.getXanInt() + ";" + newId.getZanInt());
         try {
             cache.save(new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
         } catch (IOException e) {
