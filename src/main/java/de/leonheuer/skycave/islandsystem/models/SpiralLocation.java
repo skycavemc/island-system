@@ -19,7 +19,7 @@ public class SpiralLocation {
     }
 
     public static SpiralLocation of(int index) {
-        SpiralLocation result = new SpiralLocation(0, 0);
+        SpiralLocation result = new SpiralLocation(1, 1);
         if (index <= 0) {
             return result;
         }
