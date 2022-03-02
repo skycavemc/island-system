@@ -184,7 +184,7 @@ public class Island {
     }
 
     private boolean generateDefaultIsland(@NotNull IslandTemplate template) {
-        boolean success = Utils.printSchematic(
+        boolean success = IslandUtils.printSchematic(
                 spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
                 spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, template.getFile());
         if (success) {
@@ -237,7 +237,7 @@ public class Island {
 
     @Nullable
     public static Island at(Location location) {
-        ProtectedRegion r = Utils.getIslandRegionAt(location);
+        ProtectedRegion r = IslandUtils.getIslandRegionAt(location);
         if (r == null) {
             return null;
         }

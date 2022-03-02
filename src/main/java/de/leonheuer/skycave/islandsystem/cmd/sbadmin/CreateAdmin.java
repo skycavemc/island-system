@@ -7,6 +7,7 @@ import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -29,9 +30,9 @@ public class CreateAdmin {
 
             File file = new File(main.getDataFolder(), "sbInsel_Spawn.schem");
             if (file.exists()) {
-                Utils.printSchematic(0, 64, 0, file);
+                IslandUtils.printSchematic(0, 64, 0, file);
 
-                ProtectedRegion rg = Utils.protectedRegion(0, 0, 1000, "sc_spawn");
+                ProtectedRegion rg = IslandUtils.protectedRegion(0, 0, 1000, "sc_spawn");
                 if (rg == null) {
                     return;
                 }

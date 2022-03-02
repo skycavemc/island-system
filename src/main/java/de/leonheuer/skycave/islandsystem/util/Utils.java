@@ -1,20 +1,6 @@
 package de.leonheuer.skycave.islandsystem.util;
 
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.mcguiapi.gui.GUI;
 import de.leonheuer.mcguiapi.utils.ItemBuilder;
@@ -22,26 +8,19 @@ import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimitType;
 import org.bukkit.*;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
 public class Utils {
 
-    public static final FileConfiguration CACHE_CONFIG = YamlConfiguration.loadConfiguration(
-            new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
     public static final @NotNull World ISLAND_WORLD = Objects.requireNonNull(
-            Bukkit.getWorld(main.getIslandWorld().getUID())
-    );
+            Bukkit.getWorld(main.getIslandWorld().getUID()));
 
     public static int getLastID() {
         return CACHE_CONFIG.getInt("lastid");
@@ -55,71 +34,6 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static boolean printSchematic(int x, int y, int z, File schematic) {
-        ClipboardFormat format = ClipboardFormats.findByFile(schematic);
-        if (format == null) {
-            return false;
-        }
-
-        Clipboard cc;
-        try (ClipboardReader reader = format.getReader(new FileInputStream(schematic))) {
-            cc = reader.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        if (cc == null) {
-            return false;
-        }
-
-        BlockVector3 location = BlockVector3.at(x, y, z);
-        EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
-                .world(BukkitAdapter.adapt(ISLAND_WORLD))
-                .maxBlocks(-1)
-                .build();
-        try {
-            Operation operation = new ClipboardHolder(cc).createPaste(editSession).to(location).build();
-            Operations.complete(operation);
-        } catch (WorldEditException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static @Nullable ProtectedRegion protectedRegion(int x, int z, int radius, String region) {
-        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(ISLAND_WORLD));
-        if (rm == null) {
-            return null;
-        }
-
-        BlockVector3 min2 = BlockVector3.at(x - radius, 0, z - radius);
-        BlockVector3 max2 = BlockVector3.at(x + radius, 255, z + radius);
-        ProtectedCuboidRegion pr = new ProtectedCuboidRegion(region, min2, max2);
-        rm.addRegion(pr);
-        return rm.getRegion(region);
-    }
-
-    @Nullable
-    public static ProtectedRegion getIslandRegionAt(@NotNull Location loc) {
-        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld()));
-        if (rm == null) {
-            return null;
-        }
-
-        ApplicableRegionSet set = rm.getApplicableRegions(BukkitAdapter.asBlockVector(loc));
-        if (set.getRegions().size() == 0) {
-            return null;
-        }
-
-        for (ProtectedRegion region : set.getRegions()) {
-            if (IslandUtils.isValidName(region.getId())) {
-                return region;
-            }
-        }
-        return null;
     }
 
     public static @NotNull GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
@@ -192,7 +106,7 @@ public class Utils {
                     (event) -> {
                         event.setCancelled(true);
                         Player player = (Player) event.getWhoClicked();
-                        ProtectedRegion region = Utils.getIslandRegionAt(player.getLocation());
+                        ProtectedRegion region = IslandUtils.getIslandRegionAt(player.getLocation());
                         getLimitGui(region, t).show(player);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                     });

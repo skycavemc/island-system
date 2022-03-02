@@ -44,6 +44,9 @@ public class IslandSystem extends JavaPlugin {
             limitManager.start(islandWorld);
         }
 
+        // TODO config
+        // TODO add comments
+
         // commands
         registerCommand("sb", new SBCommand(this));
         registerCommand("sbadmin", new SBAdminCommand(this));

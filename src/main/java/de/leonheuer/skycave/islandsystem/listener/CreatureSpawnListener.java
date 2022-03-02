@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.manager.LimitManager;
+import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,7 @@ public class CreatureSpawnListener implements Listener {
             return;
         }
 
-        ProtectedRegion region = Utils.getIslandRegionAt(event.getLocation());
+        ProtectedRegion region = IslandUtils.getIslandRegionAt(event.getLocation());
         if (region == null) {
             return;
         }
