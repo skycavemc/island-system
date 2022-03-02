@@ -8,10 +8,11 @@ import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class KickCommand {
 
-    public KickCommand(Player player, String[] args, IslandSystem main) {
+    public KickCommand(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 2) {
             player.sendMessage(Message.SB_SUBCOMMAND_KICK_SYNTAX.getString().get());
             return;

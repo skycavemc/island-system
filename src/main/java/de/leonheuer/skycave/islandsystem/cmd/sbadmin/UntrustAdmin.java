@@ -7,12 +7,13 @@ import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class UntrustAdmin {
 
-    public UntrustAdmin(Player player, String[] args, IslandSystem main) {
+    public UntrustAdmin(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 2) {
             player.sendMessage(Message.SB_SUBCOMMAND_UNTRUST_SYNTAX.getString().get());
             return;

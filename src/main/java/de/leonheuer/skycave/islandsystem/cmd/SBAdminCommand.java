@@ -54,7 +54,7 @@ public class SBAdminCommand implements TabExecutor {
         return true;
     }
 
-    private void sendHelp(Player player) {
+    private void sendHelp(@NotNull Player player) {
         player.sendMessage(Message.CMD_SBADMIN_HELP_TITEL.getString().get(false));
         player.sendMessage(Message.CMD_SBADMIN_HELP_CREATE.getString().get(false));
         player.sendMessage(Message.CMD_SBADMIN_HELP_SETOWNER.getString().get(false));
@@ -71,7 +71,7 @@ public class SBAdminCommand implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         Player player = (Player) sender;
         List<String> arguments = new ArrayList<>();
         List<String> completions = new ArrayList<>();

@@ -10,13 +10,14 @@ import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 
 public class CreateAdmin {
 
-    public CreateAdmin(Player player, String[] args, IslandSystem main) {
+    public CreateAdmin(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 4) {
             player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_SYNTAX.getString().get());
             return;

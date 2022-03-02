@@ -6,12 +6,13 @@ import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
 
 public class InfoAdmin {
 
-    public InfoAdmin(Player player, IslandSystem main) {
+    public InfoAdmin(@NotNull Player player, @NotNull IslandSystem main) {
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;

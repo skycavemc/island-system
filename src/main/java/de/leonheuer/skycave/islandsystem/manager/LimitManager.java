@@ -89,7 +89,7 @@ public class LimitManager {
         tasks.forEach(BukkitTask::cancel);
     }
 
-    public void addToMap(Map<String, Map<EntityType, Integer>> map, String id, EntityType type, int amount) {
+    public void addToMap(@NotNull Map<String, Map<EntityType, Integer>> map, String id, EntityType type, int amount) {
         if (!map.containsKey(id)) {
             Map<EntityType, Integer> entities = new HashMap<>();
             entities.put(type, amount);

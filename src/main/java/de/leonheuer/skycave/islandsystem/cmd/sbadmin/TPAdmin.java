@@ -3,10 +3,11 @@ package de.leonheuer.skycave.islandsystem.cmd.sbadmin;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class TPAdmin {
 
-    public TPAdmin(Player player, String[] args) {
+    public TPAdmin(Player player, String @NotNull [] args) {
         if (args.length < 2) {
             player.sendMessage(Message.SBADMIN_SUBCOMMAND_TP_SYNTAX.getString().get());
             return;

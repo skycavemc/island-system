@@ -6,10 +6,11 @@ import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class TeamCommand {
 
-    public TeamCommand(Player player, IslandSystem main) {
+    public TeamCommand(@NotNull Player player, @NotNull IslandSystem main) {
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;

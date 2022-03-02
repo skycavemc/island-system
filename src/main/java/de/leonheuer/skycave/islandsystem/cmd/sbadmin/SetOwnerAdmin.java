@@ -7,12 +7,13 @@ import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class SetOwnerAdmin {
 
-    public SetOwnerAdmin(Player player, String[] args, IslandSystem main) {
+    public SetOwnerAdmin(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 2) {
             player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETOWNER_SYNTAX.getString().get());
             return;

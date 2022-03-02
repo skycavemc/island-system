@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class CreatureSpawnListener implements Listener {
@@ -21,7 +22,7 @@ public class CreatureSpawnListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onCreatureSpawn(CreatureSpawnEvent event) {
+    public void onCreatureSpawn(@NotNull CreatureSpawnEvent event) {
         if (event.isCancelled()) {
             return;
         }

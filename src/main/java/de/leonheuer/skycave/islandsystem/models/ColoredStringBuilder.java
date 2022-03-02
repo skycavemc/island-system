@@ -27,7 +27,7 @@ public class ColoredStringBuilder {
         return result;
     }
 
-    public String get(Boolean prefix) {
+    public String get(boolean prefix) {
         if (prefix) {
             result = IslandSystem.PREFIX + result;
         }
@@ -35,7 +35,7 @@ public class ColoredStringBuilder {
         return result;
     }
 
-    public String get(Boolean prefix, Boolean formatted) {
+    public String get(boolean prefix, boolean formatted) {
         if (prefix) {
             result = IslandSystem.PREFIX + result;
         }
