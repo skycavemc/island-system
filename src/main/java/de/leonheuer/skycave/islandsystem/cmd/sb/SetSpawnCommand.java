@@ -10,7 +10,7 @@ public class SetSpawnCommand {
 
     public SetSpawnCommand(Player player, IslandSystem main) {
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
-            player.sendMessage(Message.MISC_NOINWORLD.getString().get());
+            player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
 
@@ -27,7 +27,7 @@ public class SetSpawnCommand {
         }
 
         if (!region.getOwners().contains(player.getUniqueId())) {
-            player.sendMessage(Message.MISC_NOOWNER.getString().get());
+            player.sendMessage(Message.NO_OWNER.getString().get());
             return;
         }
 

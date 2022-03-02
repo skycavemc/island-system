@@ -18,7 +18,7 @@ public class TrustAdmin {
         }
 
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
-            player.sendMessage(Message.MISC_NOINWORLD.getString().get());
+            player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
 
@@ -36,7 +36,7 @@ public class TrustAdmin {
 
         Player other = Bukkit.getPlayerExact(args[1]);
         if (other == null || !player.canSee(other)) {
-            player.sendMessage(Message.PLAYER_NOONLINE.getString().replace("{player}", args[1]).get());
+            player.sendMessage(Message.PLAYER_OFFLINE.getString().replace("{player}", args[1]).get());
             return;
         }
         UUID uuid = other.getUniqueId();

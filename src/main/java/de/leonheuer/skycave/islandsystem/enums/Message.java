@@ -8,13 +8,12 @@ public enum Message {
     /**
      * Global
      */
-    NO_PERMISSION("&cFehlende Berechtigung!"),
-    NO_NUMMER("&cBitte gib eibe gültige Zahl an!"),
-    CMD_CONSOLE("&cDieser Command ist nur über die Console verfügbar!"),
-    COMING_SOON("&cDiese Funktion ist erst in Zukunft verfügbar!"),
-    PLAYER_NOFOUND("&cDer Spieler {player} existiert nicht!"),
-    PLAYER_NOONLINE("&cDer Spieler {player} ist nicht online!"),
+    INVALID_NUMBER("&cBitte gib eibe gültige Zahl an!"),
+    PLAYER_UNKNOWN("&cDer Spieler {player} existiert nicht!"),
+    PLAYER_OFFLINE("&cDer Spieler {player} ist nicht online!"),
     NOT_ON_ISLAND("&cDu befindest dich auf keiner SB-Insel."),
+    NOT_IN_WORLD("&cDu befindest dich nicht in der korrekten Welt!"),
+    NO_OWNER("&cDu bist nicht der Besitzer dieser Insel!"),
 
     /**
      * Command_sbadmin
@@ -30,13 +29,14 @@ public enum Message {
     CMD_SBADMIN_HELP_SETWARP("&e/sbadmin setwarp <Name> &8- &7&oSetzt einen Warp Punkt"),
     CMD_SBADMIN_HELP_DELWARP("&e/sbadmin delwarp <Name> &8- &7&oEntfernt einen Warp Punkt"),
     CMD_SBADMIN_HELP_INFO("&e/sbadmin info &8- &7&oLiefert Infos zur Insel"),
+    CMD_SBADMIN_HELP_IMPORT("&e/sbadmin import &8- &7&oImportiert alte SB-Inseln und Konfigurationen"),
     CMD_SBADMIN_HELP_ENDTITEL("\n"),
 
     /**
      * Command_sc
      */
     CMD_SB_HELP_TITEL("\n &bSkyBeeInsel Hilfe:"),
-    CMD_SB_HELP_BUY("\n&e/sb buy &8- &7&oZeigt Kaufinfos für eine Insel"),
+    CMD_SB_HELP_BUY("\n&e/sb buy &8- &7&oKaufe dir eine Insel"),
     CMD_SB_HELP_TRUST("&e/sb trust <Spieler> &8- &7&oFügt einen Spieler zur Insel hinzu"),
     CMD_SB_HELP_UNTRUST("&e/sb untrust <Spieler> &8- &7&oEntfernt einen Spieler von der Insel"),
     CMD_SB_HELP_LIST("&e/sb list &8- &7&oListe deiner Inseln + Inseln, auf denen du hinzugefügt bist"),
@@ -48,8 +48,6 @@ public enum Message {
     CMD_SB_HELP_WARP("&e/sb warp <Name> &8- &7&oTeleportiert dich zur einem Warp"),
     CMD_SB_HELP_LIMITS("&e/sb limits &8- &7&oZeigt dir die Limits für deine Insel an"),
     CMD_SB_HELP_ENDTITEL("\n"),
-    MISC_NOOWNER("&cDu bist nicht der Besitzer dieser Insel!"),
-    MISC_NOINWORLD("&cDu befindest dich nicht in der korrekten Welt!"),
 
     /**
      * SB_Subcommand_trust
@@ -76,7 +74,6 @@ public enum Message {
     SBADMIN_SUBCOMMAND_CREATE_FERTIG("&aDie Insel {isid} wurde erfolgreich erstellt!"),
     SBADMIN_SUBCOMMAND_CREATE_OUTOFRANGE("&cDie Größe geht über den erlaubten Bereich hinaus!"),
     SBADMIN_SUBCOMMAND_CREATE_MISSING_SCHEMATIC("&cInsel Schematic wurde nicht gefunden!"),
-    SBADMIN_SUBCOMMAND_CREATE_ERROR("&cBei der Schematic liegt ein Fehler vor!"),
     SBADMIN_SUBCOMMAND_CREATE_TYPEERROR("&cUnbekannter Inseltyp! Wähle zwischen: Blume, Eis, Pilz, Wüste"),
     SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR("&cEin unbekannter Fehler ist aufgetreten."),
 
@@ -127,7 +124,6 @@ public enum Message {
      * SB_Subcommand_info
      */
     SB_SUBCOMMAND_INFO("&7Insel &b{id} &8- &7Besitzer: &b{owners}"),
-    SB_SUBCOMMAND_INFO_SPAWN("&cDu befindest dich auf der Spawn-Insel!"),
 
     /**
      * SB_Subcommand_kick
@@ -150,7 +146,6 @@ public enum Message {
     SBADMIN_SUBCOMMAND_INFO_CENTER_LOC("&aZentrum: &b{center}"),
     SBADMIN_SUBCOMMAND_INFO_START_LOC("&aAnfang: &b{start}"),
     SBADMIN_SUBCOMMAND_INFO_END_LOC("&aEnde: &b{end}"),
-    SBADMIN_SUBCOMMAND_INFO_SPAWN("&cDu befindest dich auf der Spawn-Insel!"),
 
     /**
      * SB_Subcommand_team
@@ -184,6 +179,12 @@ public enum Message {
     SBADMIN_SUBCOMMAND_DELWARP_NOEXIST("&cDer Warp {warp} existiert nicht."),
     SBADMIN_SUBCOMMAND_DELWARP_SUCCESS("&aDer Warp {warp} wurde entfernt."),
     SBADMIN_SUBCOMMAND_DELWARP_MISSING("&cBitte gib den Warp an: §7{warps}"),
+
+    /**
+     * SBAdmin_Subcommand_import
+     */
+    SBADMIN_SUBCOMMAND_IMPORT_ERROR("&cFolgende Komponenten konnten nicht importiert werden: &4{components}"),
+    SBADMIN_SUBCOMMAND_IMPORT_SUCCESS("&aFolgende Komponenten wurden erfolgreich importiert: &2{components}"),
 
     /**
      * PLUGIN

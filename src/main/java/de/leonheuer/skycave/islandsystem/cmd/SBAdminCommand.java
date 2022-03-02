@@ -36,15 +36,15 @@ public class SBAdminCommand implements TabExecutor {
             switch (args[0].toLowerCase()) {
                 case "create" -> new CreateAdmin(player, args, main);
                 case "setowner" -> new SetOwnerAdmin(player, args, main);
-                case "setspawn" -> new SetSpawnAdmin(player, main);
-                case "tp" -> new TPAdmin(player, args);
+                case "setradius" -> new SetRadiusAdmin(player, args, main);
                 case "trust" -> new TrustAdmin(player, args, main);
                 case "untrust" -> new UntrustAdmin(player, args, main);
-                case "setradius" -> new SetRadiusAdmin(player, args, main);
+                case "setspawn" -> new SetSpawnAdmin(player, main);
+                case "info" -> new InfoAdmin(player, main);
+                case "tp" -> new TPAdmin(player, args);
                 case "setwarp" -> new SetWarpAdmin(player, args, main);
                 case "delwarp" -> new DelWarpAdmin(player, args, main);
-                case "info" -> new InfoAdmin(player, main);
-                // TODO import command
+                case "import" -> new ImportAdmin(player);
                 default -> sendHelp(player);
             }
         } else {
@@ -66,7 +66,7 @@ public class SBAdminCommand implements TabExecutor {
         player.sendMessage(Message.CMD_SBADMIN_HELP_TP.getString().get(false));
         player.sendMessage(Message.CMD_SBADMIN_HELP_SETWARP.getString().get(false));
         player.sendMessage(Message.CMD_SBADMIN_HELP_DELWARP.getString().get(false));
-        // TODO import command
+        player.sendMessage(Message.CMD_SBADMIN_HELP_IMPORT.getString().get(false));
         player.sendMessage(Message.CMD_SBADMIN_HELP_ENDTITEL.getString().get(false));
     }
 
@@ -87,7 +87,7 @@ public class SBAdminCommand implements TabExecutor {
             arguments.add("setwarp");
             arguments.add("delwarp");
             arguments.add("info");
-            // TODO import command
+            arguments.add("import");
 
             StringUtil.copyPartialMatches(args[0], arguments, completions);
         } else if (args.length == 2) {
@@ -100,7 +100,7 @@ public class SBAdminCommand implements TabExecutor {
                     }
                     StringUtil.copyPartialMatches(args[1], arguments, completions);
                 }
-                case "setwarp", "delwarp" -> StringUtil.copyPartialMatches(args[1], main.getWarpsConfig().getWarps(), completions);
+                case "setwarp", "delwarp" -> StringUtil.copyPartialMatches(args[1], main.getWarpManager().getNames(), completions);
             }
         } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("create")) {

@@ -13,28 +13,25 @@ import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
 public class Island {
 
     private final int id;
     private final SpiralLocation spiralLocation;
+    private final YamlConfiguration config;
+    private final File file;
     private int radius;
     private Location spawn;
     private LocalDateTime created;
-    private YamlConfiguration config;
-    private File file;
 
-    // For internal use only
-    private Island(int id, int radius, Location spawn, LocalDateTime created,
-                  YamlConfiguration config, File file) {
+    public Island(int id, int radius, Location spawn, @NotNull LocalDateTime created,
+                  @NotNull YamlConfiguration config, @NotNull File file) {
         this.id = id;
         this.spiralLocation = SpiralLocation.of(id, 1, 1);
         this.radius = radius;
@@ -45,10 +42,12 @@ public class Island {
     }
 
     // For internal use only
-    private Island(int id, int radius) {
+    private Island(int id, int radius, @NotNull YamlConfiguration config, @NotNull File file) {
         this.id = id;
         spiralLocation = SpiralLocation.of(id, 1, 1);
         this.radius = radius;
+        this.config = config;
+        this.file = file;
     }
 
     /**
@@ -196,7 +195,7 @@ public class Island {
         return success;
     }
 
-    private void save() {
+    public void save() {
         if (file == null || config == null) {
             return;
         }
@@ -213,23 +212,13 @@ public class Island {
 
     @Nullable
     public static Island create(int id, int radius, IslandTemplate template) throws IOException {
-        File dir = new File(JavaPlugin.getPlugin(IslandSystem.class).getDataFolder(), "island/");
-        if (!dir.isDirectory()) {
-            //noinspection ResultOfMethodCallIgnored
-            dir.mkdirs();
+        File file = IslandUtils.getIslandSaveLocation(id, true);
+        if (file == null) {
+            return null;
         }
-
-        DecimalFormat format = new DecimalFormat("000");
-        String name = "sc_" + format.format(id);
-        File file = new File(dir, name + ".yml");
-        if (!file.isFile()) {
-            //noinspection ResultOfMethodCallIgnored
-            file.createNewFile();
-        }
-
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        Island island = new Island(id, radius);
+        Island island = new Island(id, radius, config, file);
         island.setSpawn(island.getCenterLocation());
         if (!island.generateDefaultIsland(template)) {
             return null;
@@ -257,20 +246,10 @@ public class Island {
 
     @Nullable
     public static Island load(int id) {
-        File dir = new File(JavaPlugin.getPlugin(IslandSystem.class).getDataFolder(), "island/");
-        if (!dir.isDirectory()) {
-            //noinspection ResultOfMethodCallIgnored
-            dir.mkdirs();
+        File file = IslandUtils.getIslandSaveLocation(id, false);
+        if (file == null) {
             return null;
         }
-
-        DecimalFormat format = new DecimalFormat("000");
-        String name = "sc_" + format.format(id);
-        File file = new File(dir, name + ".yml");
-        if (!file.isFile()) {
-            return null;
-        }
-
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         LocalDateTime created;

@@ -10,7 +10,7 @@ public class SetSpawnAdmin {
 
     public SetSpawnAdmin(Player player, IslandSystem main) {
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
-            player.sendMessage(Message.MISC_NOINWORLD.getString().get());
+            player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
 

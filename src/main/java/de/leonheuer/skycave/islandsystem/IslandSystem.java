@@ -7,8 +7,7 @@ import de.leonheuer.mcguiapi.gui.GUIFactory;
 import de.leonheuer.skycave.islandsystem.cmd.SBAdminCommand;
 import de.leonheuer.skycave.islandsystem.cmd.SBCommand;
 import de.leonheuer.skycave.islandsystem.config.CacheConfig;
-import de.leonheuer.skycave.islandsystem.config.GameConfig;
-import de.leonheuer.skycave.islandsystem.config.WarpsConfig;
+import de.leonheuer.skycave.islandsystem.manager.WarpManager;
 import de.leonheuer.skycave.islandsystem.listener.CreatureSpawnListener;
 import de.leonheuer.skycave.islandsystem.listener.PlayerCommandListener;
 import de.leonheuer.skycave.islandsystem.listener.WorldLoadListener;
@@ -23,8 +22,7 @@ public class IslandSystem extends JavaPlugin {
 
     public static final String PREFIX = "&8❙ &6SB&fInseln &8» ";
     public static final int ISLAND_DISTANCE = 4000;
-    private WarpsConfig warpsConfig;
-    private GameConfig gameConfig;
+    private WarpManager warpManager;
     private CacheConfig cacheConfig;
     private RegionContainer regionContainer;
     private GUIFactory guiFactory;
@@ -34,9 +32,9 @@ public class IslandSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        gameConfig = new GameConfig();
         cacheConfig = new CacheConfig();
-        warpsConfig = new WarpsConfig();
+        warpManager = new WarpManager();
+        warpManager.reloadConfig();
         regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         guiFactory = new GUIFactory(this);
         multiverse = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
@@ -65,12 +63,13 @@ public class IslandSystem extends JavaPlugin {
         cmd.setExecutor(executor);
     }
 
-    public WarpsConfig getWarpsConfig() {
-        return warpsConfig;
+    @Override
+    public void onDisable() {
+        limitManager.stopAll();
     }
 
-    public GameConfig getGameConfig() {
-        return gameConfig;
+    public WarpManager getWarpManager() {
+        return warpManager;
     }
 
     public CacheConfig getCacheConfig() {

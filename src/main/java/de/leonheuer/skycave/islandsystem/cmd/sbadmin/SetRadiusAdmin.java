@@ -15,7 +15,7 @@ public class SetRadiusAdmin {
         }
 
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
-            player.sendMessage(Message.MISC_NOINWORLD.getString().get());
+            player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
 
@@ -35,7 +35,7 @@ public class SetRadiusAdmin {
         try {
             radius = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(Message.NO_NUMMER.getString().get());
+            player.sendMessage(Message.INVALID_NUMBER.getString().get());
             return;
         }
 

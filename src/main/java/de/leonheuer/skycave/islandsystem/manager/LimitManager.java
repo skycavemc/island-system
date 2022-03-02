@@ -7,12 +7,18 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
+import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.block.Beehive;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,19 +26,21 @@ public class LimitManager {
 
     private final IslandSystem main;
     private Map<String, Map<EntityType, Integer>> entityCountMap = new HashMap<>();
+    private List<BukkitTask> tasks;
 
     public LimitManager(IslandSystem main) {
         this.main = main;
     }
 
-    public void start(@NotNull World world) {
+    @Nullable
+    public BukkitTask start(@NotNull World world) {
         RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(world));
         if (rm == null) {
-            return;
+            return null;
         }
 
         main.getLogger().info("Started limit manager for world " + world.getName());
-        main.getServer().getScheduler().runTaskTimer(main, () -> {
+        BukkitTask task = main.getServer().getScheduler().runTaskTimer(main, () -> {
             Map<String, Map<EntityType, Integer>> newMap = new HashMap<>();
             for (LivingEntity e : world.getEntitiesByClass(LivingEntity.class)) {
                 if (EntityLimit.getLimitByType(e.getType()) == -1) {
@@ -52,26 +60,54 @@ public class LimitManager {
                     addToMap(newMap, r.getId(), e.getType());
                 }
             }
-            // TODO count Bees in nests
+            for (Chunk c : world.getLoadedChunks()) {
+                for (BlockState state : c.getTileEntities()) {
+                    if (state.getBlock() instanceof Beehive hive) {
+                        BlockVector3 loc = BukkitAdapter.asBlockVector(state.getLocation());
+                        Set<ProtectedRegion> regions = rm.getApplicableRegions(loc).getRegions();
+                        if (regions.isEmpty()) {
+                            continue;
+                        }
+
+                        for (ProtectedRegion r : regions) {
+                            if (!IslandUtils.isValidName(r.getId())) {
+                                continue;
+                            }
+                            addToMap(newMap, r.getId(), EntityType.BEE, hive.getEntityCount());
+                        }
+                    }
+                }
+            }
             entityCountMap = newMap;
         }, 0L, 40L);
+
+        tasks.add(task);
+        return task;
     }
 
-    public void addToMap(Map<String, Map<EntityType, Integer>> map, String id, EntityType type) {
+    public void stopAll() {
+        tasks.forEach(BukkitTask::cancel);
+    }
+
+    public void addToMap(Map<String, Map<EntityType, Integer>> map, String id, EntityType type, int amount) {
         if (!map.containsKey(id)) {
             Map<EntityType, Integer> entities = new HashMap<>();
-            entities.put(type, 1);
+            entities.put(type, amount);
             map.put(id, entities);
             return;
         }
 
         Map<EntityType, Integer> entities = map.get(id);
         if (!entities.containsKey(type)) {
-            entities.put(type, 1);
+            entities.put(type, amount);
             return;
         }
 
-        entities.put(type, entities.get(type) + 1);
+        entities.put(type, entities.get(type) + amount);
+    }
+
+    public void addToMap(Map<String, Map<EntityType, Integer>> map, String id, EntityType type) {
+        addToMap(map, id, type, 1);
     }
 
     public int getEntityCount(String regionId, EntityType type) {

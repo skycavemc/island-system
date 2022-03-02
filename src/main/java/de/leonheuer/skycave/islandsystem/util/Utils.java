@@ -36,8 +36,6 @@ import java.util.*;
 
 public class Utils {
 
-    public static final FileConfiguration GAME_CONFIG = YamlConfiguration.loadConfiguration(
-            new File("plugins/SkyBeeIslandSystem/", "game.yml"));
     public static final FileConfiguration CACHE_CONFIG = YamlConfiguration.loadConfiguration(
             new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
@@ -225,13 +223,13 @@ public class Utils {
         return sj.toString();
     }
 
-    public static String locationAsString(Location location) {
+    public static @NotNull String locationAsString(@NotNull Location location) {
         return location.getX() + ", " +
                 location.getY() + ", " +
                 location.getZ();
     }
 
-    public static String locationAsString(BlockVector3 location) {
+    public static @NotNull String locationAsString(@NotNull BlockVector3 location) {
         return location.getX() + ", " +
                 location.getY() + ", " +
                 location.getZ();

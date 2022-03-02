@@ -19,7 +19,7 @@ public class SetOwnerAdmin {
         }
 
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
-            player.sendMessage(Message.MISC_NOINWORLD.getString().get());
+            player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
 
@@ -37,7 +37,7 @@ public class SetOwnerAdmin {
 
         OfflinePlayer other = Bukkit.getOfflinePlayerIfCached(args[1]);
         if (other == null) {
-            player.sendMessage(Message.PLAYER_NOFOUND.getString().replace("{player}", args[1]).get());
+            player.sendMessage(Message.PLAYER_UNKNOWN.getString().replace("{player}", args[1]).get());
             return;
         }
         UUID uuid = other.getUniqueId();

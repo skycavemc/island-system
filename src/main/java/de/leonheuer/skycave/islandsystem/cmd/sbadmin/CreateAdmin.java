@@ -46,7 +46,7 @@ public class CreateAdmin {
 
         Player other = Bukkit.getPlayerExact(args[1]);
         if (other == null || !player.canSee(other)) {
-            player.sendMessage(Message.PLAYER_NOONLINE.getString().replace("{player}", args[1]).get());
+            player.sendMessage(Message.PLAYER_OFFLINE.getString().replace("{player}", args[1]).get());
             return;
         }
 
@@ -54,7 +54,7 @@ public class CreateAdmin {
         try {
             radius = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            player.sendMessage(Message.NO_NUMMER.getString().get());
+            player.sendMessage(Message.INVALID_NUMBER.getString().get());
             return;
         }
 

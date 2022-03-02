@@ -19,7 +19,7 @@ public class UntrustCommand {
         }
 
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
-            player.sendMessage(Message.MISC_NOINWORLD.getString().get());
+            player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
 
@@ -36,13 +36,13 @@ public class UntrustCommand {
         }
 
         if (!region.getOwners().contains(player.getUniqueId())) {
-            player.sendMessage(Message.MISC_NOOWNER.getString().get());
+            player.sendMessage(Message.NO_OWNER.getString().get());
             return;
         }
 
         OfflinePlayer other = Bukkit.getOfflinePlayerIfCached(args[1]);
         if (other == null) {
-            player.sendMessage(Message.PLAYER_NOFOUND.getString().replace("{player}", args[1]).get());
+            player.sendMessage(Message.PLAYER_UNKNOWN.getString().replace("{player}", args[1]).get());
             return;
         }
         UUID uuid = other.getUniqueId();

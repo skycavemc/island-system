@@ -9,7 +9,7 @@ public class WarpCommand {
 
     public WarpCommand(Player player, String[] args, IslandSystem main) {
         if (args.length >= 2) {
-            Location loc = main.getWarpsConfig().getWarp(args[1].toLowerCase());
+            Location loc = main.getWarpManager().get(args[1].toLowerCase());
             if (loc == null) {
                 player.sendMessage(Message.SB_SUBCOMMAND_WARP_NOEXIST.getString().replace("{warp}", args[1]).get());
             } else {
@@ -18,7 +18,7 @@ public class WarpCommand {
             }
         } else {
             player.sendMessage(Message.SB_SUBCOMMAND_WARP_MISSING.getString()
-                    .replace("{warps}", String.join("§c, §a", main.getWarpsConfig().getWarps()))
+                    .replace("{warps}", String.join("§c, §a", main.getWarpManager().getNames()))
                     .get()
             );
         }

@@ -8,15 +8,15 @@ public class DelWarpAdmin {
 
     public DelWarpAdmin(Player player, String[] args, IslandSystem main) {
         if (args.length >= 2) {
-            if (main.getWarpsConfig().isSet(args[1].toLowerCase())) {
-                main.getWarpsConfig().removeWarp(args[1].toLowerCase());
+            if (main.getWarpManager().exists(args[1].toLowerCase())) {
+                main.getWarpManager().remove(args[1].toLowerCase());
                 player.sendMessage(Message.SBADMIN_SUBCOMMAND_DELWARP_SUCCESS.getString().replace("{warp}", args[1]).get());
             } else {
                 player.sendMessage(Message.SBADMIN_SUBCOMMAND_DELWARP_NOEXIST.getString().replace("{warp}", args[1]).get());
             }
         } else {
             player.sendMessage(Message.SBADMIN_SUBCOMMAND_DELWARP_MISSING.getString()
-                    .replace("{warps}", String.join("§c, §7", main.getWarpsConfig().getWarps()))
+                    .replace("{warps}", String.join("§c, §7", main.getWarpManager().getNames()))
                     .get()
             );
         }

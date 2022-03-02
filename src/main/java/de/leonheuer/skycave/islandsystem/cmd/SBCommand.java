@@ -44,7 +44,7 @@ public class SBCommand implements TabExecutor {
                 case "info" -> new InfoCommand(player, main);
                 case "list" -> new ListCommand(player);
                 case "kick" -> new KickCommand(player, args, main);
-                case "warp" -> new WarpCommand(player, args, main);
+                case "warp", "warps" -> new WarpCommand(player, args, main);
                 case "limits" -> new LimitsCommand(player);
                 default -> sendHelp(player);
             }
@@ -67,6 +67,7 @@ public class SBCommand implements TabExecutor {
         player.sendMessage(Message.CMD_SB_HELP_TP.getString().get(false));
         player.sendMessage(Message.CMD_SB_HELP_SPAWN.getString().get(false));
         player.sendMessage(Message.CMD_SB_HELP_WARP.getString().get(false));
+        player.sendMessage(Message.CMD_SB_HELP_LIMITS.getString().get(false));
         player.sendMessage(Message.CMD_SB_HELP_ENDTITEL.getString().get(false));
     }
 
@@ -87,6 +88,7 @@ public class SBCommand implements TabExecutor {
             arguments.add("tp");
             arguments.add("spawn");
             arguments.add("warp");
+            arguments.add("warps");
             arguments.add("limits");
             arguments.add("kick");
 
@@ -101,7 +103,7 @@ public class SBCommand implements TabExecutor {
                     }
                     StringUtil.copyPartialMatches(args[1], arguments, completions);
                 }
-                case "warp" -> StringUtil.copyPartialMatches(args[1], main.getWarpsConfig().getWarps(), completions);
+                case "warp" -> StringUtil.copyPartialMatches(args[1], main.getWarpManager().getNames(), completions);
             }
         }
 

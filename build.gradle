@@ -11,6 +11,7 @@ repositories {
     maven { url 'https://papermc.io/repo/repository/maven-public/' }
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.onarandombox.com/content/groups/public/' }
+    maven { url "https://repo.codemc.org/repository/maven-public/" }
 }
 
 dependencies {
@@ -20,8 +21,8 @@ dependencies {
     compileOnly 'com.googlecode.json-simple:json-simple:1.1.1'
     compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
     compileOnly 'com.onarandombox.multiversecore:Multiverse-Core:4.3.1'
+    compileOnly 'world.bentobox:bentobox:1.19.0'
     implementation 'com.github.heuerleon:mcguiapi:v1.0.1'
-    // TODO add bentobox api for checking challenges
 }
 
 test {
