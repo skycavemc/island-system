@@ -52,6 +52,7 @@ public class LimitManager {
                     addToMap(newMap, r.getId(), e.getType());
                 }
             }
+            // TODO count Bees in nests
             entityCountMap = newMap;
         }, 0L, 40L);
     }

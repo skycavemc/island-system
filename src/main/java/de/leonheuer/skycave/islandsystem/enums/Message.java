@@ -97,7 +97,8 @@ public enum Message {
     /**
      * SB_Subcommand_setspawn
      */
-    SBADMIN_SUBCOMMAND_SETSPAWN_ERFOLG("&aDer Insel-Spawn wurde erfolgreich umgesetzt!"),
+    SBADMIN_SUBCOMMAND_SETSPAWN_ERFOLG("&aDer Insel-Spawn wurde erfolgreich bei deiner Position gesetzt."),
+    SB_SUBCOMMAND_SETSPAWN_ERFOLG("&aDer Insel-Spawn wurde erfolgreich bei deiner Position gesetzt."),
 
     /**
      * SB_Subcommand_tp
@@ -125,7 +126,7 @@ public enum Message {
     /**
      * SB_Subcommand_info
      */
-    SB_SUBCOMMAND_INFO("&7Insel &b{nummer} &8- &7Besitzer: &b{player}"),
+    SB_SUBCOMMAND_INFO("&7Insel &b{id} &8- &7Besitzer: &b{owners}"),
     SB_SUBCOMMAND_INFO_SPAWN("&cDu befindest dich auf der Spawn-Insel!"),
 
     /**

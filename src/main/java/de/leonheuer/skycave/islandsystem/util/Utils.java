@@ -41,7 +41,9 @@ public class Utils {
     public static final FileConfiguration CACHE_CONFIG = YamlConfiguration.loadConfiguration(
             new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
-    public static final World ISLAND_WORLD = Bukkit.getWorld(main.getIslandWorld().getUID());
+    public static final @NotNull World ISLAND_WORLD = Objects.requireNonNull(
+            Bukkit.getWorld(main.getIslandWorld().getUID())
+    );
 
     public static int getLastID() {
         return CACHE_CONFIG.getInt("lastid");

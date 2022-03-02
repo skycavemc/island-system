@@ -1,4 +1,4 @@
-package de.leonheuer.skycave.islandsystem.cmd.sbadmin;
+package de.leonheuer.skycave.islandsystem.cmd.sb;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
@@ -6,9 +6,9 @@ import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.entity.Player;
 
-public class SetSpawnAdmin {
+public class SetSpawnCommand {
 
-    public SetSpawnAdmin(Player player, IslandSystem main) {
+    public SetSpawnCommand(Player player, IslandSystem main) {
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
             player.sendMessage(Message.MISC_NOINWORLD.getString().get());
             return;
@@ -26,8 +26,12 @@ public class SetSpawnAdmin {
             return;
         }
 
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETSPAWN_ERFOLG.getString().get());
+        if (!region.getOwners().contains(player.getUniqueId())) {
+            player.sendMessage(Message.MISC_NOOWNER.getString().get());
+            return;
+        }
+
+        player.sendMessage(Message.SB_SUBCOMMAND_SETSPAWN_ERFOLG.getString().get());
         island.setSpawn(player.getLocation());
     }
-
 }

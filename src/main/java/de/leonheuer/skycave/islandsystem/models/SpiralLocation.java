@@ -19,8 +19,8 @@ public class SpiralLocation {
         this.z = z;
     }
 
-    public static SpiralLocation of(int index) {
-        SpiralLocation result = new SpiralLocation(1, 1);
+    public static SpiralLocation of(int index, int startX, int startZ) {
+        SpiralLocation result = new SpiralLocation(startX, startZ);
         if (index <= 0) {
             return result;
         }

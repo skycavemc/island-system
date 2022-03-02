@@ -36,7 +36,7 @@ public class Island {
     private Island(int id, int radius, Location spawn, LocalDateTime created,
                   YamlConfiguration config, File file) {
         this.id = id;
-        this.spiralLocation = SpiralLocation.of(id);
+        this.spiralLocation = SpiralLocation.of(id, 1, 1);
         this.radius = radius;
         this.spawn = spawn;
         this.created = created;
@@ -47,7 +47,7 @@ public class Island {
     // For internal use only
     private Island(int id, int radius) {
         this.id = id;
-        spiralLocation = SpiralLocation.of(id);
+        spiralLocation = SpiralLocation.of(id, 1, 1);
         this.radius = radius;
     }
 

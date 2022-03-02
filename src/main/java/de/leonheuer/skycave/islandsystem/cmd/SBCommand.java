@@ -37,11 +37,11 @@ public class SBCommand implements TabExecutor {
                 case "buy" -> new BuyCommand(player);
                 case "trust" -> new TrustCommand(player, args, main);
                 case "untrust" -> new UntrustCommand(player, args, main);
-                case "setspawn" -> new SetspawnCommand(player);
+                case "setspawn" -> new SetSpawnCommand(player, main);
                 case "tp" -> new TPCommand(player, args);
                 case "spawn" -> new SpawnCommand(player);
                 case "team" -> new TeamCommand(player, main);
-                case "info" -> new InfoCommand(player);
+                case "info" -> new InfoCommand(player, main);
                 case "list" -> new ListCommand(player);
                 case "kick" -> new KickCommand(player, args, main);
                 case "warp" -> new WarpCommand(player, args, main);

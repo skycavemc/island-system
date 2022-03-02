@@ -36,7 +36,7 @@ public class SBAdminCommand implements TabExecutor {
             switch (args[0].toLowerCase()) {
                 case "create" -> new CreateAdmin(player, args, main);
                 case "setowner" -> new SetOwnerAdmin(player, args, main);
-                case "setspawn" -> new SetSpawnAdmin(player);
+                case "setspawn" -> new SetSpawnAdmin(player, main);
                 case "tp" -> new TPAdmin(player, args);
                 case "trust" -> new TrustAdmin(player, args, main);
                 case "untrust" -> new UntrustAdmin(player, args, main);

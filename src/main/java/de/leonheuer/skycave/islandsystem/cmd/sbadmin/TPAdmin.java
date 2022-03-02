@@ -2,7 +2,6 @@ package de.leonheuer.skycave.islandsystem.cmd.sbadmin;
 
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class TPAdmin {
