@@ -17,16 +17,13 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class LimitManager {
 
     private final IslandSystem main;
     private Map<String, Map<EntityType, Integer>> entityCountMap = new HashMap<>();
-    private List<BukkitTask> tasks;
+    private final List<BukkitTask> tasks = new ArrayList<>();
 
     public LimitManager(IslandSystem main) {
         this.main = main;
