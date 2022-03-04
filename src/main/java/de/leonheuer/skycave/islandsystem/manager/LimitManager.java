@@ -59,7 +59,7 @@ public class LimitManager {
             }
             for (Chunk c : world.getLoadedChunks()) {
                 for (BlockState state : c.getTileEntities()) {
-                    if (state.getBlock() instanceof Beehive hive) {
+                    if (state instanceof Beehive hive) {
                         BlockVector3 loc = BukkitAdapter.asBlockVector(state.getLocation());
                         Set<ProtectedRegion> regions = rm.getApplicableRegions(loc).getRegions();
                         if (regions.isEmpty()) {
