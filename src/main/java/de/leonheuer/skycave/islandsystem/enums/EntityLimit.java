@@ -109,7 +109,7 @@ public enum EntityLimit {
         return limit;
     }
 
-    public Material getSpawnegg() {
+    public Material getSpawnEgg() {
         return spawnegg;
     }
 

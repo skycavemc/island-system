@@ -19,6 +19,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.mcguiapi.gui.GUI;
+import de.leonheuer.mcguiapi.gui.GUIPattern;
 import de.leonheuer.mcguiapi.utils.ItemBuilder;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
@@ -30,6 +31,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -223,7 +225,7 @@ public class Utils {
         return result;
     }
 
-    public static GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
+    public static @NotNull GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
         List<EntityLimit> limits = new ArrayList<>();
@@ -238,10 +240,9 @@ public class Utils {
         int i = 0;
         if (region == null) {
             for (EntityLimit l : limits) {
-                gui.set(i, new ItemBuilder(l.getSpawnegg(), 1)
-                                .name("§e" + entityTypeToString(l.getType()) + " §6(" + l.getLimit() + ")")
-                                .getResult(),
-                        (event) -> event.setCancelled(true));
+                gui.setItem(i, ItemBuilder.of(l.getSpawnEgg())
+                        .name("§e" + entityTypeToString(l.getType()) + " §6(" + l.getLimit() + ")")
+                        .asItem(), false);
                 i++;
             }
         } else {
@@ -255,62 +256,43 @@ public class Utils {
                     color = "§a";
                 }
 
-                gui.set(i, new ItemBuilder(l.getSpawnegg(), 1)
-                                .name("§e" + entityTypeToString(l.getType()) + " " + color + "(" + count + "/" + l.getLimit() + ")")
-                                .getResult(),
-                        (event) -> event.setCancelled(true));
+                gui.setItem(i, ItemBuilder.of(l.getSpawnEgg())
+                        .name("§e" + entityTypeToString(l.getType()) + " " + color + "(" + count + "/" + l.getLimit() + ")")
+                        .asItem(), false);
                 i++;
             }
         }
 
-        for (int j = 18; j < 27; j++) {
-            gui.set(j, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1)
-                            .name("§0")
-                            .getResult(),
-                    (event) -> event.setCancelled(true));
-        }
-        gui.set(26, new ItemBuilder(Material.OAK_DOOR, 1)
-                        .name("§cZurück")
-                        .getResult(),
-                (event) -> {
-                    event.setCancelled(true);
-                    Player player = (Player) event.getWhoClicked();
-                    getLimitGui().show((Player) event.getWhoClicked());
-                    player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-                });
-
+        GUIPattern pattern = GUIPattern.ofPattern("bbbbbbbbb")
+                .withMaterial('b', ItemBuilder.of(Material.BLACK_STAINED_GLASS_PANE).name("§0").asItem());
+        gui.formatPattern(pattern.startAtLine(3))
+                .setItem(3, 9, ItemBuilder.of(Material.OAK_DOOR).name("§cZurück").asItem(), false,
+                        event -> {
+                            Player player = (Player) event.getWhoClicked();
+                            getLimitGui().show((Player) event.getWhoClicked());
+                            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+                        });
         return gui;
     }
 
-    public static GUI getLimitGui() {
+    public static @NotNull GUI getLimitGui() {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
         int i = 9;
         for (EntityLimitType t : EntityLimitType.values()) {
-            gui.set(i, new ItemBuilder(t.getMat(), 1)
-                            .name("§6§l" + t.getName())
-                            .getResult(),
+            gui.setItem(i, ItemBuilder.of(t.getMat()).name("§6§l" + t.getName()).asItem(), false,
                     (event) -> {
-                        event.setCancelled(true);
                         Player player = (Player) event.getWhoClicked();
-                        ProtectedRegion region = Utils.getIslandRegionAt(player.getLocation());
+                        ProtectedRegion region = getIslandRegionAt(player.getLocation());
                         getLimitGui(region, t).show(player);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                     });
             i++;
         }
-        for (int j = 0; j < 9; j++) {
-            gui.set(j, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1)
-                            .name("§0")
-                            .getResult(),
-                    (event) -> event.setCancelled(true));
-        }
-        for (int j = 18; j < 27; j++) {
-            gui.set(j, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE, 1)
-                            .name("§0")
-                            .getResult(),
-                    (event) -> event.setCancelled(true));
-        }
+
+        GUIPattern pattern = GUIPattern.ofPattern("bbbbbbbbb")
+                .withMaterial('b', ItemBuilder.of(Material.BLACK_STAINED_GLASS_PANE).name("§0").asItem());
+        gui.formatPattern(pattern.startAtLine(1)).formatPattern(pattern.startAtLine(3));
         return gui;
     }
 

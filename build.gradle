@@ -20,7 +20,7 @@ dependencies {
     compileOnly 'com.googlecode.json-simple:json-simple:1.1.1'
     compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
     compileOnly 'com.onarandombox.multiversecore:Multiverse-Core:4.3.1'
-    implementation 'com.github.heuerleon:mcguiapi:v1.0.1'
+    implementation 'com.github.heuerleon:mcguiapi:v1.3.1'
 }
 
 test {
@@ -41,8 +41,7 @@ java {
 
 tasks.withType(JavaCompile).configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        //noinspection GroovyAssignabilityCheck, GroovyAccessibility
-        options.release = targetJavaVersion
+        options.release.set(targetJavaVersion)
     }
     compileJava.options.encoding = encoding
     compileTestJava.options.encoding = encoding
