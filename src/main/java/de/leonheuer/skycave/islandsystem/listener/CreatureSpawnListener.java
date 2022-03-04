@@ -5,7 +5,6 @@ import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.manager.LimitManager;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
-import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
