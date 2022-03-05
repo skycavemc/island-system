@@ -31,6 +31,12 @@ public class IslandUtils {
 
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
 
+    /**
+     * Transforms an island name into its according ID.
+     * @param name The name to transform
+     * @return The ID
+     * @throws IllegalArgumentException If the name is not a valid island name.
+     */
     public static int nameToId(String name) throws IllegalArgumentException {
         if (!isValidName(name)) {
             throw new IllegalArgumentException("Name " + name + " does not match pattern for Island names.");
@@ -39,16 +45,32 @@ public class IslandUtils {
         return Integer.parseInt(parts[1]);
     }
 
+    /**
+     * Transforms an island ID into its according name.
+     * @param id The ID to transform
+     * @return The name
+     */
     @NotNull
     public static String idToName(int id) {
         DecimalFormat format = new DecimalFormat("000");
         return "sc_" + format.format(id);
     }
 
+    /**
+     * Checks whether the given string is a valid island name.
+     * @param name The name to check
+     * @return Whether the name is valid
+     */
     public static boolean isValidName(@NotNull String name) {
         return name.matches("^sc_\\d{3,}$");
     }
 
+    /**
+     * Gets the destination of the island save file. Optionally creates the file if it does not exist.
+     * @param id The ID of the island
+     * @param create Whether to create the file if it does not exist
+     * @return The destination file
+     */
     @Nullable
     public static File getIslandSaveLocation(int id, boolean create) {
         File dir = new File(JavaPlugin.getPlugin(IslandSystem.class).getDataFolder(), "island/");
@@ -75,13 +97,18 @@ public class IslandUtils {
         return file;
     }
 
+    /**
+     * Gets the WorldGuard region of an island at the given location. Returns null if there is none.
+     * @param location The location to search around
+     * @return The WorldGuard region
+     */
     @Nullable
-    public static ProtectedRegion getIslandRegionAt(@NotNull Location loc) {
-        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld()));
+    public static ProtectedRegion getIslandRegionAt(@NotNull Location location) {
+        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(location.getWorld()));
         if (rm == null) {
             return null;
         }
-        ApplicableRegionSet set = rm.getApplicableRegions(BukkitAdapter.asBlockVector(loc));
+        ApplicableRegionSet set = rm.getApplicableRegions(BukkitAdapter.asBlockVector(location));
         if (set.getRegions().size() == 0) {
             return null;
         }
@@ -93,6 +120,14 @@ public class IslandUtils {
         return null;
     }
 
+    /**
+     * Prints a schematic from the given file at the coordinates.
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param z The z coordinate
+     * @param schematic The file to load the schematic from
+     * @return Whether the operation succeeded
+     */
     public static boolean printSchematic(int x, int y, int z, File schematic) {
         ClipboardFormat format = ClipboardFormats.findByFile(schematic);
         if (format == null) {
@@ -125,6 +160,16 @@ public class IslandUtils {
         return true;
     }
 
+    /**
+     * Creates a cuboid WorldGuard region at the given center x and z coordinates in the island world.
+     * Reaches from bottom-most height to top-most height and will be scaled up to the radius around the x and z
+     * coordinates. The region name must be provided. Will return null if the island world is not loaded.
+     * @param x The center x coordinate
+     * @param z The center z coordinate
+     * @param radius The radius around the center
+     * @param region The name of the region
+     * @return The created region
+     */
     public static @Nullable ProtectedRegion protectedRegion(int x, int z, int radius, String region) {
         RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(main.getIslandWorld()));
         if (rm == null) {

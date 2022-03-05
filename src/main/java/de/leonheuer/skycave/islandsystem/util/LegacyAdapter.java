@@ -21,6 +21,11 @@ public class LegacyAdapter {
 
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
 
+    /**
+     * Imports the old warps from legacy-format into the new format.
+     * @param file The file to import from
+     * @return Whether the operation succeeded
+     */
     public static boolean importWarps(@NotNull File file) {
         if (!file.isFile()) {
             return false;
@@ -50,6 +55,11 @@ public class LegacyAdapter {
         return true;
     }
 
+    /**
+     * Imports the old islands from legacy-format into the new format.
+     * @param dir The directory to import from
+     * @return Whether the operation succeeded
+     */
     public static boolean importIslands(@NotNull File dir) {
         if (!dir.isDirectory()) {
             return false;
@@ -96,6 +106,11 @@ public class LegacyAdapter {
         return true;
     }
 
+    /**
+     * Imports the old cache config from legacy-format into the new format.
+     * @param file The file to import from
+     * @return Whether the operation succeeded
+     */
     public static boolean importCacheConfig(@NotNull File file) {
         if (!file.isFile()) {
             return false;

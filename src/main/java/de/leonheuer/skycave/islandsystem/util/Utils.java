@@ -19,6 +19,12 @@ public class Utils {
 
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
 
+    /**
+     * Gets the specific in-game view for checking the island limits.
+     * @param region The region where to count entities
+     * @param limitType The category of limit types
+     * @return The created GUI
+     */
     public static @NotNull GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
@@ -35,7 +41,7 @@ public class Utils {
         if (region == null) {
             for (EntityLimit l : limits) {
                 gui.setItem(i, ItemBuilder.of(l.getSpawnEgg())
-                        .name("§e" + entityTypeToString(l.getType()) + " §6(" + l.getLimit() + ")")
+                        .name("§e" + entityTypeAsString(l.getType()) + " §6(" + l.getLimit() + ")")
                         .asItem(), false);
                 i++;
             }
@@ -51,7 +57,7 @@ public class Utils {
                 }
 
                 gui.setItem(i, ItemBuilder.of(l.getSpawnEgg())
-                                .name("§e" + entityTypeToString(l.getType()) + " " + color + "(" + count + "/" + l.getLimit() + ")")
+                                .name("§e" + entityTypeAsString(l.getType()) + " " + color + "(" + count + "/" + l.getLimit() + ")")
                                 .asItem(), false);
                 i++;
             }
@@ -69,6 +75,10 @@ public class Utils {
         return gui;
     }
 
+    /**
+     * Gets the main in-game view of the island limits.
+     * @return The created GUI
+     */
     public static @NotNull GUI getLimitGui() {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
@@ -90,7 +100,12 @@ public class Utils {
         return gui;
     }
 
-    public static String entityTypeToString(@NotNull EntityType type) {
+    /**
+     * Transforms a minecraft entity type to a well readable string.
+     * @param type The entity type to transform
+     * @return The result
+     */
+    public static String entityTypeAsString(@NotNull EntityType type) {
         StringJoiner sj = new StringJoiner(" ");
         String[] partial = type.toString().split("_");
         Arrays.stream(partial).forEach(part -> {
@@ -100,12 +115,22 @@ public class Utils {
         return sj.toString();
     }
 
+    /**
+     * Transforms a location into a string containing the x, y and z components of the location.
+     * @param location The location to transform
+     * @return The result
+     */
     public static @NotNull String locationAsString(@NotNull Location location) {
         return location.getX() + ", " +
                 location.getY() + ", " +
                 location.getZ();
     }
 
+    /**
+     * Transforms a BlockVector3 into a string containing the x, y and z components of the vector.
+     * @param location The BlockVector3 to transform
+     * @return The result
+     */
     public static @NotNull String locationAsString(@NotNull BlockVector3 location) {
         return location.getX() + ", " +
                 location.getY() + ", " +

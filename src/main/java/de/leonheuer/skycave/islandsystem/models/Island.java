@@ -31,6 +31,7 @@ public class Island {
     private Location spawn;
     private LocalDateTime created;
 
+    // For internal use only
     private Island(int id, int radius, Location spawn, @NotNull LocalDateTime created,
                   @NotNull YamlConfiguration config, @NotNull File file) {
         this.id = id;
@@ -164,7 +165,7 @@ public class Island {
     }
 
     @Nullable
-    private ProtectedRegion createRegion(boolean override) {
+    private ProtectedRegion createRegion() {
         RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionManager rm = rc.get(BukkitAdapter.adapt(main.getIslandWorld()));
         if (rm == null) {
@@ -172,11 +173,7 @@ public class Island {
         }
 
         if (rm.hasRegion(getName())) {
-            if (override) {
-                rm.removeRegion(getName());
-            } else {
-                return rm.getRegion(getName());
-            }
+            rm.removeRegion(getName());
         }
 
         ProtectedCuboidRegion region = spiralLocation.asRegion(getName(), radius);
@@ -196,6 +193,9 @@ public class Island {
         return success;
     }
 
+    /**
+     * Saves the island to its file.
+     */
     public void save() {
         if (file == null || config == null) {
             return;
@@ -212,6 +212,14 @@ public class Island {
         }
     }
 
+    /**
+     * Creates a new island with the given id, radius and starter island template.
+     * @param id The id of the island, also used for calculating the spiral location
+     * @param radius The radius of the island
+     * @param template The template for the starter island
+     * @return The created Island
+     * @throws IOException If the island could not be saved.
+     */
     @Nullable
     public static Island create(int id, int radius, IslandTemplate template) throws IOException {
         if (main.getIslandWorld() == null) {
@@ -229,7 +237,7 @@ public class Island {
         if (!island.generateDefaultIsland(template)) {
             return null;
         }
-        if (island.createRegion(true) == null) {
+        if (island.createRegion() == null) {
             return null;
         }
         config.set("radius", radius);
@@ -239,12 +247,26 @@ public class Island {
         return island;
     }
 
+    /**
+     * Imports and saves an island from raw data and saves it.
+     * @param id The id
+     * @param radius The radius
+     * @param spawn The spawn location
+     * @param created The creation timestamp
+     * @param config The configuration
+     * @param file The config file
+     */
     public static void importAndSave(int id, int radius, Location spawn, @NotNull LocalDateTime created,
                                      @NotNull YamlConfiguration config, @NotNull File file) {
         Island island = new Island(id, radius, spawn, created, config, file);
         island.save();
     }
 
+    /**
+     * Gets the island at the given location. Will return null if none is found.
+     * @param location The location to search around
+     * @return The island
+     */
     @Nullable
     public static Island at(Location location) {
         ProtectedRegion r = IslandUtils.getIslandRegionAt(location);
@@ -254,6 +276,11 @@ public class Island {
         return Island.load(IslandUtils.nameToId(r.getId()));
     }
 
+    /**
+     * Loads the island with the given id from its file. WIll return null if no island with the given id exists.
+     * @param id The id
+     * @return The island
+     */
     @Nullable
     public static Island load(int id) {
         if (main.getIslandWorld() == null) {

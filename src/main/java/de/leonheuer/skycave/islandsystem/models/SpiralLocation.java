@@ -5,6 +5,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents an abstract location in a 2-dimensional matrix of islands. The matrix continues from the inside out
+ * in a counter-clockwise spiral pattern. The pattern starts in the middle and then starts the first circle by moving upwards.
+ */
 public class SpiralLocation {
 
     private final int left = 0;
@@ -14,11 +18,23 @@ public class SpiralLocation {
     private final int x;
     private final int z;
 
+    /**
+     * Creates a new spiral location at the given coordinates.
+     * @param x The x coordinate
+     * @param z The z coordinate
+     */
     public SpiralLocation(int x, int z) {
         this.x = x;
         this.z = z;
     }
 
+    /**
+     * Creates a new spiral location at the start points and then continues it until the given index is reached.
+     * @param index The index
+     * @param startX The start x coordinate
+     * @param startZ The start z coordinate
+     * @return The new location
+     */
     public static SpiralLocation of(int index, int startX, int startZ) {
         SpiralLocation result = new SpiralLocation(startX, startZ);
         if (index <= 0) {
@@ -30,26 +46,54 @@ public class SpiralLocation {
         return result;
     }
 
+    /**
+     * Gets the x coordinate.
+     * @return The x coordinate
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Gets the z coordinate.
+     * @return The z coordinate
+     */
     public int getZ() {
         return z;
     }
 
+    /**
+     * Gets the start vector of a cuboid region around the spiral location with the given radius.
+     * @param radius The radius
+     * @return The start vector
+     */
     public BlockVector3 getStartVector(int radius) {
         return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE - radius, -64, x * IslandSystem.ISLAND_DISTANCE - radius);
     }
 
+    /**
+     * Gets the end vector of a cuboid region around the spiral location with the given radius.
+     * @param radius The radius
+     * @return The end vector
+     */
     public BlockVector3 getEndVector(int radius) {
         return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE + radius, 320, x * IslandSystem.ISLAND_DISTANCE + radius);
     }
 
+    /**
+     * Creates a new WorldGuard region around the spiral location with the given radius and given name.
+     * @param name The name
+     * @param radius The radius around the spiral location as center
+     * @return The created region
+     */
     public ProtectedCuboidRegion asRegion(String name, int radius) {
         return new ProtectedCuboidRegion(name, getStartVector(radius), getEndVector(radius));
     }
 
+    /**
+     * Gets the next spiral location in order.
+     * @return The next spiral location
+     */
     @NotNull
     public SpiralLocation next() {
         int x = Math.abs(this.x);
