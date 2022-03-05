@@ -10,6 +10,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.format.DateTimeFormatter;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -83,6 +84,9 @@ public class InfoAdmin {
         player.sendMessage(Message.INFO_MEMBER.getString()
                 .replace("{member}", members.toString()).get(false));
 
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm");
+        player.sendMessage(Message.INFO_CREATION.getString()
+                .replace("{creation}", dtf.format(island.getCreated())).get(false));
         player.sendMessage(Message.INFO_RADIUS.getString()
                 .replace("{radius}", "" + island.getRadius()).get(false));
         player.sendMessage(Message.INFO_SPAWN.getString()
