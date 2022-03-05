@@ -18,6 +18,7 @@ public enum Message {
     ISLAND_UNKNOWN("&cDie Inselnummer wurde nicht gefunden!"),
     ISLAND_WORLD_UNLOADED("&cDie Inselwelt ist nicht geladen."),
     REGION_ACCESS("&4Achtung! Jeder Eingriff kann die Funktion des Plugins beeinträchtigen!"),
+    TEMP_DISABLED("&cDiese Funktion ist deaktiviert."),
 
 
 
@@ -40,7 +41,7 @@ public enum Message {
     ADMIN_CREATE_WAIT("&aBeginne Inselerstellung! Bitte habe einen Moment Geduld..."),
     ADMIN_CREATE_FINISHED_SPAWN("&aDie Spawninsel wurde erfolgreich erstellt!"),
     ADMIN_CREATE_FINISHED("&aDie Insel {isid} wurde erfolgreich erstellt!"),
-    ADMIN_CREATE_OUT_OF_RANGE("&cDie Größe geht über den erlaubten Bereich hinaus!"),
+    ADMIN_CREATE_OUT_OF_RANGE("&cDer Radius darf nur zwischen 100 und 1500 liegen!"),
     ADMIN_CREATE_MISSING_SCHEMATIC("&cInsel Schematic wurde nicht gefunden!"),
     ADMIN_CREATE_TYPE_ERROR("&cUnbekannter Inseltyp! Wähle zwischen: &e{types}"),
     ADMIN_CREATE_ERROR("&cEin unbekannter Fehler ist aufgetreten."),
@@ -53,7 +54,8 @@ public enum Message {
     // Admin setradius
     ADMIN_SETRADIUS_SYNTAX("&e/sbadmin setradius <Radius>"),
     ADMIN_SETRADIUS_ERFOLG("&aDie Größe der Insel wurde erfolgreich geändert!"),
-    ADMIN_SETRADIUS_OUTOFRANGE("&cDie Insel kann nicht verkleinert werden! &8(&7'/scadmin setradius <Radius> true', um den Schutz zu umgehen&8)"),
+    ADMIN_SETRADIUS_OUT_OF_RANGE("&cDer Radius darf nur zwischen 100 und 1500 liegen!"),
+    ADMIN_SETRADIUS_SMALLER("&cDu kannst keine Insel verkleinern."),
 
     // Admin tp
     ADMIN_TP_SYNTAX("&e/sc tp <Inselnummer> [Zentrum]"),
@@ -133,13 +135,19 @@ public enum Message {
 
     // Info
     INFO_HEADER("&8~~~~ &2Info für Insel Nummer {nummer} &8~~~~"),
-    INFO_OWNER("&7Besitzer: &b{owner}"),
-    INFO_MEMBER("&7Mitglieder: &b{member}"),
+    INFO_OWNER("&eBesitzer: &b{owner}"),
+    INFO_MEMBER("&eMitglieder: &b{member}"),
+    INFO_CREATION("&eGründungsdatum: &b{creation}"),
     INFO_RADIUS("&2Radius: &b{radius}"),
     INFO_SPAWN("&aSpawn: &b{spawn}"),
     INFO_CENTER("&aZentrum: &b{center}"),
     INFO_START("&aAnfang: &b{start}"),
     INFO_END("&aEnde: &b{end}"),
+
+    // Buy
+    BUY_NOT_ENOUGH("&cDu hast nicht genug Geld. Dir fehlen noch {diff}"),
+    BUY_SUCCESS("&aDu hast dir erfolgreich eine SB-Insel gekauft."),
+    BUY_ERROR("&cDas Geld konnte nicht eingezogen werden."),
     ;
 
     private final String string;

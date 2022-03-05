@@ -12,7 +12,7 @@ import java.io.File;
 public enum IslandTemplate {
 
     ICE("Eis", "sbInsel_Eis.schem", Material.BLUE_ICE, 1000000),
-    FLOWER("Blume", "sbInsel_Blume.schem", Material.POPPY, 1200000),
+    FLOWER("Blume", "sbInsel_Blume.schem", Material.ROSE_BUSH, 1200000),
     MUSHROOM("Pilz", "sbInsel_Pilz.schem", Material.RED_MUSHROOM_BLOCK, 1300000),
     DESERT("Wüste", "sbInsel_Wuste.schem", Material.SAND, 1500000),
     ;
@@ -33,13 +33,15 @@ public enum IslandTemplate {
         return alternativeName;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
     @Contract(" -> new")
-    public @NotNull File getFile() {
-        return new File(JavaPlugin.getPlugin(IslandSystem.class).getDataFolder(), fileName);
+    @NotNull
+    public File getFile() {
+        File dir = new File(JavaPlugin.getPlugin(IslandSystem.class).getDataFolder(), "schematics/");
+        if (!dir.isDirectory()) {
+            //noinspection ResultOfMethodCallIgnored
+            dir.mkdirs();
+        }
+        return new File(JavaPlugin.getPlugin(IslandSystem.class).getDataFolder(), "schematics/" + fileName);
     }
 
     public Material getIcon() {

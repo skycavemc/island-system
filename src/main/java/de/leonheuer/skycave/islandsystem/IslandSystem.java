@@ -15,12 +15,15 @@ import de.leonheuer.skycave.islandsystem.models.AutoSaveConfig;
 import de.leonheuer.skycave.islandsystem.models.PrefixHolder;
 import de.leonheuer.skycave.islandsystem.models.SelectionProfile;
 import de.leonheuer.skycave.islandsystem.util.FileUtils;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +34,11 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
 
     public static final int ISLAND_DISTANCE = 4000;
     private final HashMap<UUID, SelectionProfile> selectionProfiles = new HashMap<>();
-    private WarpManager warpManager;
     private RegionContainer regionContainer;
-    private GUIFactory guiFactory;
     private MultiverseCore multiverse;
+    private GUIFactory guiFactory;
+    private Economy economy;
+    private WarpManager warpManager;
     private LimitManager limitManager;
     private World islandWorld;
     private AutoSaveConfig config;
@@ -45,6 +49,9 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
         regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         multiverse = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
         guiFactory = new GUIFactory(this);
+        if ((economy = setupEconomy()) == null) {
+            getLogger().severe("Vault Economy no initialized. Some features of this plugin will not work.");
+        }
 
         // managers
         warpManager = new WarpManager(this);
@@ -112,6 +119,17 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
         return true;
     }
 
+    private @Nullable Economy setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return null;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return null;
+        }
+        return rsp.getProvider();
+    }
+
     private void registerCommand(String command, CommandExecutor executor) {
         PluginCommand cmd = getCommand(command);
         if (cmd == null) {
@@ -144,6 +162,10 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
 
     public MultiverseCore getMultiverse() {
         return multiverse;
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 
     public LimitManager getLimitManager() {
