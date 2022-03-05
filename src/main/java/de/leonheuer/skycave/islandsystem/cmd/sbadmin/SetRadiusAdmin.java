@@ -40,8 +40,12 @@ public class SetRadiusAdmin {
             return;
         }
 
+        if (radius < island.getRadius()) {
+            player.sendMessage(Message.ADMIN_SETRADIUS_SMALLER.getString().get());
+            return;
+        }
         if (radius > 1500 || radius < 100) {
-            player.sendMessage(Message.ADMIN_SETRADIUS_OUTOFRANGE.getString().get());
+            player.sendMessage(Message.ADMIN_SETRADIUS_OUT_OF_RANGE.getString().get());
             return;
         }
         island.setRadius(radius);

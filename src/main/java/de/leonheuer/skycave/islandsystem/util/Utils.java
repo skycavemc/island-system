@@ -13,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Utils {
@@ -121,9 +122,10 @@ public class Utils {
      * @return The result
      */
     public static @NotNull String locationAsString(@NotNull Location location) {
-        return location.getX() + ", " +
-                location.getY() + ", " +
-                location.getZ();
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        return decimalFormat.format(location.getX()) + ", " +
+                decimalFormat.format(location.getY()) + ", " +
+                decimalFormat.format(location.getZ());
     }
 
     /**
@@ -132,9 +134,10 @@ public class Utils {
      * @return The result
      */
     public static @NotNull String locationAsString(@NotNull BlockVector3 location) {
-        return location.getX() + ", " +
-                location.getY() + ", " +
-                location.getZ();
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        return decimalFormat.format(location.getX()) + ", " +
+                decimalFormat.format(location.getY()) + ", " +
+                decimalFormat.format(location.getZ());
     }
 
 }

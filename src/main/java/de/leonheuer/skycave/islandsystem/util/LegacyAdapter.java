@@ -70,40 +70,36 @@ public class LegacyAdapter {
         }
 
         int i = 0;
+        int count = files.length;
         for (File f : files) {
             String name = f.getName().replace(".yml", "");
-            main.getLogger().info(name);
             if (!IslandUtils.isValidName(name)) {
+                count--;
                 continue;
             }
             YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
 
+            int radius = config.getInt("insel.radius");
             Instant created = Instant.ofEpochMilli(config.getLong("erstellt"));
-
-            Location spawn = null;
-            String worldName = config.getString("tppunkt.world");
-            if (worldName != null) {
-                spawn = new Location(
-                        Bukkit.getWorld(worldName),
-                        config.getDouble("tppunkt.x"),
-                        config.getDouble("tppunkt.y"),
-                        config.getDouble("tppunkt.z"),
-                        (float) config.getDouble("tppunkt.yaw"),
-                        (float) config.getDouble("tppunkt.pitch")
-                );
-            }
-
+            Location spawn = new Location(
+                    main.getIslandWorld(),
+                    config.getDouble("tppunkt.x"),
+                    config.getDouble("tppunkt.y"),
+                    config.getDouble("tppunkt.z"),
+                    (float) config.getDouble("tppunkt.yaw"),
+                    (float) config.getDouble("tppunkt.pitch")
+            );
             File file = IslandUtils.getIslandSaveLocation(IslandUtils.nameToId(name), true);
             if (file == null) {
                 continue;
             }
             YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(file);
 
-            Island.importAndSave(IslandUtils.nameToId(name), config.getInt("insel.radius"), spawn,
-                    LocalDateTime.ofInstant(created, ZoneId.systemDefault()), newConfig, file);
+            Island.importAndSave(IslandUtils.nameToId(name), radius, spawn,
+                    LocalDateTime.ofInstant(created, ZoneId.systemDefault()), newConfig, file).setRadius(radius);
             i++;
         }
-        main.getLogger().info("Imported " + i + " of " + files.length + " islands.");
+        main.getLogger().info("Imported " + i + " of " + count + " islands.");
         return true;
     }
 

@@ -203,7 +203,7 @@ public class Island {
 
         config.set("radius", radius);
         config.set("spawn", spawn);
-        config.set("creation_timestamp", created.toString());
+        config.set("creation_timestamp", getCreated().toString());
 
         try {
             config.save(file);
@@ -256,10 +256,11 @@ public class Island {
      * @param config The configuration
      * @param file The config file
      */
-    public static void importAndSave(int id, int radius, Location spawn, @NotNull LocalDateTime created,
+    public static Island importAndSave(int id, int radius, Location spawn, @NotNull LocalDateTime created,
                                      @NotNull YamlConfiguration config, @NotNull File file) {
         Island island = new Island(id, radius, spawn, created, config, file);
         island.save();
+        return island;
     }
 
     /**

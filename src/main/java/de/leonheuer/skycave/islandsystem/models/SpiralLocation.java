@@ -68,7 +68,7 @@ public class SpiralLocation {
      * @return The start vector
      */
     public BlockVector3 getStartVector(int radius) {
-        return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE - radius, -64, x * IslandSystem.ISLAND_DISTANCE - radius);
+        return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE - radius, -64, z * IslandSystem.ISLAND_DISTANCE - radius);
     }
 
     /**
@@ -77,7 +77,7 @@ public class SpiralLocation {
      * @return The end vector
      */
     public BlockVector3 getEndVector(int radius) {
-        return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE + radius, 320, x * IslandSystem.ISLAND_DISTANCE + radius);
+        return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE + radius, 320, z * IslandSystem.ISLAND_DISTANCE + radius);
     }
 
     /**
