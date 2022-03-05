@@ -17,6 +17,7 @@ public enum Message {
     NOT_IN_WORLD("&cDu befindest dich nicht in der korrekten Welt!"),
     NO_OWNER("&cDu bist nicht der Besitzer dieser Insel!"),
     ISLAND_UNKNOWN("&cDie Inselnummer wurde nicht gefunden!"),
+    ISLAND_WORLD_UNLOADED("&cDie Inselwelt ist nicht geladen."),
 
     /**
      * Command_sbadmin
@@ -188,6 +189,11 @@ public enum Message {
     SBADMIN_SUBCOMMAND_IMPORT_ERROR("&cFolgende Komponenten konnten nicht importiert werden: &4{components}"),
     SBADMIN_SUBCOMMAND_IMPORT_SUCCESS("&aFolgende Komponenten wurden erfolgreich importiert: &2{components}"),
     SBADMIN_SUBCOMMAND_IMPORT_PERMISSION("&cDieser Vorgang erfordert Sonderberechtigungen."),
+
+    /**
+     * SB_Subcommand_spawn
+     */
+    SB_SUBCOMMAND_SPAWN("&aDu hast dich zum SB Spawn teleportiert."),
 
     /**
      * PLUGIN
