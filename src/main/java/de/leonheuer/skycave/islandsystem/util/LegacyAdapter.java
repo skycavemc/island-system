@@ -1,9 +1,11 @@
 package de.leonheuer.skycave.islandsystem.util;
 
+import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,21 +13,23 @@ import java.io.File;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class LegacyAdapter {
 
-    @Nullable
-    public static Map<String, Location> importWarps(@NotNull File file) {
+    private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
+
+    public static boolean importWarps(@NotNull File file) {
         if (!file.isFile()) {
-            return null;
+            return false;
         }
         Map<String, Location> result = new HashMap<>();
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        for (String warp : config.getStringList("warps")) {
+        List<String> oldWarps = config.getStringList("warps");
+        int i = 0;
+        for (String warp : oldWarps) {
             String worldName = config.getString(warp + ".world");
             if (worldName == null) {
                 continue;
@@ -39,22 +43,23 @@ public class LegacyAdapter {
                     (float) config.getDouble(warp + ".pitch")
             );
             result.put(warp, loc);
+            i++;
         }
-        return result;
+        main.getWarpManager().setMany(result);
+        main.getLogger().info("Imported " + i + " of " + oldWarps.size() + " warps.");
+        return true;
     }
 
-    @Nullable
-    public static List<Island> importIslands(@NotNull File dir) {
+    public static boolean importIslands(@NotNull File dir) {
         if (!dir.isDirectory()) {
-            return null;
+            return false;
         }
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
-            return null;
+            return false;
         }
 
-        List<Island> result = new ArrayList<>();
-
+        int i = 0;
         for (File f : files) {
             String name = f.getName().replace(".yml", "");
             if (!IslandUtils.isValidName(name)) {
@@ -81,15 +86,25 @@ public class LegacyAdapter {
             if (file == null) {
                 continue;
             }
-            YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(new File(dir, name + ".yml"));
+            YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(file);
 
-            Island island = new Island(IslandUtils.nameToId(name), config.getInt("insel.radius"), spawn,
+            Island.importAndSave(IslandUtils.nameToId(name), config.getInt("insel.radius"), spawn,
                     LocalDateTime.ofInstant(created, ZoneId.systemDefault()), newConfig, file);
-            result.add(island);
+            i++;
         }
-        return result;
+        main.getLogger().info("Imported " + i + " of " + files.length + " islands.");
+        return true;
     }
 
-    // TODO import cache config
+    public static boolean importCacheConfig(@NotNull File file) {
+        if (!file.isFile()) {
+            return false;
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        int id = config.getInt("lastid");
+        main.getConfiguration().set("current_island_id", id - 1);
+        main.getLogger().info("Imported cache config.");
+        return true;
+    }
 
 }
