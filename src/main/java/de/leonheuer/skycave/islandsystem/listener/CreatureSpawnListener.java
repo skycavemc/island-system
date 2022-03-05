@@ -28,7 +28,7 @@ public class CreatureSpawnListener implements Listener {
         }
 
         World world = event.getLocation().getWorld();
-        if (!world.getName().equals("skybeeisland")) {
+        if (!world.getName().equals(main.getConfiguration().getString("world_name"))) {
             return;
         }
 

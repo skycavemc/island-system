@@ -17,13 +17,13 @@ public class TPAdmin {
         try {
             id = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_TP_NOEXIST.getString().get());
+            player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
             return;
         }
 
         Island island = Island.load(id);
         if (island == null) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_TP_NOEXIST.getString().get());
+            player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
             return;
         }
 

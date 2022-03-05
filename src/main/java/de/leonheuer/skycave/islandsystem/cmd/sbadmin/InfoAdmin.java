@@ -12,22 +12,47 @@ import java.util.StringJoiner;
 
 public class InfoAdmin {
 
-    public InfoAdmin(@NotNull Player player, @NotNull IslandSystem main) {
+    public InfoAdmin(@NotNull Player player, @NotNull String[] args, @NotNull IslandSystem main) {
         if (player.getLocation().getWorld() == main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
 
-        Island island = Island.at(player.getLocation());
-        if (island == null) {
-            player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
-            return;
-        }
+        Island island;
+        ProtectedRegion region;
 
-        ProtectedRegion region = island.getRegion();
-        if (region == null) {
-            player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
-            return;
+        if (args.length < 2) {
+            island = Island.at(player.getLocation());
+            if (island == null) {
+                player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
+                return;
+            }
+
+            region = island.getRegion();
+            if (region == null) {
+                player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
+                return;
+            }
+        } else {
+            int id;
+            try {
+                id = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                player.sendMessage(Message.INVALID_NUMBER.getString().get());
+                return;
+            }
+
+            island = Island.load(id);
+            if (island == null) {
+                player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
+                return;
+            }
+
+            region = island.getRegion();
+            if (region == null) {
+                player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
+                return;
+            }
         }
 
         player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_TITEL.getString()

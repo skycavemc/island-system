@@ -1,6 +1,8 @@
 package de.leonheuer.skycave.islandsystem.enums;
 
-import de.leonheuer.skycave.islandsystem.models.ColoredStringBuilder;
+import de.leonheuer.skycave.islandsystem.IslandSystem;
+import de.leonheuer.skycave.islandsystem.models.ColoredString;
+import org.bukkit.plugin.java.JavaPlugin;
 
 
 public enum Message {
@@ -8,12 +10,13 @@ public enum Message {
     /**
      * Global
      */
-    INVALID_NUMBER("&cBitte gib eibe gültige Zahl an!"),
+    INVALID_NUMBER("&cBitte gib eine gültige Zahl an!"),
     PLAYER_UNKNOWN("&cDer Spieler {player} existiert nicht!"),
     PLAYER_OFFLINE("&cDer Spieler {player} ist nicht online!"),
     NOT_ON_ISLAND("&cDu befindest dich auf keiner SB-Insel."),
     NOT_IN_WORLD("&cDu befindest dich nicht in der korrekten Welt!"),
     NO_OWNER("&cDu bist nicht der Besitzer dieser Insel!"),
+    ISLAND_UNKNOWN("&cDie Inselnummer wurde nicht gefunden!"),
 
     /**
      * Command_sbadmin
@@ -28,7 +31,7 @@ public enum Message {
     CMD_SBADMIN_HELP_TP("&e/sbadmin tp <Inselnummer> [center] &8- &7&oTeleportiert dich zu einer Insel, optional ins Zentrum"),
     CMD_SBADMIN_HELP_SETWARP("&e/sbadmin setwarp <Name> &8- &7&oSetzt einen Warp Punkt"),
     CMD_SBADMIN_HELP_DELWARP("&e/sbadmin delwarp <Name> &8- &7&oEntfernt einen Warp Punkt"),
-    CMD_SBADMIN_HELP_INFO("&e/sbadmin info &8- &7&oLiefert Infos zur Insel"),
+    CMD_SBADMIN_HELP_INFO("&e/sbadmin info [Nummer] &8- &7&oLiefert Infos zur Insel"),
     CMD_SBADMIN_HELP_IMPORT("&e/sbadmin import &8- &7&oImportiert alte SB-Inseln und Konfigurationen"),
     CMD_SBADMIN_HELP_ENDTITEL("\n"),
 
@@ -43,7 +46,7 @@ public enum Message {
     CMD_SB_HELP_TEAM("&e/sb team &8- &7&oZeigt den Besitzer und die Mitglieder einer Insel an"),
     CMD_SB_HELP_INFO("&e/sb info &8- &7&oLiefert Infos zur Insel"),
     CMD_SB_HELP_SETSPAWN("&e/sb setspawn &8- &7&oSetzt den Spawnpunkt der Insel um"),
-    CMD_SB_HELP_TP("&e/sb tp <Inselnummer> &8- &7&oTeleportiert dich zur einer Insel"),
+    CMD_SB_HELP_TP("&e/sb tp <Nummer> &8- &7&oTeleportiert dich zur einer Insel"),
     CMD_SB_HELP_SPAWN("&e/sb spawn &8- &7&oTeleportiert dich zur Spawn-Insel"),
     CMD_SB_HELP_WARP("&e/sb warp <Name> &8- &7&oTeleportiert dich zur einem Warp"),
     CMD_SB_HELP_LIMITS("&e/sb limits &8- &7&oZeigt dir die Limits für deine Insel an"),
@@ -75,7 +78,7 @@ public enum Message {
     SBADMIN_SUBCOMMAND_CREATE_OUTOFRANGE("&cDie Größe geht über den erlaubten Bereich hinaus!"),
     SBADMIN_SUBCOMMAND_CREATE_MISSING_SCHEMATIC("&cInsel Schematic wurde nicht gefunden!"),
     SBADMIN_SUBCOMMAND_CREATE_TYPEERROR("&cUnbekannter Inseltyp! Wähle zwischen: Blume, Eis, Pilz, Wüste"),
-    SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR("&cEin unbekannter Fehler ist aufgetreten."),
+    SBADMIN_SUBCOMMAND_CREATE_ERROR("&cEin unbekannter Fehler ist aufgetreten."),
 
     /**
      * SBAdmin_Subcommand_setowner
@@ -88,7 +91,6 @@ public enum Message {
      * SBAdmin_Subcommand_tp
      */
     SBADMIN_SUBCOMMAND_TP_SYNTAX("&e/sc tp <Inselnummer> [Zentrum]"),
-    SBADMIN_SUBCOMMAND_TP_NOEXIST("&cDie Inselnummer wurde nicht gefunden!"),
     SBADMIN_SUBCOMMAND_TP_ERFOLG("&aDu hast dich erfolgreich teleportiert!"),
 
     /**
@@ -185,6 +187,7 @@ public enum Message {
      */
     SBADMIN_SUBCOMMAND_IMPORT_ERROR("&cFolgende Komponenten konnten nicht importiert werden: &4{components}"),
     SBADMIN_SUBCOMMAND_IMPORT_SUCCESS("&aFolgende Komponenten wurden erfolgreich importiert: &2{components}"),
+    SBADMIN_SUBCOMMAND_IMPORT_PERMISSION("&cDieser Vorgang erfordert Sonderberechtigungen."),
 
     /**
      * PLUGIN
@@ -198,8 +201,8 @@ public enum Message {
         this.string = string;
     }
 
-    public ColoredStringBuilder getString() {
-        return new ColoredStringBuilder(string);
+    public ColoredString getString() {
+        return new ColoredString(JavaPlugin.getPlugin(IslandSystem.class), string);
     }
 
 }

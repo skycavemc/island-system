@@ -40,7 +40,7 @@ public class SBAdminCommand implements TabExecutor {
                 case "trust" -> new TrustAdmin(player, args, main);
                 case "untrust" -> new UntrustAdmin(player, args, main);
                 case "setspawn" -> new SetSpawnAdmin(player, main);
-                case "info" -> new InfoAdmin(player, main);
+                case "info" -> new InfoAdmin(player, args, main);
                 case "tp" -> new TPAdmin(player, args);
                 case "setwarp" -> new SetWarpAdmin(player, args, main);
                 case "delwarp" -> new DelWarpAdmin(player, args, main);

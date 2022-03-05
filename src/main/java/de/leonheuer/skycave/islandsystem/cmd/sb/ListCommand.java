@@ -1,6 +1,7 @@
 package de.leonheuer.skycave.islandsystem.cmd.sb;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
@@ -11,10 +12,14 @@ import java.util.StringJoiner;
 
 public class ListCommand {
 
-    public ListCommand(Player player) {
-        File dir = new File("plugins/SkyBeeIslandSystem/insel/");
+    public ListCommand(Player player, IslandSystem main) {
+        File dir = new File(main.getDataFolder(), "islands/");
+        if (!dir.isDirectory()) {
+            return;
+        }
+
         File[] files = dir.listFiles();
-        if (!dir.isDirectory() || files == null) {
+        if (files == null) {
             return;
         }
 

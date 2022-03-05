@@ -8,7 +8,6 @@ import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
-import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -76,30 +75,31 @@ public class CreateAdmin {
         }
 
         player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_WAIT.getString().get());
+        int id = main.getConfiguration().getInt("current_island_id") + 1;
         Island island;
         try {
-            island = Island.create(Utils.getLastID(), radius, template);
+            island = Island.create(id, radius, template);
         } catch (IOException e) {
             e.printStackTrace();
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR.getString().get());
+            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_ERROR.getString().get());
             return;
         }
         if (island == null) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR.getString().get());
+            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_ERROR.getString().get());
             return;
         }
         ProtectedRegion region = island.getRegion();
         if (region == null) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OTHER_ERROR.getString().get());
+            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_ERROR.getString().get());
             return;
         }
 
         region.getOwners().addPlayer(other.getUniqueId());
 
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_FERTIG.getString().replace("{isid}", "" + Utils.getLastID()).get());
+        player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_FERTIG.getString().replace("{isid}", "" + id).get());
         other.teleport(island.getCenterLocation());
         player.teleport(island.getCenterLocation());
-        Utils.increaseLastID();
+        main.getConfiguration().set("current_island_id", id);
     }
 
 }

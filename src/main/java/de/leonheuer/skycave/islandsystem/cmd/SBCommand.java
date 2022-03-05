@@ -34,7 +34,7 @@ public class SBCommand implements TabExecutor {
 
         if (args.length >= 1) {
             switch (args[0].toLowerCase()) {
-                case "buy" -> new BuyCommand(player);
+                case "buy" -> new BuyCommand(player, main);
                 case "trust" -> new TrustCommand(player, args, main);
                 case "untrust" -> new UntrustCommand(player, args, main);
                 case "setspawn" -> new SetSpawnCommand(player, main);
@@ -42,7 +42,7 @@ public class SBCommand implements TabExecutor {
                 case "spawn" -> new SpawnCommand(player);
                 case "team" -> new TeamCommand(player, main);
                 case "info" -> new InfoCommand(player, main);
-                case "list" -> new ListCommand(player);
+                case "list" -> new ListCommand(player, main);
                 case "kick" -> new KickCommand(player, args, main);
                 case "warp", "warps" -> new WarpCommand(player, args, main);
                 case "limits" -> new LimitsCommand(player);

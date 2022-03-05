@@ -9,10 +9,10 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
-import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 
 public class Island {
 
+    private static final IslandSystem main = JavaPlugin.getPlugin(IslandSystem.class);
     private final int id;
     private final SpiralLocation spiralLocation;
     private final YamlConfiguration config;
@@ -30,7 +31,7 @@ public class Island {
     private Location spawn;
     private LocalDateTime created;
 
-    public Island(int id, int radius, Location spawn, @NotNull LocalDateTime created,
+    private Island(int id, int radius, Location spawn, @NotNull LocalDateTime created,
                   @NotNull YamlConfiguration config, @NotNull File file) {
         this.id = id;
         this.spiralLocation = SpiralLocation.of(id, 1, 1);
@@ -80,7 +81,7 @@ public class Island {
      */
     public void setRadius(int radius) {
         RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager rm = rc.get(BukkitAdapter.adapt(Utils.ISLAND_WORLD));
+        RegionManager rm = rc.get(BukkitAdapter.adapt(main.getIslandWorld()));
         if (rm == null) {
             return;
         }
@@ -143,7 +144,7 @@ public class Island {
      * @return The center location
      */
     public Location getCenterLocation() {
-        return new Location(Utils.ISLAND_WORLD,
+        return new Location(main.getIslandWorld(),
                 spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
                 spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, 0, 1);
     }
@@ -155,7 +156,7 @@ public class Island {
     @Nullable
     public ProtectedRegion getRegion() {
         RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager rm = rc.get(BukkitAdapter.adapt(Utils.ISLAND_WORLD));
+        RegionManager rm = rc.get(BukkitAdapter.adapt(main.getIslandWorld()));
         if (rm == null) {
             return null;
         }
@@ -165,7 +166,7 @@ public class Island {
     @Nullable
     private ProtectedRegion createRegion(boolean override) {
         RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager rm = rc.get(BukkitAdapter.adapt(Utils.ISLAND_WORLD));
+        RegionManager rm = rc.get(BukkitAdapter.adapt(main.getIslandWorld()));
         if (rm == null) {
             return null;
         }
@@ -189,8 +190,8 @@ public class Island {
                 spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, template.getFile());
         if (success) {
             Location villagerLocation = getCenterLocation();
-            Utils.ISLAND_WORLD.spawnEntity(villagerLocation.add(0, 2, 0), EntityType.VILLAGER);
-            Utils.ISLAND_WORLD.spawnEntity(villagerLocation.add(1, 2, 0), EntityType.VILLAGER);
+            main.getIslandWorld().spawnEntity(villagerLocation.add(0, 2, 0), EntityType.VILLAGER);
+            main.getIslandWorld().spawnEntity(villagerLocation.add(1, 2, 0), EntityType.VILLAGER);
         }
         return success;
     }
@@ -202,6 +203,7 @@ public class Island {
 
         config.set("radius", radius);
         config.set("spawn", spawn);
+        config.set("creation_timestamp", created.toString());
 
         try {
             config.save(file);
@@ -212,6 +214,10 @@ public class Island {
 
     @Nullable
     public static Island create(int id, int radius, IslandTemplate template) throws IOException {
+        if (main.getIslandWorld() == null) {
+            main.getLogger().severe("Island world is not loaded. Island could not be created.");
+            return null;
+        }
         File file = IslandUtils.getIslandSaveLocation(id, true);
         if (file == null) {
             return null;
@@ -226,13 +232,17 @@ public class Island {
         if (island.createRegion(true) == null) {
             return null;
         }
-        config.set("id", id);
         config.set("radius", radius);
         config.set("spawn", island.getSpawn());
         config.set("creation_timestamp", island.getCreated().toString());
         config.save(file);
-        Utils.increaseLastID();
         return island;
+    }
+
+    public static void importAndSave(int id, int radius, Location spawn, @NotNull LocalDateTime created,
+                                     @NotNull YamlConfiguration config, @NotNull File file) {
+        Island island = new Island(id, radius, spawn, created, config, file);
+        island.save();
     }
 
     @Nullable
@@ -246,6 +256,10 @@ public class Island {
 
     @Nullable
     public static Island load(int id) {
+        if (main.getIslandWorld() == null) {
+            main.getLogger().severe("Island world is not loaded. Island could not be loaded.");
+            return null;
+        }
         File file = IslandUtils.getIslandSaveLocation(id, false);
         if (file == null) {
             return null;

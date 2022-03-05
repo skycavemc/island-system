@@ -18,8 +18,6 @@ import java.util.*;
 public class Utils {
 
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
-    public static final @NotNull World ISLAND_WORLD = Objects.requireNonNull(
-            Bukkit.getWorld(main.getIslandWorld().getUID()));
 
     public static @NotNull GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");

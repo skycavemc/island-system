@@ -27,8 +27,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import static de.leonheuer.skycave.islandsystem.util.Utils.ISLAND_WORLD;
-
 public class IslandUtils {
 
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
@@ -114,7 +112,7 @@ public class IslandUtils {
 
         BlockVector3 location = BlockVector3.at(x, y, z);
         EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
-                .world(BukkitAdapter.adapt(ISLAND_WORLD))
+                .world(BukkitAdapter.adapt(main.getIslandWorld()))
                 .maxBlocks(-1)
                 .build();
         try {
@@ -128,7 +126,7 @@ public class IslandUtils {
     }
 
     public static @Nullable ProtectedRegion protectedRegion(int x, int z, int radius, String region) {
-        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(ISLAND_WORLD));
+        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(main.getIslandWorld()));
         if (rm == null) {
             return null;
         }
