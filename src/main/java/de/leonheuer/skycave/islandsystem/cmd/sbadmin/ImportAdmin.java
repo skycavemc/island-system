@@ -11,7 +11,7 @@ public class ImportAdmin {
 
     public ImportAdmin(Player player) {
         if (!player.isOp()) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_IMPORT_PERMISSION.getString().get());
+            player.sendMessage(Message.ADMIN_IMPORT_PERMISSION.getString().get());
             return;
         }
 
@@ -34,9 +34,9 @@ public class ImportAdmin {
             error.add("cache");
         }
 
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_IMPORT_ERROR.getString()
+        player.sendMessage(Message.ADMIN_IMPORT_ERROR.getString()
                 .replace("{components}", error.toString()).get(false));
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_IMPORT_SUCCESS.getString()
+        player.sendMessage(Message.ADMIN_IMPORT_SUCCESS.getString()
                 .replace("{components}", successful.toString()).get(false));
     }
 

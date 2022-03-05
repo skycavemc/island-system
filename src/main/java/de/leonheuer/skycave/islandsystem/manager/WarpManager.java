@@ -28,6 +28,7 @@ public class WarpManager {
         for (String key : config.getKeys(false)) {
             warps.put(key, config.getObject(key, Location.class));
         }
+        main.getLogger().info("Warp manager config successfully reloaded.");
     }
 
     public void set(@NotNull String warp, @NotNull Location loc) {

@@ -72,6 +72,7 @@ public class LegacyAdapter {
         int i = 0;
         for (File f : files) {
             String name = f.getName().replace(".yml", "");
+            main.getLogger().info(name);
             if (!IslandUtils.isValidName(name)) {
                 continue;
             }

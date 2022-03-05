@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class SetSpawnAdmin {
 
     public SetSpawnAdmin(@NotNull Player player, @NotNull IslandSystem main) {
-        if (player.getLocation().getWorld() == main.getIslandWorld()) {
+        if (player.getLocation().getWorld() != main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
@@ -27,7 +27,7 @@ public class SetSpawnAdmin {
             return;
         }
 
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETSPAWN_ERFOLG.getString().get());
+        player.sendMessage(Message.ADMIN_SETSPAWN_SUCCESS.getString().get());
         island.setSpawn(player.getLocation());
     }
 

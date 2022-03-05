@@ -13,6 +13,7 @@ import de.leonheuer.skycave.islandsystem.manager.LimitManager;
 import de.leonheuer.skycave.islandsystem.manager.WarpManager;
 import de.leonheuer.skycave.islandsystem.models.AutoSaveConfig;
 import de.leonheuer.skycave.islandsystem.models.PrefixHolder;
+import de.leonheuer.skycave.islandsystem.models.SelectionProfile;
 import de.leonheuer.skycave.islandsystem.util.FileUtils;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
@@ -23,10 +24,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class IslandSystem extends JavaPlugin implements PrefixHolder {
 
     public static final int ISLAND_DISTANCE = 4000;
+    private final HashMap<UUID, SelectionProfile> selectionProfiles = new HashMap<>();
     private WarpManager warpManager;
     private RegionContainer regionContainer;
     private GUIFactory guiFactory;
@@ -37,22 +41,21 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
 
     @Override
     public void onEnable() {
-        // resources
-        if (!reloadResources()) {
-            getServer().getPluginManager().disablePlugin(this);
-            getLogger().severe("Unable to load all plugin resources.");
-            return;
-        }
-
-        // other dependencies
+        // dependencies
         regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         multiverse = (MultiverseCore) getServer().getPluginManager().getPlugin("Multiverse-Core");
         guiFactory = new GUIFactory(this);
 
         // managers
         warpManager = new WarpManager(this);
-
         limitManager = new LimitManager(this);
+
+        // resources
+        if (!reloadResources()) {
+            getServer().getPluginManager().disablePlugin(this);
+            getLogger().severe("Unable to load all plugin resources.");
+            return;
+        }
         String worldName = config.getString("world_name");
         if (worldName != null && (islandWorld = getServer().getWorld(worldName)) != null) {
             limitManager.start(islandWorld);
@@ -87,11 +90,14 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
         if (!warpConfig.isFile()) {
             try {
                 if (!warpConfig.createNewFile()) {
+                    getLogger().info("The file warps.yml could not be created.");
                     return false;
                 }
+                getLogger().info("The file warps.yml has been created.");
                 warpManager.reloadConfig();
             } catch (IOException e) {
                 e.printStackTrace();
+                getLogger().info("The file warps.yml could not be created.");
                 return false;
             }
         } else {
@@ -118,6 +124,10 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
     @Override
     public void onDisable() {
         limitManager.stopAll();
+    }
+
+    public HashMap<UUID, SelectionProfile> getSelectionProfiles() {
+        return selectionProfiles;
     }
 
     public WarpManager getWarpManager() {

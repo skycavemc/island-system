@@ -49,14 +49,14 @@ public class ListCommand {
         }
 
         if (ownerMessage.length() == 0) {
-            player.sendMessage(Message.SB_SUBCOMMAND_LIST_OWNER_NO.getString().get());
+            player.sendMessage(Message.LIST_OWNER_NO.getString().get());
         } else {
-            player.sendMessage(Message.SB_SUBCOMMAND_LIST_OWNER.getString().replace("{nummer}", ownerMessage.toString()).get());
+            player.sendMessage(Message.LIST_OWNER.getString().replace("{nummer}", ownerMessage.toString()).get());
         }
         if (memberMessage.length() == 0) {
-            player.sendMessage(Message.SB_SUBCOMMAND_LIST_MEMBER_NO.getString().get());
+            player.sendMessage(Message.LIST_MEMBER_NO.getString().get());
         } else {
-            player.sendMessage(Message.SB_SUBCOMMAND_LIST_MEMBER.getString().replace("{nummer}", memberMessage.toString()).get());
+            player.sendMessage(Message.LIST_MEMBER.getString().replace("{nummer}", memberMessage.toString()).get());
         }
     }
 }

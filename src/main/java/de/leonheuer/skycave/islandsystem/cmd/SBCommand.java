@@ -40,7 +40,6 @@ public class SBCommand implements TabExecutor {
                 case "setspawn" -> new SetSpawnCommand(player, main);
                 case "tp" -> new TPCommand(player, args);
                 case "spawn" -> new SpawnCommand(player, main);
-                case "team" -> new TeamCommand(player, main);
                 case "info" -> new InfoCommand(player, main);
                 case "list" -> new ListCommand(player, main);
                 case "kick" -> new KickCommand(player, args, main);
@@ -56,19 +55,17 @@ public class SBCommand implements TabExecutor {
     }
 
     private void sendHelp(@NotNull Player player) {
-        player.sendMessage(Message.CMD_SB_HELP_TITEL.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_BUY.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_TRUST.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_UNTRUST.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_LIST.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_TEAM.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_INFO.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_SETSPAWN.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_TP.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_SPAWN.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_WARP.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_LIMITS.getString().get(false));
-        player.sendMessage(Message.CMD_SB_HELP_ENDTITEL.getString().get(false));
+        player.sendMessage(Message.HELP_HEADER.getString().get(false));
+        player.sendMessage(Message.HELP_BUY.getString().get(false));
+        player.sendMessage(Message.HELP_TRUST.getString().get(false));
+        player.sendMessage(Message.HELP_UNTRUST.getString().get(false));
+        player.sendMessage(Message.HELP_LIST.getString().get(false));
+        player.sendMessage(Message.HELP_INFO.getString().get(false));
+        player.sendMessage(Message.HELP_SETSPAWN.getString().get(false));
+        player.sendMessage(Message.HELP_TP.getString().get(false));
+        player.sendMessage(Message.HELP_SPAWN.getString().get(false));
+        player.sendMessage(Message.HELP_WARP.getString().get(false));
+        player.sendMessage(Message.HELP_LIMITS.getString().get(false));
     }
 
     @Override

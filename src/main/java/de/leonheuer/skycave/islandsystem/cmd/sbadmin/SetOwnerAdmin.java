@@ -15,11 +15,11 @@ public class SetOwnerAdmin {
 
     public SetOwnerAdmin(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 2) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETOWNER_SYNTAX.getString().get());
+            player.sendMessage(Message.ADMIN_SETOWNER_SYNTAX.getString().get());
             return;
         }
 
-        if (player.getLocation().getWorld() == main.getIslandWorld()) {
+        if (player.getLocation().getWorld() != main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
@@ -44,12 +44,12 @@ public class SetOwnerAdmin {
         UUID uuid = other.getUniqueId();
 
         if (region.getOwners().contains(uuid)) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETOWNER_ALREADY.getString().replace("{player}", args[1]).get());
+            player.sendMessage(Message.ADMIN_SETOWNER_ALREADY.getString().replace("{player}", args[1]).get());
             return;
         }
 
         region.getOwners().removeAll();
         region.getOwners().addPlayer(uuid);
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETOWNER_ERFOLG.getString().replace("{player}", args[1]).get());
+        player.sendMessage(Message.ADMIN_SETOWNER_SUCCESS.getString().replace("{player}", args[1]).get());
     }
 }

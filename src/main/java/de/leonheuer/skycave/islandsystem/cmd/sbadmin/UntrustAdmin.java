@@ -15,11 +15,11 @@ public class UntrustAdmin {
 
     public UntrustAdmin(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 2) {
-            player.sendMessage(Message.SB_SUBCOMMAND_UNTRUST_SYNTAX.getString().get());
+            player.sendMessage(Message.UNTRUST_SYNTAX.getString().get());
             return;
         }
 
-        if (player.getLocation().getWorld() == main.getIslandWorld()) {
+        if (player.getLocation().getWorld() != main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
@@ -45,10 +45,10 @@ public class UntrustAdmin {
 
         if (region.getMembers().contains(uuid)) {
             region.getMembers().removePlayer(uuid);
-            player.sendMessage(Message.SB_SUBCOMMAND_UNTRUST_ERFOLG.getString()
+            player.sendMessage(Message.UNTRUST_SUCCESS.getString()
                     .replace("{player}", other.getName()).get());
         } else {
-            player.sendMessage(Message.SB_SUBCOMMAND_UNTRUST_BEREITS.getString().get());
+            player.sendMessage(Message.UNTRUST_ALREADY.getString().get());
         }
     }
 }

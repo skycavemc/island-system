@@ -73,7 +73,7 @@ public class IslandUtils {
      */
     @Nullable
     public static File getIslandSaveLocation(int id, boolean create) {
-        File dir = new File(JavaPlugin.getPlugin(IslandSystem.class).getDataFolder(), "island/");
+        File dir = new File(JavaPlugin.getPlugin(IslandSystem.class).getDataFolder(), "islands/");
         if (!dir.isDirectory()) {
             //noinspection ResultOfMethodCallIgnored
             dir.mkdirs();
@@ -84,7 +84,7 @@ public class IslandUtils {
         String name = IslandUtils.idToName(id);
         File file = new File(dir, name + ".yml");
         if (!file.isFile()) {
-            if (create) {
+            if (!create) {
                 return null;
             }
             try {

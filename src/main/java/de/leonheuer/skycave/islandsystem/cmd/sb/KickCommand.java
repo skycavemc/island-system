@@ -14,11 +14,11 @@ public class KickCommand {
 
     public KickCommand(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 2) {
-            player.sendMessage(Message.SB_SUBCOMMAND_KICK_SYNTAX.getString().get());
+            player.sendMessage(Message.KICK_SYNTAX.getString().get());
             return;
         }
 
-        if (player.getLocation().getWorld() == main.getIslandWorld()) {
+        if (player.getLocation().getWorld() != main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
@@ -46,24 +46,24 @@ public class KickCommand {
             return;
         }
         if (player.getName().equalsIgnoreCase(other.getName())) {
-            player.sendMessage(Message.SB_SUBCOMMAND_KICK_NOYOU.getString().get());
+            player.sendMessage(Message.KICK_SELF.getString().get());
             return;
         }
         if (region.getMembers().contains(other.getUniqueId())) {
-            player.sendMessage(Message.SB_SUBCOMMAND_KICK_NOMEMBER.getString().get());
+            player.sendMessage(Message.KICK_MEMBER.getString().get());
             return;
         }
         if (!region.contains(BukkitAdapter.asBlockVector(other.getLocation()))) {
-            player.sendMessage(Message.SB_SUBCOMMAND_KICK_NOONISLAND.getString().get());
+            player.sendMessage(Message.KICK_NOT_ON_ISLAND.getString().get());
             return;
         }
 
         Location spawn = main.getMultiverse().getMVWorldManager()
                 .getMVWorld("Builder").getSpawnLocation();
         other.teleport(spawn);
-        other.sendMessage(Message.SB_SUBCOMMAND_KICK_TOOTHER.getString()
+        other.sendMessage(Message.KICK_ALERT.getString()
                 .replace("{player}", player.getName()).get());
-        player.sendMessage(Message.SB_SUBCOMMAND_KICK_ERFOLG.getString().replace("{player}", args[1]).get());
+        player.sendMessage(Message.KICK_SUCCESS.getString().replace("{player}", args[1]).get());
     }
 
 }

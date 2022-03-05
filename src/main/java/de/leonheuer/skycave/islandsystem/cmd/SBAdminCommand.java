@@ -55,19 +55,18 @@ public class SBAdminCommand implements TabExecutor {
     }
 
     private void sendHelp(@NotNull Player player) {
-        player.sendMessage(Message.CMD_SBADMIN_HELP_TITEL.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_CREATE.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_SETOWNER.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_SETRADIUS.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_TRUST.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_UNTRUST.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_SETSPAWN.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_INFO.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_TP.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_SETWARP.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_DELWARP.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_IMPORT.getString().get(false));
-        player.sendMessage(Message.CMD_SBADMIN_HELP_ENDTITEL.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_HEADER.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_CREATE.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_SETOWNER.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_SETRADIUS.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_TRUST.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_UNTRUST.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_SETSPAWN.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_INFO.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_TP.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_SETWARP.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_DELWARP.getString().get(false));
+        player.sendMessage(Message.ADMIN_HELP_IMPORT.getString().get(false));
     }
 
     @Override

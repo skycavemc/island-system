@@ -9,13 +9,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class SpawnCommand {
 
-    public SpawnCommand(@NotNull Player player, IslandSystem main) {
+    public SpawnCommand(@NotNull Player player, @NotNull IslandSystem main) {
         World world = main.getIslandWorld();
         if (world == null) {
             player.sendMessage(Message.ISLAND_WORLD_UNLOADED.getString().get());
             return;
         }
-        player.teleport(new Location(world, 0d, 67d, 0d, 0f, 1f));
-        player.sendMessage(Message.SB_SUBCOMMAND_SPAWN.getString().get());
+        player.teleport(new Location(world, 0, 65, 0, 0, 1));
+        player.sendMessage(Message.SPAWN.getString().get());
     }
 }

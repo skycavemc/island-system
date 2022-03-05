@@ -14,18 +14,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.StringJoiner;
 
 public class CreateAdmin {
 
     public CreateAdmin(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 4) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_SYNTAX.getString().get());
+            player.sendMessage(Message.ADMIN_CREATE_SYNTAX.getString().get());
             return;
         }
 
         // spawn island
         if (args[1].equalsIgnoreCase("spawn")) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_WAIT.getString().get());
+            player.sendMessage(Message.ADMIN_CREATE_WAIT.getString().get());
 
             File file = new File(main.getDataFolder(), "sbInsel_Spawn.schem");
             if (file.exists()) {
@@ -38,9 +39,9 @@ public class CreateAdmin {
                 rg.setFlag(Flags.LEAF_DECAY, StateFlag.State.DENY);
                 rg.setFlag(Flags.MOB_SPAWNING, StateFlag.State.DENY);
 
-                player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_FERTIG_SPAWN.getString().get());
+                player.sendMessage(Message.ADMIN_CREATE_FINISHED_SPAWN.getString().get());
             } else {
-                player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_MISSING_SCHEMATIC.getString().get());
+                player.sendMessage(Message.ADMIN_CREATE_MISSING_SCHEMATIC.getString().get());
             }
             return;
         }
@@ -60,43 +61,47 @@ public class CreateAdmin {
         }
 
         if (radius > 1500 || radius < 100) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_OUTOFRANGE.getString().get());
+            player.sendMessage(Message.ADMIN_CREATE_OUT_OF_RANGE.getString().get());
             return;
         }
 
         IslandTemplate template = IslandTemplate.fromString(args[3]);
         if (template == null) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_TYPEERROR.getString().get());
+            StringJoiner types = new StringJoiner("&8, &e");
+            for (IslandTemplate type : IslandTemplate.values()) {
+                types.add(type.getAlternativeName());
+            }
+            player.sendMessage(Message.ADMIN_CREATE_TYPE_ERROR.getString().replace("{types}", types.toString()).get());
             return;
         }
         if (!template.getFile().exists()) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_MISSING_SCHEMATIC.getString().get());
+            player.sendMessage(Message.ADMIN_CREATE_MISSING_SCHEMATIC.getString().get());
             return;
         }
 
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_WAIT.getString().get());
+        player.sendMessage(Message.ADMIN_CREATE_WAIT.getString().get());
         int id = main.getConfiguration().getInt("current_island_id") + 1;
         Island island;
         try {
             island = Island.create(id, radius, template);
         } catch (IOException e) {
             e.printStackTrace();
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_ERROR.getString().get());
+            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().get());
             return;
         }
         if (island == null) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_ERROR.getString().get());
+            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().get());
             return;
         }
         ProtectedRegion region = island.getRegion();
         if (region == null) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_ERROR.getString().get());
+            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().get());
             return;
         }
 
         region.getOwners().addPlayer(other.getUniqueId());
 
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_CREATE_FERTIG.getString().replace("{isid}", "" + id).get());
+        player.sendMessage(Message.ADMIN_CREATE_FINISHED.getString().replace("{isid}", "" + id).get());
         other.teleport(island.getCenterLocation());
         player.teleport(island.getCenterLocation());
         main.getConfiguration().set("current_island_id", id);

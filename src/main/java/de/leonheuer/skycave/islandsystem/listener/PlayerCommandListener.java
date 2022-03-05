@@ -21,11 +21,11 @@ public class PlayerCommandListener implements Listener {
     public void onCommand(@NotNull PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         if (player.hasPermission("skybee.island.alert.manual") &&
-                player.getLocation().getWorld() == main.getIslandWorld() &&
+                player.getLocation().getWorld() != main.getIslandWorld() &&
                 (event.getMessage().startsWith("/region ") ||
                         event.getMessage().startsWith("/rg "))
         ) {
-            player.sendMessage(Message.PLUGIN_MANUAL_WARNUNG.getString().get());
+            player.sendMessage(Message.REGION_ACCESS.getString().get());
         }
     }
 }

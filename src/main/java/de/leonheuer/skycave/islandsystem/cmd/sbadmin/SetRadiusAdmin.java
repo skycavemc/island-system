@@ -11,11 +11,11 @@ public class SetRadiusAdmin {
 
     public SetRadiusAdmin(Player player, String @NotNull [] args, IslandSystem main) {
         if (args.length < 2) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETRADIUS_SYNTAX.getString().get());
+            player.sendMessage(Message.ADMIN_SETRADIUS_SYNTAX.getString().get());
             return;
         }
 
-        if (player.getLocation().getWorld() == main.getIslandWorld()) {
+        if (player.getLocation().getWorld() != main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
@@ -41,10 +41,10 @@ public class SetRadiusAdmin {
         }
 
         if (radius > 1500 || radius < 100) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETRADIUS_OUTOFRANGE.getString().get());
+            player.sendMessage(Message.ADMIN_SETRADIUS_OUTOFRANGE.getString().get());
             return;
         }
         island.setRadius(radius);
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_SETRADIUS_ERFOLG.getString().get());
+        player.sendMessage(Message.ADMIN_SETRADIUS_ERFOLG.getString().get());
     }
 }

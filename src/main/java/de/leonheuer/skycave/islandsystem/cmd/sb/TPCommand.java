@@ -9,7 +9,7 @@ public class TPCommand {
 
     public TPCommand(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(Message.SB_SUBCOMMAND_TP_SYNTAX.getString().get());
+            player.sendMessage(Message.TP_SYNTAX.getString().get());
             return;
         }
 
@@ -17,27 +17,27 @@ public class TPCommand {
         try {
             id = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(Message.SB_SUBCOMMAND_TP_NOEXIST.getString().get());
+            player.sendMessage(Message.INVALID_NUMBER.getString().get());
             return;
         }
 
         Island island = Island.load(id);
         if (island == null) {
-            player.sendMessage(Message.SB_SUBCOMMAND_TP_NOEXIST.getString().get());
+            player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
             return;
         }
 
         ProtectedRegion region = island.getRegion();
         if (region == null) {
-            player.sendMessage(Message.SB_SUBCOMMAND_TP_NOEXIST.getString().get());
+            player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
             return;
         }
 
         if (!region.getMembers().contains(player.getUniqueId()) && !region.getOwners().contains(player.getUniqueId())) {
-            player.sendMessage(Message.SB_SUBCOMMAND_TP_NOMEMBER.getString().get());
+            player.sendMessage(Message.NO_MEMBER.getString().get());
             return;
         }
         player.teleport(island.getSpawn());
-        player.sendMessage(Message.SB_SUBCOMMAND_TP_ERFOLG.getString().get());
+        player.sendMessage(Message.TP_SUCCESS.getString().get());
     }
 }

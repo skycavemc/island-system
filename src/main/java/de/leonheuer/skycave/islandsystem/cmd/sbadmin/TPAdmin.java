@@ -9,7 +9,7 @@ public class TPAdmin {
 
     public TPAdmin(Player player, String @NotNull [] args) {
         if (args.length < 2) {
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_TP_SYNTAX.getString().get());
+            player.sendMessage(Message.ADMIN_TP_SYNTAX.getString().get());
             return;
         }
 
@@ -17,7 +17,7 @@ public class TPAdmin {
         try {
             id = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
+            player.sendMessage(Message.INVALID_NUMBER.getString().get());
             return;
         }
 
@@ -29,10 +29,10 @@ public class TPAdmin {
 
         if (args.length < 3) {
             player.teleport(island.getSpawn());
-            player.sendMessage(Message.SBADMIN_SUBCOMMAND_TP_ERFOLG.getString().get());
+            player.sendMessage(Message.ADMIN_TP_SUCCESS.getString().get());
             return;
         }
         player.teleport(island.getCenterLocation());
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_TP_ERFOLG.getString().get());
+        player.sendMessage(Message.ADMIN_TP_SUCCESS.getString().get());
     }
 }

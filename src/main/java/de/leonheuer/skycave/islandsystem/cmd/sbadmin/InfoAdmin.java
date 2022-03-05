@@ -5,15 +5,18 @@ import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.util.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
+import java.util.UUID;
 
 public class InfoAdmin {
 
     public InfoAdmin(@NotNull Player player, @NotNull String[] args, @NotNull IslandSystem main) {
-        if (player.getLocation().getWorld() == main.getIslandWorld()) {
+        if (player.getLocation().getWorld() != main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
@@ -55,33 +58,41 @@ public class InfoAdmin {
             }
         }
 
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_TITEL.getString()
+        player.sendMessage(Message.INFO_HEADER.getString()
                 .replace("{nummer}", "" + island.getId()).get(false));
 
         StringJoiner owners = new StringJoiner("&8, &b");
-        for (String owner: region.getOwners().getPlayers()) {
-            owners.add(owner);
+        for (UUID owner: region.getOwners().getUniqueIds()) {
+            OfflinePlayer other = Bukkit.getOfflinePlayer(owner);
+            if (other.getName() == null) {
+                continue;
+            }
+            owners.add(other.getName());
         }
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_OWNER.getString()
+        player.sendMessage(Message.INFO_OWNER.getString()
                 .replace("{owner}", owners.toString()).get(false));
 
         StringJoiner members = new StringJoiner("&8, &b");
-        for (String member: region.getMembers().getPlayers()) {
-            members.add(member);
+        for (UUID member : region.getMembers().getUniqueIds()) {
+            OfflinePlayer other = Bukkit.getOfflinePlayer(member);
+            if (other.getName() == null) {
+                continue;
+            }
+            members.add(other.getName());
         }
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_MEMBER.getString()
+        player.sendMessage(Message.INFO_MEMBER.getString()
                 .replace("{member}", members.toString()).get(false));
 
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_RADIUS.getString()
-                .replace("{radius}", "" + island.getRadius()).get());
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_SPAWN_LOC.getString()
-                .replace("{spawn}", Utils.locationAsString(island.getSpawn())).get());
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_CENTER_LOC.getString()
-                .replace("{center}", Utils.locationAsString(island.getCenterLocation())).get());
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_START_LOC.getString().replace("{start}",
-                Utils.locationAsString(island.getSpiralLocation().getStartVector(island.getRadius()))).get());
-        player.sendMessage(Message.SBADMIN_SUBCOMMAND_INFO_END_LOC.getString().replace("{end}",
-                Utils.locationAsString(island.getSpiralLocation().getEndVector(island.getRadius()))).get());
+        player.sendMessage(Message.INFO_RADIUS.getString()
+                .replace("{radius}", "" + island.getRadius()).get(false));
+        player.sendMessage(Message.INFO_SPAWN.getString()
+                .replace("{spawn}", Utils.locationAsString(island.getSpawn())).get(false));
+        player.sendMessage(Message.INFO_CENTER.getString()
+                .replace("{center}", Utils.locationAsString(island.getCenterLocation())).get(false));
+        player.sendMessage(Message.INFO_START.getString().replace("{start}",
+                Utils.locationAsString(island.getSpiralLocation().getStartVector(island.getRadius()))).get(false));
+        player.sendMessage(Message.INFO_END.getString().replace("{end}",
+                Utils.locationAsString(island.getSpiralLocation().getEndVector(island.getRadius()))).get(false));
     }
 
 }
