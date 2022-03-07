@@ -19,6 +19,7 @@ public enum Message {
     ISLAND_WORLD_UNLOADED("&cDie Inselwelt ist nicht geladen."),
     REGION_ACCESS("&4Achtung! Jeder Eingriff kann die Funktion des Plugins beeinträchtigen!"),
     TEMP_DISABLED("&cDiese Funktion ist deaktiviert."),
+    LIMIT_REACHED("&cDas Limit von &4{count} {entity} &cwurde auf der Insel &4{id} &cüberschritten."),
 
 
 

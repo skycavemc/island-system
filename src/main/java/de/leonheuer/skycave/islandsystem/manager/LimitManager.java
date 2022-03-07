@@ -40,7 +40,7 @@ public class LimitManager {
         BukkitTask task = main.getServer().getScheduler().runTaskTimer(main, () -> {
             Map<String, Map<EntityType, Integer>> newMap = new HashMap<>();
             for (LivingEntity e : world.getEntitiesByClass(LivingEntity.class)) {
-                if (EntityLimit.getLimitByType(e.getType()) == -1) {
+                if (EntityLimit.getLimitByType(e.getType()) == null) {
                     continue;
                 }
 
@@ -55,24 +55,6 @@ public class LimitManager {
                         continue;
                     }
                     addToMap(newMap, r.getId(), e.getType());
-                }
-            }
-            for (Chunk c : world.getLoadedChunks()) {
-                for (BlockState state : c.getTileEntities()) {
-                    if (state instanceof Beehive hive) {
-                        BlockVector3 loc = BukkitAdapter.asBlockVector(state.getLocation());
-                        Set<ProtectedRegion> regions = rm.getApplicableRegions(loc).getRegions();
-                        if (regions.isEmpty()) {
-                            continue;
-                        }
-
-                        for (ProtectedRegion r : regions) {
-                            if (!IslandUtils.isValidName(r.getId())) {
-                                continue;
-                            }
-                            addToMap(newMap, r.getId(), EntityType.BEE, hive.getEntityCount());
-                        }
-                    }
                 }
             }
             entityCountMap = newMap;

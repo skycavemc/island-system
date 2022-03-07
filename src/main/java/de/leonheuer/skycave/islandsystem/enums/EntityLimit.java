@@ -2,6 +2,7 @@ package de.leonheuer.skycave.islandsystem.enums;
 
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.Nullable;
 
 public enum EntityLimit {
 
@@ -92,13 +93,14 @@ public enum EntityLimit {
         this.limitType = limitType;
     }
 
-    public static int getLimitByType(EntityType type) {
+    @Nullable
+    public static EntityLimit getLimitByType(EntityType type) {
         for (EntityLimit limit : EntityLimit.values()) {
             if (limit.getType() == type) {
-                return limit.getLimit();
+                return limit;
             }
         }
-        return -1;
+        return null;
     }
 
     public EntityType getType() {
