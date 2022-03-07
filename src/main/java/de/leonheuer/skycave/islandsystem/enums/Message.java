@@ -14,6 +14,7 @@ public enum Message {
     PLAYER_NOFOUND("&cDer Spieler {player} existiert nicht!"),
     PLAYER_NOONLINE("&cDer Spieler {player} ist nicht online!"),
     NOT_ON_ISLAND("&cDu befindest dich auf keiner SB-Insel."),
+    LIMIT_REACHED("&cDas Limit von &4{count} {entity} &cwurde auf der Insel &4{id} &cüberschritten."),
 
     /**
      * Command_sbadmin
