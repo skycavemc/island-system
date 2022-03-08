@@ -62,14 +62,14 @@ public class CreatureSpawnListener implements Listener {
     }
 
     private void sendLimitMessage(UUID uuid, EntityLimit limit, ProtectedRegion region) {
-        Player player = Bukkit.getPlayer(uuid);
+        /*Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline()) {
             return;
         }
         player.sendMessage(Message.LIMIT_REACHED.getString()
                 .replace("{count}", "" + limit.getLimit())
                 .replace("{entity}", Utils.entityTypeToString(limit.getType()))
-                .replace("{id}", region.getId()).replace("sc_", "").get());
+                .replace("{id}", region.getId()).replace("sc_", "").get());*/
     }
 
 }
