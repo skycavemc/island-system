@@ -39,7 +39,6 @@ public class KickCommand {
             player.sendMessage(Message.NO_OWNER.getString().get());
             return;
         }
-
         Player other = Bukkit.getPlayerExact(args[1]);
         if (other == null || !player.canSee(other)) {
             player.sendMessage(Message.PLAYER_OFFLINE.getString().replace("{player}", args[1]).get());

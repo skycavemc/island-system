@@ -31,10 +31,11 @@ public class Island {
     private int radius;
     private Location spawn;
     private LocalDateTime created;
+    private IslandTemplate template;
 
     // For internal use only
     private Island(int id, int radius, Location spawn, @NotNull LocalDateTime created,
-                  @NotNull YamlConfiguration config, @NotNull File file) {
+                  @NotNull YamlConfiguration config, @NotNull File file, @NotNull IslandTemplate template) {
         this.id = id;
         this.spiralLocation = SpiralLocation.of(id, 1, 1);
         this.radius = radius;
@@ -42,6 +43,7 @@ public class Island {
         this.created = created;
         this.config = config;
         this.file = file;
+        this.template = template;
     }
 
     // For internal use only
@@ -130,6 +132,15 @@ public class Island {
             created = LocalDateTime.now();
         }
         return created;
+    }
+
+    /**
+     * Gets the template or starter island that was used for creating the island.
+     * @return The IslandTemplate
+     */
+    @NotNull
+    public IslandTemplate getTemplate() {
+        return template;
     }
 
     /**
@@ -239,6 +250,7 @@ public class Island {
         config.set("radius", radius);
         config.set("spawn", island.getSpawn());
         config.set("creation_timestamp", island.getCreated().toString());
+        config.set("template", template.toString());
         try {
             config.save(file);
             return new CreationResponse(CreationResponse.ResponseType.SUCCESS, island);
@@ -259,8 +271,11 @@ public class Island {
      */
     @Nullable
     public static Island importAndSave(int id, int radius, Location spawn, @NotNull LocalDateTime created,
-                                                 @NotNull YamlConfiguration config, @NotNull File file) {
-        Island island = new Island(id, radius, spawn, created, config, file);
+                                                 @NotNull YamlConfiguration config, @NotNull File file, IslandTemplate template) {
+        if (template == null) {
+            template = IslandTemplate.ICE;
+        }
+        Island island = new Island(id, radius, spawn, created, config, file, template);
         if (island.save()) {
             return island;
         }
@@ -306,9 +321,16 @@ public class Island {
             created = LocalDateTime.parse(timestamp);
         }
 
+        IslandTemplate template;
+        try {
+            template = IslandTemplate.valueOf(config.getString("template"));
+        } catch (IllegalArgumentException e) {
+            template = IslandTemplate.ICE;
+        }
+
         return new Island(
                 id, config.getInt("radius"), config.getObject("spawn", Location.class),
-                created, config, file
+                created, config, file, template
         );
     }
 

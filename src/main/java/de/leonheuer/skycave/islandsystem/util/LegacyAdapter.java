@@ -96,7 +96,7 @@ public class LegacyAdapter {
             YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(file);
 
             Island island = Island.importAndSave(IslandUtils.nameToId(name), radius, spawn,
-                    LocalDateTime.ofInstant(created, ZoneId.systemDefault()), newConfig, file);
+                    LocalDateTime.ofInstant(created, ZoneId.systemDefault()), newConfig, file, null);
             if (island == null) {
                 continue;
             }

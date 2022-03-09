@@ -140,6 +140,7 @@ public enum Message {
     INFO_OWNER("&eBesitzer: &b{owner}"),
     INFO_MEMBER("&eMitglieder: &b{member}"),
     INFO_CREATION("&eGründungsdatum: &b{creation}"),
+    INFO_TEMPLATE("&eInseltyp: &b{type}"),
     INFO_RADIUS("&2Radius: &b{radius}"),
     INFO_SPAWN("&aSpawn: &b{spawn}"),
     INFO_CENTER("&aZentrum: &b{center}"),

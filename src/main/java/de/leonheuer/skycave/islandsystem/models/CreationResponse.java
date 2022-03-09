@@ -11,8 +11,7 @@ public record CreationResponse(@NotNull ResponseType type, @Nullable Island isla
         GENERATION_ERROR,
         WG_REGION_ERROR,
         FILE_ERROR,
-        SUCCESS,
-        UNKNOWN
+        SUCCESS
     }
 
     @NotNull

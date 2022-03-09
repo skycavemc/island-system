@@ -62,6 +62,8 @@ public class InfoCommand {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm");
         player.sendMessage(Message.INFO_CREATION.getString()
                 .replace("{creation}", dtf.format(island.getCreated())).get(false));
+        player.sendMessage(Message.INFO_TEMPLATE.getString()
+                .replace("{type}", island.getTemplate().getAlternativeName()).get(false));
         player.sendMessage(Message.INFO_RADIUS.getString()
                 .replace("{radius}", "" + island.getRadius()).get(false));
         player.sendMessage(Message.INFO_SPAWN.getString()
