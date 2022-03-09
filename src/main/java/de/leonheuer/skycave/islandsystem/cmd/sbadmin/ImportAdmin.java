@@ -11,7 +11,7 @@ public class ImportAdmin {
 
     public ImportAdmin(Player player) {
         if (!player.isOp()) {
-            player.sendMessage(Message.ADMIN_IMPORT_PERMISSION.getString().get());
+            player.sendMessage(Message.SPECIAL_PERMS.getString().get());
             return;
         }
 

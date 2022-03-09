@@ -79,7 +79,6 @@ public class SBCommand implements TabExecutor {
             arguments.add("trust");
             arguments.add("untrust");
             arguments.add("list");
-            arguments.add("team");
             arguments.add("info");
             arguments.add("setspawn");
             arguments.add("tp");

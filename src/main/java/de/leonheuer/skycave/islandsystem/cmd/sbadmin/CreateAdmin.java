@@ -6,6 +6,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.enums.Message;
+import de.leonheuer.skycave.islandsystem.models.CreationResponse;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import org.bukkit.Bukkit;
@@ -13,12 +14,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.StringJoiner;
 
 public class CreateAdmin {
 
-    public CreateAdmin(Player player, String @NotNull [] args, IslandSystem main) {
+    public CreateAdmin(@NotNull Player player, String @NotNull [] args, IslandSystem main) {
+        if (!player.isOp()) {
+            player.sendMessage(Message.SPECIAL_PERMS.getString().get());
+            return;
+        }
+
         if (args.length < 4) {
             player.sendMessage(Message.ADMIN_CREATE_SYNTAX.getString().get());
             return;
@@ -81,26 +86,19 @@ public class CreateAdmin {
 
         player.sendMessage(Message.ADMIN_CREATE_WAIT.getString().get());
         int id = main.getConfiguration().getInt("current_island_id") + 1;
-        Island island;
-        try {
-            island = Island.create(id, radius, template);
-        } catch (IOException e) {
-            e.printStackTrace();
-            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().get());
-            return;
-        }
-        if (island == null) {
-            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().get());
+        CreationResponse response = Island.create(id, radius, template);
+        Island island = response.getIsland();
+        if (response.getType() != CreationResponse.ResponseType.SUCCESS || island == null) {
+            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().replace("{type}", response.getType().toString()).get());
             return;
         }
         ProtectedRegion region = island.getRegion();
         if (region == null) {
-            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().get());
+            player.sendMessage(Message.ADMIN_CREATE_REGION_ERROR.getString().get());
             return;
         }
 
         region.getOwners().addPlayer(other.getUniqueId());
-
         player.sendMessage(Message.ADMIN_CREATE_FINISHED.getString().replace("{isid}", "" + id).get());
         other.teleport(island.getCenterLocation());
         player.teleport(island.getCenterLocation());

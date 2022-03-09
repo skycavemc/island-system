@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -144,6 +145,7 @@ public class Island {
      * Gets the center location of the island.
      * @return The center location
      */
+    @NotNull
     public Location getCenterLocation() {
         return new Location(main.getIslandWorld(),
                 spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
@@ -186,9 +188,11 @@ public class Island {
                 spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
                 spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, template.getFile());
         if (success) {
-            Location villagerLocation = getCenterLocation();
-            main.getIslandWorld().spawnEntity(villagerLocation.add(0, 2, 0), EntityType.VILLAGER);
-            main.getIslandWorld().spawnEntity(villagerLocation.add(1, 2, 0), EntityType.VILLAGER);
+            main.getServer().getScheduler().runTaskLater(main, () -> {
+                Location villagerLocation = getCenterLocation();
+                main.getIslandWorld().spawnEntity(villagerLocation.add(0, 2, 0), EntityType.VILLAGER);
+                main.getIslandWorld().spawnEntity(villagerLocation.add(1, 2, 0), EntityType.VILLAGER);
+            }, 20);
         }
         return success;
     }
@@ -196,9 +200,9 @@ public class Island {
     /**
      * Saves the island to its file.
      */
-    public void save() {
+    public boolean save() {
         if (file == null || config == null) {
-            return;
+            return false;
         }
 
         config.set("radius", radius);
@@ -207,8 +211,10 @@ public class Island {
 
         try {
             config.save(file);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -218,33 +224,36 @@ public class Island {
      * @param radius The radius of the island
      * @param template The template for the starter island
      * @return The created Island
-     * @throws IOException If the island could not be saved.
      */
-    @Nullable
-    public static Island create(int id, int radius, IslandTemplate template) throws IOException {
+    @NotNull
+    public static CreationResponse create(int id, int radius, IslandTemplate template) {
         if (main.getIslandWorld() == null) {
-            main.getLogger().severe("Island world is not loaded. Island could not be created.");
-            return null;
+            return new CreationResponse(CreationResponse.ResponseType.ISLAND_WORLD_UNLOADED, null);
         }
         File file = IslandUtils.getIslandSaveLocation(id, true);
         if (file == null) {
-            return null;
+            return new CreationResponse(CreationResponse.ResponseType.SAVE_LOCATION_UNDEFINED, null);
         }
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         Island island = new Island(id, radius, config, file);
         island.setSpawn(island.getCenterLocation());
         if (!island.generateDefaultIsland(template)) {
-            return null;
+            return new CreationResponse(CreationResponse.ResponseType.GENERATION_ERROR, null);
         }
         if (island.createRegion() == null) {
-            return null;
+            return new CreationResponse(CreationResponse.ResponseType.WG_REGION_ERROR, null);
         }
         config.set("radius", radius);
         config.set("spawn", island.getSpawn());
         config.set("creation_timestamp", island.getCreated().toString());
-        config.save(file);
-        return island;
+        try {
+            config.save(file);
+            return new CreationResponse(CreationResponse.ResponseType.SUCCESS, island);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new CreationResponse(CreationResponse.ResponseType.FILE_ERROR, null);
+        }
     }
 
     /**
@@ -256,11 +265,14 @@ public class Island {
      * @param config The configuration
      * @param file The config file
      */
+    @Nullable
     public static Island importAndSave(int id, int radius, Location spawn, @NotNull LocalDateTime created,
-                                     @NotNull YamlConfiguration config, @NotNull File file) {
+                                                 @NotNull YamlConfiguration config, @NotNull File file) {
         Island island = new Island(id, radius, spawn, created, config, file);
-        island.save();
-        return island;
+        if (island.save()) {
+            return island;
+        }
+        return null;
     }
 
     /**

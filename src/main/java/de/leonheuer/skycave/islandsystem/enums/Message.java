@@ -20,6 +20,7 @@ public enum Message {
     REGION_ACCESS("&4Achtung! Jeder Eingriff kann die Funktion des Plugins beeinträchtigen!"),
     TEMP_DISABLED("&cDiese Funktion ist deaktiviert."),
     LIMIT_REACHED("&cDas Limit von &4{count} {entity} &cwurde auf der Insel &4{id} &cüberschritten."),
+    SPECIAL_PERMS("&cDieser Vorgang erfordert Sonderberechtigungen."),
 
 
 
@@ -39,13 +40,14 @@ public enum Message {
 
     // Admin create
     ADMIN_CREATE_SYNTAX("&e/sbadmin create <Spieler> <250,500> <Variante>"),
-    ADMIN_CREATE_WAIT("&aBeginne Inselerstellung! Bitte habe einen Moment Geduld..."),
+    ADMIN_CREATE_OUT_OF_RANGE("&cDer Radius darf nur zwischen 100 und 1500 liegen!"),
+    ADMIN_CREATE_TYPE_ERROR("&cUnbekannter Inseltyp! Wähle zwischen: &e{types}"),
+    ADMIN_CREATE_MISSING_SCHEMATIC("&cInsel Schematic wurde nicht gefunden!"),
+    ADMIN_CREATE_REGION_ERROR("&cDie Insel-Region konnte nicht geladen werden."),
+    ADMIN_CREATE_ERROR("&cBei der Inselerstellung ist ein Fehler aufgetreten. Fehlercode: &4{type}"),
+    ADMIN_CREATE_WAIT("&eDie Insel wird erstellt, bitte warte einen Moment..."),
     ADMIN_CREATE_FINISHED_SPAWN("&aDie Spawninsel wurde erfolgreich erstellt!"),
     ADMIN_CREATE_FINISHED("&aDie Insel {isid} wurde erfolgreich erstellt!"),
-    ADMIN_CREATE_OUT_OF_RANGE("&cDer Radius darf nur zwischen 100 und 1500 liegen!"),
-    ADMIN_CREATE_MISSING_SCHEMATIC("&cInsel Schematic wurde nicht gefunden!"),
-    ADMIN_CREATE_TYPE_ERROR("&cUnbekannter Inseltyp! Wähle zwischen: &e{types}"),
-    ADMIN_CREATE_ERROR("&cEin unbekannter Fehler ist aufgetreten."),
 
     // Admin setowner
     ADMIN_SETOWNER_SYNTAX("&e/sbadmin setowner <Spieler>"),
@@ -75,7 +77,6 @@ public enum Message {
     // Admin import
     ADMIN_IMPORT_ERROR("&cFolgende Komponenten konnten nicht importiert werden: &4{components}"),
     ADMIN_IMPORT_SUCCESS("&aFolgende Komponenten wurden erfolgreich importiert: &2{components}"),
-    ADMIN_IMPORT_PERMISSION("&cDieser Vorgang erfordert Sonderberechtigungen."),
 
 
 
@@ -147,8 +148,12 @@ public enum Message {
 
     // Buy
     BUY_NOT_ENOUGH("&cDu hast nicht genug Geld. Dir fehlen noch {diff}"),
-    BUY_SUCCESS("&aDu hast dir erfolgreich eine SB-Insel gekauft."),
-    BUY_ERROR("&cDas Geld konnte nicht eingezogen werden."),
+    BUY_TEMPLATE_ERROR("&cDie Starter-Insel konnte nicht geladen werden."),
+    BUY_REGION_ERROR("&cDie Insel-Region konnte nicht geladen werden."),
+    BUY_TRANSACTION_FAILED("&cDas Geld konnte nicht eingezogen werden."),
+    BUY_CREATION_ERROR("&cBei der Inselerstellung ist ein Fehler aufgetreten. Fehlercode: &4{type}"),
+    BUY_WAIT("&eDie Insel wird erstellt, bitte warte einen Moment..."),
+    BUY_FINISHED("&aDu hast dir erfolgreich eine SB-Insel gekauft. Die Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
     ;
 
     private final String string;

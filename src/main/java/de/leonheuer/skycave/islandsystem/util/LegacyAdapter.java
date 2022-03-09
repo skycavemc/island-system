@@ -95,8 +95,12 @@ public class LegacyAdapter {
             }
             YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(file);
 
-            Island.importAndSave(IslandUtils.nameToId(name), radius, spawn,
-                    LocalDateTime.ofInstant(created, ZoneId.systemDefault()), newConfig, file).setRadius(radius);
+            Island island = Island.importAndSave(IslandUtils.nameToId(name), radius, spawn,
+                    LocalDateTime.ofInstant(created, ZoneId.systemDefault()), newConfig, file);
+            if (island == null) {
+                continue;
+            }
+            island.setRadius(radius);
             i++;
         }
         main.getLogger().info("Imported " + i + " of " + count + " islands.");

@@ -64,6 +64,7 @@ public class CreatureSpawnListener implements Listener {
     }
 
     private void sendLimitMessage(UUID uuid, EntityLimit limit, ProtectedRegion region) {
+        // TODO options for notifications
         Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline()) {
             return;
@@ -71,7 +72,7 @@ public class CreatureSpawnListener implements Listener {
         player.sendMessage(Message.LIMIT_REACHED.getString()
                 .replace("{count}", "" + limit.getLimit())
                 .replace("{entity}", Utils.entityTypeAsString(limit.getType()))
-                .replace("{id}", region.getId()).replace("sc_", "").get());
+                .replace("{id}", "" + IslandUtils.nameToId(region.getId())).get());
     }
 
 }

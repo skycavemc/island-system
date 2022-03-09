@@ -1,11 +1,14 @@
 package de.leonheuer.skycave.islandsystem.cmd.sb;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.mcguiapi.gui.GUI;
 import de.leonheuer.mcguiapi.gui.GUIPattern;
 import de.leonheuer.mcguiapi.utils.ItemBuilder;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.enums.Message;
+import de.leonheuer.skycave.islandsystem.models.CreationResponse;
+import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.models.SelectionProfile;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
@@ -106,13 +109,7 @@ public class BuyCommand {
         ).setItem(6, 8, getConfirmItemStack(), event -> {
                     Player p = (Player) event.getWhoClicked();
                     if (economy.has(p, getCost())) {
-                        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-                        if (economy.withdrawPlayer(p, getCost()).transactionSuccess()) {
-                            p.sendMessage(Message.BUY_SUCCESS.getString().get());
-                        } else {
-                            p.sendMessage(Message.BUY_ERROR.getString().get());
-                        }
-                        p.closeInventory();
+                        buy(p);
                     } else {
                         p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
                         String diff = format.format(getCost() - economy.getBalance(p)) + "$";
@@ -148,6 +145,46 @@ public class BuyCommand {
                         "&7Kosten: &e" + cost,
                         "&cDer Betrag wird direkt abgebucht!"
                 ).asItem();
+    }
+
+    private void buy(@NotNull Player p) {
+        SelectionProfile profile = main.getSelectionProfiles().get(p.getUniqueId());
+        if (!profile.getTemplate().getFile().exists()) {
+            p.sendMessage(Message.BUY_TEMPLATE_ERROR.getString().get());
+            return;
+        }
+        player.sendMessage(Message.BUY_WAIT.getString().get());
+        int id = main.getConfiguration().getInt("current_island_id") + 1;
+        int radius = 250;
+        if (profile.isLarge()) {
+            radius = radius * 2;
+        }
+
+        CreationResponse response = Island.create(id, radius, profile.getTemplate());
+        Island island = response.getIsland();
+        if (response.getType() != CreationResponse.ResponseType.SUCCESS || island == null) {
+            player.sendMessage(Message.BUY_CREATION_ERROR.getString().replace("{type}", response.getType().toString()).get());
+            return;
+        }
+
+        ProtectedRegion region = island.getRegion();
+        if (region == null) {
+            player.sendMessage(Message.BUY_REGION_ERROR.getString().get());
+            return;
+        }
+
+        if (main.getEconomy().withdrawPlayer(p, getCost()).transactionSuccess()) {
+            region.getOwners().addPlayer(p.getUniqueId());
+
+            player.sendMessage(Message.BUY_FINISHED.getString().replaceAll("{id}", "" + id).get());
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+            p.teleport(island.getSpawn());
+
+            main.getConfiguration().set("current_island_id", id);
+        } else {
+            p.sendMessage(Message.BUY_TRANSACTION_FAILED.getString().get());
+        }
+        p.closeInventory();
     }
 
 }
