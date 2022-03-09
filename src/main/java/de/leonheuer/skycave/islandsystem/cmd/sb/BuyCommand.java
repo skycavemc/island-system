@@ -11,8 +11,10 @@ import de.leonheuer.skycave.islandsystem.models.CreationResponse;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.models.SelectionProfile;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -107,6 +109,7 @@ public class BuyCommand {
                     p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
                 }
         ).setItem(6, 8, getConfirmItemStack(), event -> {
+                    event.setCancelled(true);
                     Player p = (Player) event.getWhoClicked();
                     if (economy.has(p, getCost())) {
                         buy(p);
@@ -153,6 +156,10 @@ public class BuyCommand {
             p.sendMessage(Message.BUY_TEMPLATE_ERROR.getString().get());
             return;
         }
+
+        p.closeInventory();
+        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+
         player.sendMessage(Message.BUY_WAIT.getString().get());
         int id = main.getConfiguration().getInt("current_island_id") + 1;
         int radius = 250;
@@ -175,16 +182,21 @@ public class BuyCommand {
 
         if (main.getEconomy().withdrawPlayer(p, getCost()).transactionSuccess()) {
             region.getOwners().addPlayer(p.getUniqueId());
-
-            player.sendMessage(Message.BUY_FINISHED.getString().replaceAll("{id}", "" + id).get());
-            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-            p.teleport(island.getSpawn());
-
             main.getConfiguration().set("current_island_id", id);
+            main.getLogger().info(p.getName() + " bought an island. Specifications: ID: " + id + ", Radius: " + radius + ", Type: " + profile.getTemplate().toString());
+
+            main.getServer().getScheduler().runTaskLater(main, () -> {
+                player.sendMessage(Message.BUY_FINISHED.getString().replaceAll("{id}", "" + id).get());
+                p.teleport(island.getSpawn());
+                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+                Location villagerLocation = island.getCenterLocation().add(0, 1, 0);
+                main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
+                main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
+            }, 20);
+
         } else {
             p.sendMessage(Message.BUY_TRANSACTION_FAILED.getString().get());
         }
-        p.closeInventory();
     }
 
 }

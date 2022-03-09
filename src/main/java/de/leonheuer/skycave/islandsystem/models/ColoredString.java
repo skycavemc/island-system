@@ -39,7 +39,9 @@ public class ColoredString {
      * @return The ColoredString instance
      */
     public ColoredString replaceAll(String from, String to) {
-        base = base.replaceAll(from, to);
+        while (base.contains(from)) {
+            base = base.replace(from, to);
+        }
         return this;
     }
 

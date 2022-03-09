@@ -153,7 +153,7 @@ public enum Message {
     BUY_TRANSACTION_FAILED("&cDas Geld konnte nicht eingezogen werden."),
     BUY_CREATION_ERROR("&cBei der Inselerstellung ist ein Fehler aufgetreten. Fehlercode: &4{type}"),
     BUY_WAIT("&eDie Insel wird erstellt, bitte warte einen Moment..."),
-    BUY_FINISHED("&aDu hast dir erfolgreich eine SB-Insel gekauft. Die Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
+    BUY_FINISHED("&aDu hast dir erfolgreich eine SB-Insel gekauft! Die Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
     ;
 
     private final String string;

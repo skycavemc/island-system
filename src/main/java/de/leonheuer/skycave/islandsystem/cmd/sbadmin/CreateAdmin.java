@@ -103,6 +103,7 @@ public class CreateAdmin {
         other.teleport(island.getCenterLocation());
         player.teleport(island.getCenterLocation());
         main.getConfiguration().set("current_island_id", id);
+        main.getLogger().info(player.getName() + " manually created an island for + " + other.getName() + ". Specifications: ID: " + id + ", Radius: " + radius + ", Type: " + template);
     }
 
 }

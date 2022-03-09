@@ -184,17 +184,9 @@ public class Island {
     }
 
     private boolean generateDefaultIsland(@NotNull IslandTemplate template) {
-        boolean success = IslandUtils.printSchematic(
+        return IslandUtils.printSchematic(
                 spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
                 spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, template.getFile());
-        if (success) {
-            main.getServer().getScheduler().runTaskLater(main, () -> {
-                Location villagerLocation = getCenterLocation();
-                main.getIslandWorld().spawnEntity(villagerLocation.add(0, 2, 0), EntityType.VILLAGER);
-                main.getIslandWorld().spawnEntity(villagerLocation.add(1, 2, 0), EntityType.VILLAGER);
-            }, 20);
-        }
-        return success;
     }
 
     /**
