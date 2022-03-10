@@ -112,6 +112,7 @@ public class BuyCommand {
                     event.setCancelled(true);
                     Player p = (Player) event.getWhoClicked();
                     if (economy.has(p, getCost())) {
+                        // TODO check bee nests
                         buy(p);
                     } else {
                         p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
@@ -181,6 +182,7 @@ public class BuyCommand {
         }
 
         if (main.getEconomy().withdrawPlayer(p, getCost()).transactionSuccess()) {
+            // TODO remove bee nests
             region.getOwners().addPlayer(p.getUniqueId());
             main.getConfiguration().set("current_island_id", id);
             main.getLogger().info(p.getName() + " bought an island. Specifications: ID: " + id + ", Radius: " + radius + ", Type: " + profile.getTemplate().toString());

@@ -344,10 +344,15 @@ public class Island {
         }
 
         IslandTemplate template;
-        try {
-            template = IslandTemplate.valueOf(config.getString("template"));
-        } catch (IllegalArgumentException e) {
+        String templateName = config.getString("template");
+        if (templateName == null) {
             template = IslandTemplate.ICE;
+        } else {
+            try {
+                template = IslandTemplate.valueOf(config.getString("template"));
+            } catch (IllegalArgumentException e) {
+                template = IslandTemplate.ICE;
+            }
         }
 
         List<UUID> bannedPlayers = new ArrayList<>();

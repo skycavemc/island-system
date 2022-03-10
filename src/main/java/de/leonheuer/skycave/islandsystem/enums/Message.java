@@ -102,6 +102,7 @@ public enum Message {
     TRUST_SUCCESS("&aDer Spieler {player} wurde erfolgreich hinzugefügt!"),
     TRUST_SELF("&cDu kannst dich nicht selbst hinzufügen!"),
     TRUST_ALREADY("&cDieser Spieler ist bereits Mitglied!"),
+    TRUST_BANNED("&cDieser Spieler ist gebannt!"),
 
     // Untrust
     UNTRUST_SYNTAX("&e/sb untrust <Spieler>"),

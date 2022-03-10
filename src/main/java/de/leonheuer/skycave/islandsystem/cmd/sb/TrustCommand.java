@@ -56,6 +56,10 @@ public class TrustCommand {
             player.sendMessage(Message.TRUST_ALREADY.getString().get());
             return;
         }
+        if (island.getBannedPlayers().contains(uuid)) {
+            player.sendMessage(Message.TRUST_BANNED.getString().get());
+            return;
+        }
 
         region.getMembers().addPlayer(uuid);
         player.sendMessage(Message.TRUST_SUCCESS.getString().replace("{player}", args[1]).get());

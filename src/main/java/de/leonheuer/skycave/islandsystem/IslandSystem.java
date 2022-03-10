@@ -7,6 +7,7 @@ import de.leonheuer.mcguiapi.gui.GUIFactory;
 import de.leonheuer.skycave.islandsystem.cmd.SBAdminCommand;
 import de.leonheuer.skycave.islandsystem.cmd.SBCommand;
 import de.leonheuer.skycave.islandsystem.listener.CreatureSpawnListener;
+import de.leonheuer.skycave.islandsystem.listener.EntryListener;
 import de.leonheuer.skycave.islandsystem.listener.PlayerCommandListener;
 import de.leonheuer.skycave.islandsystem.listener.WorldLoadListener;
 import de.leonheuer.skycave.islandsystem.manager.LimitManager;
@@ -76,7 +77,7 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new PlayerCommandListener(this), this);
         pm.registerEvents(new WorldLoadListener(this), this);
-        pm.registerEvents(new CreatureSpawnListener(this), this);
+        pm.registerEvents(new EntryListener(this), this);
     }
 
     /**
