@@ -27,7 +27,7 @@ public class SetSpawnAdmin {
             return;
         }
 
-        player.sendMessage(Message.ADMIN_SETSPAWN_SUCCESS.getString().get());
+        player.sendMessage(Message.SETSPAWN_SUCCESS.getString().get());
         island.setSpawn(player.getLocation());
     }
 

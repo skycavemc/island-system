@@ -29,10 +29,10 @@ public class TPAdmin {
 
         if (args.length < 3) {
             player.teleport(island.getSpawn());
-            player.sendMessage(Message.ADMIN_TP_SUCCESS.getString().get());
+            player.sendMessage(Message.TP_SUCCESS.getString().get());
             return;
         }
         player.teleport(island.getCenterLocation());
-        player.sendMessage(Message.ADMIN_TP_SUCCESS.getString().get());
+        player.sendMessage(Message.TP_SUCCESS.getString().get());
     }
 }

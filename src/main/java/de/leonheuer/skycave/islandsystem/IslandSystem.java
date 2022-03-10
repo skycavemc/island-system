@@ -16,6 +16,7 @@ import de.leonheuer.skycave.islandsystem.models.PrefixHolder;
 import de.leonheuer.skycave.islandsystem.models.SelectionProfile;
 import de.leonheuer.skycave.islandsystem.util.FileUtils;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -32,7 +33,6 @@ import java.util.UUID;
 
 public class IslandSystem extends JavaPlugin implements PrefixHolder {
 
-    public static final int ISLAND_DISTANCE = 4000;
     private final HashMap<UUID, SelectionProfile> selectionProfiles = new HashMap<>();
     private RegionContainer regionContainer;
     private MultiverseCore multiverse;
@@ -188,5 +188,14 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
     @Override
     public String getPrefix() {
         return "&8❙ &6SB&fInseln &8» ";
+    }
+
+    @NotNull
+    public Location getServerSpawn() {
+        return multiverse.getMVWorldManager().getMVWorld(config.getString("spawn_world_name")).getSpawnLocation();
+    }
+
+    public int getIslandDistance() {
+        return config.getInt("island_distance");
     }
 }

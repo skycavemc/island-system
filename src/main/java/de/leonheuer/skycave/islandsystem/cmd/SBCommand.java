@@ -37,12 +37,14 @@ public class SBCommand implements TabExecutor {
                 case "buy" -> new BuyCommand(player, main);
                 case "trust" -> new TrustCommand(player, args, main);
                 case "untrust" -> new UntrustCommand(player, args, main);
+                case "ban" -> new BanCommand(player, args, main);
+                case "unban", "pardon" -> new UnbanCommand(player, args, main);
+                case "kick" -> new KickCommand(player, args, main);
+                case "list" -> new ListCommand(player, main);
+                case "info" -> new InfoCommand(player, main);
                 case "setspawn" -> new SetSpawnCommand(player, main);
                 case "tp" -> new TPCommand(player, args);
                 case "spawn" -> new SpawnCommand(player, main);
-                case "info" -> new InfoCommand(player, main);
-                case "list" -> new ListCommand(player, main);
-                case "kick" -> new KickCommand(player, args, main);
                 case "warp", "warps" -> new WarpCommand(player, args, main);
                 case "limits" -> new LimitsCommand(player);
                 default -> sendHelp(player);
@@ -59,6 +61,9 @@ public class SBCommand implements TabExecutor {
         player.sendMessage(Message.HELP_BUY.getString().get(false));
         player.sendMessage(Message.HELP_TRUST.getString().get(false));
         player.sendMessage(Message.HELP_UNTRUST.getString().get(false));
+        player.sendMessage(Message.HELP_BAN.getString().get(false));
+        player.sendMessage(Message.HELP_UNBAN.getString().get(false));
+        player.sendMessage(Message.HELP_KICK.getString().get(false));
         player.sendMessage(Message.HELP_LIST.getString().get(false));
         player.sendMessage(Message.HELP_INFO.getString().get(false));
         player.sendMessage(Message.HELP_SETSPAWN.getString().get(false));
@@ -78,6 +83,9 @@ public class SBCommand implements TabExecutor {
             arguments.add("buy");
             arguments.add("trust");
             arguments.add("untrust");
+            arguments.add("ban");
+            arguments.add("unban");
+            arguments.add("kick");
             arguments.add("list");
             arguments.add("info");
             arguments.add("setspawn");
@@ -86,12 +94,11 @@ public class SBCommand implements TabExecutor {
             arguments.add("warp");
             arguments.add("warps");
             arguments.add("limits");
-            arguments.add("kick");
 
             StringUtil.copyPartialMatches(args[0], arguments, completions);
         } else if (args.length == 2) {
             switch (args[0]) {
-                case "trust", "untrust", "kick" -> {
+                case "trust", "untrust", "ban", "unban", "pardon", "kick" -> {
                     for (Player other : Bukkit.getOnlinePlayers()) {
                         if (player.canSee(other)) {
                             arguments.add(other.getName());
@@ -99,7 +106,7 @@ public class SBCommand implements TabExecutor {
                     }
                     StringUtil.copyPartialMatches(args[1], arguments, completions);
                 }
-                case "warp" -> StringUtil.copyPartialMatches(args[1], main.getWarpManager().getNames(), completions);
+                case "warp", "warps" -> StringUtil.copyPartialMatches(args[1], main.getWarpManager().getNames(), completions);
             }
         }
 

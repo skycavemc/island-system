@@ -57,9 +57,7 @@ public class KickCommand {
             return;
         }
 
-        Location spawn = main.getMultiverse().getMVWorldManager()
-                .getMVWorld("Builder").getSpawnLocation();
-        other.teleport(spawn);
+        other.teleport(main.getServerSpawn());
         other.sendMessage(Message.KICK_ALERT.getString()
                 .replace("{player}", player.getName()).get());
         player.sendMessage(Message.KICK_SUCCESS.getString().replace("{player}", args[1]).get());

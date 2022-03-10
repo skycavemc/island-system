@@ -1,3 +1,6 @@
+spawn_world_name: "Builder"
+# Do not change these values after the first island has been created, otherwise nothing will work properly anymore
 world_name: "skybeeisland"
+island_distance: 4000
 # DO NOT CHANGE THIS VALUE OR THE PLUGIN MIGHT BREAK
 current_island_id: 0

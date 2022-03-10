@@ -5,6 +5,7 @@ import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,9 +36,9 @@ public class TrustAdmin {
             return;
         }
 
-        Player other = Bukkit.getPlayerExact(args[1]);
-        if (other == null || !player.canSee(other)) {
-            player.sendMessage(Message.PLAYER_OFFLINE.getString().replace("{player}", args[1]).get());
+        OfflinePlayer other = Bukkit.getOfflinePlayerIfCached(args[1]);
+        if (other == null) {
+            player.sendMessage(Message.PLAYER_UNKNOWN.getString().replace("{player}", args[1]).get());
             return;
         }
         UUID uuid = other.getUniqueId();

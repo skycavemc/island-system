@@ -3,6 +3,7 @@ package de.leonheuer.skycave.islandsystem.models;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SpiralLocation {
 
+    private final IslandSystem main = JavaPlugin.getPlugin(IslandSystem.class);
     private final int left = 0;
     private final int right = 1;
     private final int up = 2;
@@ -68,7 +70,7 @@ public class SpiralLocation {
      * @return The start vector
      */
     public BlockVector3 getStartVector(int radius) {
-        return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE - radius, -64, z * IslandSystem.ISLAND_DISTANCE - radius);
+        return BlockVector3.at(x * main.getIslandDistance() - radius, -64, z * main.getIslandDistance() - radius);
     }
 
     /**
@@ -77,7 +79,7 @@ public class SpiralLocation {
      * @return The end vector
      */
     public BlockVector3 getEndVector(int radius) {
-        return BlockVector3.at(x * IslandSystem.ISLAND_DISTANCE + radius, 320, z * IslandSystem.ISLAND_DISTANCE + radius);
+        return BlockVector3.at(x * main.getIslandDistance() + radius, 320, z * main.getIslandDistance() + radius);
     }
 
     /**

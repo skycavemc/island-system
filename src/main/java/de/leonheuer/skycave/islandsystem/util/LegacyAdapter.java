@@ -5,14 +5,13 @@ import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,8 +94,8 @@ public class LegacyAdapter {
             }
             YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(file);
 
-            Island island = Island.importAndSave(IslandUtils.nameToId(name), radius, spawn,
-                    LocalDateTime.ofInstant(created, ZoneId.systemDefault()), newConfig, file, null);
+            Island island = Island.importAndSave(IslandUtils.nameToId(name) ,newConfig, file, new ArrayList<>(), radius,
+                    spawn, LocalDateTime.ofInstant(created, ZoneId.systemDefault()), null);
             if (island == null) {
                 continue;
             }

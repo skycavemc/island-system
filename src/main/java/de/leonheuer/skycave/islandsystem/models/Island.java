@@ -9,10 +9,8 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +18,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class Island {
 
@@ -28,21 +29,24 @@ public class Island {
     private final SpiralLocation spiralLocation;
     private final YamlConfiguration config;
     private final File file;
+    private final BannedPlayerList bannedPlayers;
     private int radius;
     private Location spawn;
     private LocalDateTime created;
     private IslandTemplate template;
 
     // For internal use only
-    private Island(int id, int radius, Location spawn, @NotNull LocalDateTime created,
-                  @NotNull YamlConfiguration config, @NotNull File file, @NotNull IslandTemplate template) {
+    private Island(int id, @NotNull YamlConfiguration config, @NotNull File file,  @NotNull List<UUID> bannedPlayers,
+                   int radius, Location spawn, @NotNull LocalDateTime created, @NotNull IslandTemplate template
+    ) {
         this.id = id;
         this.spiralLocation = SpiralLocation.of(id, 1, 1);
+        this.config = config;
+        this.file = file;
+        this.bannedPlayers = new BannedPlayerList(this, bannedPlayers);
         this.radius = radius;
         this.spawn = spawn;
         this.created = created;
-        this.config = config;
-        this.file = file;
         this.template = template;
     }
 
@@ -53,6 +57,7 @@ public class Island {
         this.radius = radius;
         this.config = config;
         this.file = file;
+        this.bannedPlayers = new BannedPlayerList(this, new ArrayList<>());
     }
 
     /**
@@ -144,6 +149,14 @@ public class Island {
     }
 
     /**
+     * Gets a list of all uuids of the players banned on this island.
+     * @return The list of uuids
+     */
+    public BannedPlayerList getBannedPlayers() {
+        return bannedPlayers;
+    }
+
+    /**
      * Gets the name of this island, usually following the pattern sc_??? where ??? is the id with leading zeros.
      * Example: id = 43, name = sc_043
      * @return The name
@@ -159,8 +172,8 @@ public class Island {
     @NotNull
     public Location getCenterLocation() {
         return new Location(main.getIslandWorld(),
-                spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
-                spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, 0, 1);
+                spiralLocation.getX() * main.getIslandDistance(), 64,
+                spiralLocation.getZ() * main.getIslandDistance(), 0, 1);
     }
 
     /**
@@ -196,8 +209,8 @@ public class Island {
 
     private boolean generateDefaultIsland(@NotNull IslandTemplate template) {
         return IslandUtils.printSchematic(
-                spiralLocation.getX() * IslandSystem.ISLAND_DISTANCE, 64,
-                spiralLocation.getZ() * IslandSystem.ISLAND_DISTANCE, template.getFile());
+                spiralLocation.getX() * main.getIslandDistance(), 64,
+                spiralLocation.getZ() * main.getIslandDistance(), template.getFile());
     }
 
     /**
@@ -211,6 +224,11 @@ public class Island {
         config.set("radius", radius);
         config.set("spawn", spawn);
         config.set("creation_timestamp", getCreated().toString());
+        List<String> banned = new ArrayList<>();
+        for (UUID uuid : bannedPlayers.getUniqueIds()) {
+            banned.add(uuid.toString());
+        }
+        config.set("banned_uuids", banned);
 
         try {
             config.save(file);
@@ -263,19 +281,23 @@ public class Island {
     /**
      * Imports and saves an island from raw data and saves it.
      * @param id The id
+     * @param config The configuration
+     * @param file The config file
+     * @param bannedPlayers The list of banned uuids
      * @param radius The radius
      * @param spawn The spawn location
      * @param created The creation timestamp
-     * @param config The configuration
-     * @param file The config file
+     * @param template The island template
+     * @return The imported island
      */
     @Nullable
-    public static Island importAndSave(int id, int radius, Location spawn, @NotNull LocalDateTime created,
-                                                 @NotNull YamlConfiguration config, @NotNull File file, IslandTemplate template) {
+    public static Island importAndSave(int id, @NotNull YamlConfiguration config, @NotNull File file,  @NotNull List<UUID> bannedPlayers,
+                                       int radius, Location spawn, LocalDateTime created, IslandTemplate template
+    ) {
         if (template == null) {
             template = IslandTemplate.ICE;
         }
-        Island island = new Island(id, radius, spawn, created, config, file, template);
+        Island island = new Island(id, config, file, bannedPlayers, radius, spawn, created, template);
         if (island.save()) {
             return island;
         }
@@ -328,10 +350,13 @@ public class Island {
             template = IslandTemplate.ICE;
         }
 
-        return new Island(
-                id, config.getInt("radius"), config.getObject("spawn", Location.class),
-                created, config, file, template
-        );
+        List<UUID> bannedPlayers = new ArrayList<>();
+        for (String entry : config.getStringList("banned_uuids")) {
+            bannedPlayers.add(UUID.fromString(entry));
+        }
+
+        return new Island(id, config, file, bannedPlayers, config.getInt("radius"),
+                config.getObject("spawn", Location.class), created, template);
     }
 
 }

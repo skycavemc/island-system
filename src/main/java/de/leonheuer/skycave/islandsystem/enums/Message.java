@@ -15,7 +15,7 @@ public enum Message {
     NOT_IN_WORLD("&cDu befindest dich nicht in der korrekten Welt!"),
     NO_OWNER("&cDu bist nicht der Besitzer dieser Insel!"),
     NO_MEMBER("&cDu bist kein Mitglied auf dieser Insel!"),
-    ISLAND_UNKNOWN("&cDie Inselnummer wurde nicht gefunden!"),
+    ISLAND_UNKNOWN("&cDie Nummer wurde nicht gefunden!"),
     ISLAND_WORLD_UNLOADED("&cDie Inselwelt ist nicht geladen."),
     REGION_ACCESS("&4Achtung! Jeder Eingriff kann die Funktion des Plugins beeinträchtigen!"),
     TEMP_DISABLED("&cDiese Funktion ist deaktiviert."),
@@ -27,15 +27,17 @@ public enum Message {
     // Admin help
     ADMIN_HELP_HEADER("&8~~~~ &cSkyBeeInsel Admin Hilfe: &8~~~~"),
     ADMIN_HELP_CREATE("&e/sbadmin create <Spieler> <250,500> <Variante>&8- &7&oErstellt eine Insel"),
-    ADMIN_HELP_SETOWNER("&e/sbadmin setowner <Spieler> &8- &7&oÄndert den Besitzer der Insel"),
-    ADMIN_HELP_SETRADIUS("&e/sbadmin setradius <Radius> &8- &7&oÄndert die Größe der Insel"),
+    ADMIN_HELP_TP("&e/sbadmin tp <Nummer> [Zentrum] &8- &7&oTeleportiert dich zu einer Insel, optional ins Zentrum"),
     ADMIN_HELP_TRUST("&e/sbadmin trust <Spieler> &8- &7&oFügt einen Spieler zur Insel hinzu"),
     ADMIN_HELP_UNTRUST("&e/sbadmin untrust <Spieler> &8- &7&oEntfernt einen Spieler von der Insel"),
+    ADMIN_HELP_BAN("&e/sbadmin ban <Spieler> &8- &7&oBannt einen Spieler von der Insel"),
+    ADMIN_HELP_UNBAN("&e/sbadmin unban <Spieler> &8- &7&oEntbannt einen Spieler von der Insel"),
+    ADMIN_HELP_INFO("&e/sbadmin info [Nummer] &8- &7&oZeigt Infos zur Insel an"),
     ADMIN_HELP_SETSPAWN("&e/sbadmin setspawn &8- &7&oSetzt den Spawnpunkt der Insel um"),
-    ADMIN_HELP_TP("&e/sbadmin tp <Inselnummer> [center] &8- &7&oTeleportiert dich zu einer Insel, optional ins Zentrum"),
+    ADMIN_HELP_SETOWNER("&e/sbadmin setowner <Spieler> &8- &7&oÄndert den Besitzer der Insel"),
+    ADMIN_HELP_SETRADIUS("&e/sbadmin setradius <Radius> &8- &7&oÄndert die Größe der Insel"),
     ADMIN_HELP_SETWARP("&e/sbadmin setwarp <Name> &8- &7&oSetzt einen Warp Punkt"),
     ADMIN_HELP_DELWARP("&e/sbadmin delwarp <Name> &8- &7&oEntfernt einen Warp Punkt"),
-    ADMIN_HELP_INFO("&e/sbadmin info [Nummer] &8- &7&oZeigt Infos zur Insel an"),
     ADMIN_HELP_IMPORT("&e/sbadmin import &8- &7&oImportiert alte SB-Inseln und Konfigurationen"),
 
     // Admin create
@@ -61,8 +63,7 @@ public enum Message {
     ADMIN_SETRADIUS_SMALLER("&cDu kannst keine Insel verkleinern."),
 
     // Admin tp
-    ADMIN_TP_SYNTAX("&e/sc tp <Inselnummer> [Zentrum]"),
-    ADMIN_TP_SUCCESS("&aDu hast dich erfolgreich teleportiert!"),
+    ADMIN_TP_SYNTAX("&e/sb tp <Nummer> [Zentrum]"),
 
     // Admin setwarp
     ADMIN_SETWARP_OVERRIDE("&aDer Warp {warp} wurde überschrieben."),
@@ -85,6 +86,9 @@ public enum Message {
     HELP_BUY("&e/sb buy &8- &7&oKaufe dir eine Insel"),
     HELP_TRUST("&e/sb trust <Spieler> &8- &7&oFügt einen Spieler zur Insel hinzu"),
     HELP_UNTRUST("&e/sb untrust <Spieler> &8- &7&oEntfernt einen Spieler von der Insel"),
+    HELP_BAN("&e/sb ban <Spieler> &8- &7&oBannt einen Spieler von der Insel"),
+    HELP_UNBAN("&e/sb unban <Spieler> &8- &7&oEntbannt einen Spieler von der Insel"),
+    HELP_KICK("&e/sb kick <Spieler> &8- &7&oKickt einen Spieler von der Insel"),
     HELP_LIST("&e/sb list &8- &7&oListe deiner Inseln + Inseln, auf denen du hinzugefügt bist"),
     HELP_INFO("&e/sb info &8- &7&oZeigt Infos zur Insel an"),
     HELP_SETSPAWN("&e/sb setspawn &8- &7&oSetzt den Spawnpunkt der Insel um"),
@@ -105,12 +109,36 @@ public enum Message {
     UNTRUST_SELF("&cDu kannst dich nicht selbst entfernen!"),
     UNTRUST_ALREADY("&cDieser Spieler ist kein Mitglied!"),
 
+    // Ban
+    BAN_SYNTAX("&e/sb ban <Spieler>"),
+    BAN_SUCCESS("&aDer Spieler {player} wurde erfolgreich gebannt!"),
+    BAN_SELF("&cDu kannst dich nicht selbst bannen!"),
+    BAN_MEMBER("&cDu kannst keine Mitglieder bannen!"),
+    BAN_ALREADY("&cDieser Spieler ist bereits gebannt!"),
+    BAN_ALERT("&c{player} hat dich von der SB-Insel {id} gebannt!"),
+    BAN_ENTRY("&cDu kannst die SB-Insel {id} nicht betreten, da du dort gebannt bist."),
+
+    // Unban
+    UNBAN_SYNTAX("&e/sb unban <Spieler>"),
+    UNBAN_SUCCESS("&aDer Spieler {player} wurde erfolgreich entbannt!"),
+    UNBAN_SELF("&cDu kannst dich nicht selbst entbannen!"),
+    UNBAN_MEMBER("&cDu kannst keine Mitglieder entbannen!"),
+    UNBAN_ALREADY("&cDieser Spieler ist nicht gebannt!"),
+    UNBAN_ALERT("&a{player} hat dich von der SB-Insel {id} entbannt!"),
+
+    // Kick
+    KICK_SYNTAX("&e/sb kick <Spieler>"),
+    KICK_SUCCESS("&aDer Spieler &2{player} &awurde von der Insel gekickt!"),
+    KICK_SELF("&cDu kannst dich nicht selbst kicken!"),
+    KICK_MEMBER("&cDu kannst keine Mitglieder kicken!"),
+    KICK_ALERT("&c{player} hat dich von seiner Insel gekickt!"),
+    KICK_NOT_ON_ISLAND("&cDer Spieler muss sich auf deiner Insel befinden!"),
+
     // Setspawn
-    ADMIN_SETSPAWN_SUCCESS("&aDer Insel-Spawn wurde erfolgreich bei deiner Position gesetzt."),
     SETSPAWN_SUCCESS("&aDer Insel-Spawn wurde erfolgreich bei deiner Position gesetzt."),
 
     // TP
-    TP_SYNTAX("&e/sb tp <Inselnummer>"),
+    TP_SYNTAX("&e/sb tp <Nummer>"),
     TP_SUCCESS("&aDu hast dich erfolgreich teleportiert!"),
 
     // List
@@ -118,14 +146,6 @@ public enum Message {
     LIST_OWNER_NO("&7Deine Inseln: &cDu besitzt keine Insel!"),
     LIST_MEMBER("&7Du bist auf folgenden Inseln Mitglied: &b{nummer}"),
     LIST_MEMBER_NO("&7Du bist auf folgenden Inseln Mitglied: &cDu bist auf keiner Insel hinzugefügt!"),
-
-    // Kick
-    KICK_SYNTAX("&e/sb kick <Spieler>"),
-    KICK_SUCCESS("&aDer Spieler &2{player} &awurde von der Insel gekickt!"),
-    KICK_ALERT("&c{player} hat dich von seiner Insel gekickt!"),
-    KICK_SELF("&cDu kannst dich nicht selbst kicken!"),
-    KICK_MEMBER("&cDieser Spieler ist ein Mitglied!"),
-    KICK_NOT_ON_ISLAND("&cDer Spieler muss sich auf deiner Insel befinden!"),
 
     // Warp
     WARP_UNKNOWN("&cDer Warp {warp} existiert nicht."),
