@@ -211,7 +211,7 @@ public class Island {
 
     @Contract("_ -> new")
     private @NotNull CompletableFuture<Boolean> generateDefaultIsland(@NotNull IslandTemplate template) {
-        return IslandUtils.printSchematic(
+        return IslandUtils.printSchematicAsync(
                 spiralLocation.getX() * main.getIslandDistance(), 64,
                 spiralLocation.getZ() * main.getIslandDistance(), template.getFile());
     }

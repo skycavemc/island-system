@@ -35,7 +35,7 @@ public class CreateAdmin {
 
             File file = new File(main.getDataFolder(), "sbInsel_Spawn.schem");
             if (file.exists()) {
-                IslandUtils.printSchematic(0, 64, 0, file);
+                IslandUtils.printSchematicAsync(0, 64, 0, file);
 
                 ProtectedRegion rg = IslandUtils.protectedRegion(0, 0, 1000, "sc_spawn");
                 if (rg == null) {

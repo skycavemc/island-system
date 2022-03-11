@@ -241,8 +241,9 @@ public class BuyCommand {
         }
 
         p.closeInventory();
+        int cost = getCost();
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
-        if (!main.getEconomy().withdrawPlayer(p, getCost()).transactionSuccess()) {
+        if (!main.getEconomy().withdrawPlayer(p, cost).transactionSuccess()) {
             p.sendMessage(Message.BUY_TRANSACTION_FAILED.getString().get());
             return;
         }
@@ -265,6 +266,7 @@ public class BuyCommand {
             if (generationTask != null) {
                 generationTask.cancel(true);
             }
+            giveBack(p, cost, required);
             return;
         }
 
@@ -274,11 +276,13 @@ public class BuyCommand {
             if (generationTask != null) {
                 generationTask.cancel(true);
             }
+            giveBack(p, cost, required);
             return;
         }
 
         if (generationTask == null) {
             p.sendMessage(Message.BUY_GENERATION_ERROR.getString().get());
+            giveBack(p, cost, required);
             return;
         }
 
@@ -302,8 +306,15 @@ public class BuyCommand {
             completer.cancel();
             if (!done) {
                 p.sendMessage(Message.BUY_GENERATION_ERROR.getString().get());
+                giveBack(p, cost, required);
             }
         }, 1200);
+    }
+
+    private void giveBack(Player p, int cost, int required) {
+        main.getEconomy().depositPlayer(p, cost);
+        p.getInventory().addItem(ItemBuilder.of(Material.BEEHIVE).amount(required)
+                .name("§6Bienenstock §8» §eLevel §a300").asItem());
     }
 
 }

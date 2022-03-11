@@ -28,8 +28,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
 
 public class IslandUtils {
 
@@ -133,7 +131,7 @@ public class IslandUtils {
      * @return Whether the operation succeeded
      */
     @Contract("_, _, _, _ -> new")
-    public static @NotNull CompletableFuture<Boolean> printSchematic(int x, int y, int z, File schematic) {
+    public static @NotNull CompletableFuture<Boolean> printSchematicAsync(int x, int y, int z, File schematic) {
          return CompletableFuture.supplyAsync(() -> {
             ClipboardFormat format = ClipboardFormats.findByFile(schematic);
             if (format == null) {
