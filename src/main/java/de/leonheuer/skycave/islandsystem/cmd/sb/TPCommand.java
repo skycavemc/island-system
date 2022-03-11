@@ -1,51 +1,43 @@
 package de.leonheuer.skycave.islandsystem.cmd.sb;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.enums.Message;
-import de.leonheuer.skycave.islandsystem.models.Insel;
-import de.leonheuer.skycave.islandsystem.models.InselTP;
+import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.entity.Player;
-
-import java.io.File;
 
 public class TPCommand {
 
     public TPCommand(Player player, String[] args) {
-        if (args.length >= 2) {
-            String number = args[1];
-            if (number.startsWith("sc_")) {
-                File file = new File("plugins/SkyBeeIslandSystem/insel/", number + ".yml");
-                if (file.exists() && file.isFile()) {
-                    Insel insel = new Insel(number);
-                    if (insel.isOwner(player.getUniqueId()) || insel.isMember(player.getUniqueId())) {
-                        player.teleport(new InselTP(number).getTP());
-                        player.sendMessage(Message.SB_SUBCOMMAND_TP_ERFOLG.getString().get());
-                    } else {
-                        player.sendMessage(Message.SB_SUBCOMMAND_TP_NOMEMBER.getString().get());
-                    }
-                } else {
-                    player.sendMessage(Message.SB_SUBCOMMAND_TP_NOEXIST.getString().get());
-                }
-            } else {
-                if (number.length() == 1) {
-                    number = "00" + number;
-                } else if (args[1].length() == 2) {
-                    number = "0" + number;
-                }
-                File file = new File("plugins/SkyBeeIslandSystem/insel/", "sc_" + number + ".yml");
-                if (file.exists() && file.isFile()) {
-                    Insel insel = new Insel("sc_" + number);
-                    if (insel.isOwner(player.getUniqueId()) || insel.isMember(player.getUniqueId())) {
-                        player.teleport(new InselTP("sc_" + number).getTP());
-                        player.sendMessage(Message.SB_SUBCOMMAND_TP_ERFOLG.getString().get());
-                    } else {
-                        player.sendMessage(Message.SB_SUBCOMMAND_TP_NOMEMBER.getString().get());
-                    }
-                } else {
-                    player.sendMessage(Message.SB_SUBCOMMAND_TP_NOEXIST.getString().get());
-                }
-            }
-        } else {
-            player.sendMessage(Message.SB_SUBCOMMAND_TP_SYNTAX.getString().get());
+        if (args.length < 2) {
+            player.sendMessage(Message.TP_SYNTAX.getString().get());
+            return;
         }
+
+        int id;
+        try {
+            id = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            player.sendMessage(Message.INVALID_NUMBER.getString().get());
+            return;
+        }
+
+        Island island = Island.load(id);
+        if (island == null) {
+            player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
+            return;
+        }
+
+        ProtectedRegion region = island.getRegion();
+        if (region == null) {
+            player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
+            return;
+        }
+
+        if (!region.getMembers().contains(player.getUniqueId()) && !region.getOwners().contains(player.getUniqueId())) {
+            player.sendMessage(Message.NO_MEMBER.getString().get());
+            return;
+        }
+        player.teleport(island.getSpawn());
+        player.sendMessage(Message.TP_SUCCESS.getString().get());
     }
 }

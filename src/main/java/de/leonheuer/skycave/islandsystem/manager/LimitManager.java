@@ -6,10 +6,8 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
-import org.bukkit.Chunk;
+import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import org.bukkit.World;
-import org.bukkit.block.Beehive;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitTask;
@@ -50,7 +48,7 @@ public class LimitManager {
                 }
 
                 for (ProtectedRegion r : regions) {
-                    if (!r.getId().matches("^[s][c][_]\\d{3}$")) {
+                    if (!IslandUtils.isValidName(r.getId())) {
                         continue;
                     }
                     addToMap(newMap, r.getId(), e.getType());

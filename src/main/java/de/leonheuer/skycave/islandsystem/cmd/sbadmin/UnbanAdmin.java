@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class UntrustAdmin {
+public class UnbanAdmin {
 
-    public UntrustAdmin(Player player, String @NotNull [] args, IslandSystem main) {
+    public UnbanAdmin(@NotNull Player player, String @NotNull [] args, @NotNull IslandSystem main) {
         if (args.length < 2) {
-            player.sendMessage(Message.UNTRUST_SYNTAX.getString().get());
+            player.sendMessage(Message.UNBAN_SYNTAX.getString().get());
             return;
         }
 
@@ -43,12 +43,18 @@ public class UntrustAdmin {
         }
         UUID uuid = other.getUniqueId();
 
-        if (region.getMembers().contains(uuid)) {
-            region.getMembers().removePlayer(uuid);
-            player.sendMessage(Message.UNTRUST_SUCCESS.getString()
-                    .replace("{player}", other.getName()).get());
-        } else {
-            player.sendMessage(Message.UNTRUST_ALREADY.getString().get());
+        if (!island.getBannedPlayers().contains(uuid)) {
+            player.sendMessage(Message.UNBAN_ALREADY.getString().get());
+            return;
         }
+
+        island.getBannedPlayers().remove(uuid);
+        Player bannedPlayer = other.getPlayer();
+        if (bannedPlayer != null && bannedPlayer.isOnline()) {
+            bannedPlayer.sendMessage(Message.UNBAN_ALERT.getString()
+                    .replace("{player}", player.getName()).replace("{id}", "" + island.getId()).get());
+        }
+        player.sendMessage(Message.UNBAN_SUCCESS.getString().replace("{player}", args[1]).get());
     }
+
 }

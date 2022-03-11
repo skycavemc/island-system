@@ -1,22 +1,6 @@
 package de.leonheuer.skycave.islandsystem.util;
 
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.mcguiapi.gui.GUI;
 import de.leonheuer.mcguiapi.gui.GUIPattern;
@@ -24,207 +8,24 @@ import de.leonheuer.mcguiapi.utils.ItemBuilder;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimitType;
-import de.leonheuer.skycave.islandsystem.models.InselID;
 import org.bukkit.*;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Utils {
 
-    public static final FileConfiguration game = YamlConfiguration.loadConfiguration(
-            new File("plugins/SkyBeeIslandSystem/", "game.yml"));
-    public static final FileConfiguration cache = YamlConfiguration.loadConfiguration(
-            new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
     private static final IslandSystem main = IslandSystem.getPlugin(IslandSystem.class);
 
-    public static FileConfiguration getInsel(String rg) {
-        return YamlConfiguration.loadConfiguration(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
-    }
-
-    public static void saveInsel(String rg, FileConfiguration file) {
-        try {
-            file.save(new File("plugins/SkyBeeIslandSystem/insel/", rg + ".yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static InselID getLastInternID() {
-        String id = cache.getString("lastinternid");
-        if (id != null) {
-            String[] idParts = id.split(";");
-            return new InselID(Integer.parseInt(idParts[0]), Integer.parseInt(idParts[1]));
-        }
-        return null;
-    }
-
-    public static int getLastID() {
-        return cache.getInt("lastid");
-    }
-
-    public static void setLastInternID() {
-        InselID oldId = getLastInternID();
-        if (oldId == null) {
-            return;
-        }
-        InselID newId = getNextInselID(oldId);
-        cache.set("lastinternid", newId.getXanInt() + ";" + newId.getZanInt());
-        try {
-            cache.save(new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void addLastID() {
-        int f = cache.getInt("lastid") + 1;
-        cache.set("lastid", f);
-        try {
-            cache.save(new File("plugins/SkyBeeIslandSystem/", "cache.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static InselID getNextInselID(InselID id) {
-        int absX = Math.abs(id.getXanInt());
-        int absY = Math.abs(id.getZanInt());
-        if (absX > absY) {
-            if (id.getXanInt() > 0) {
-                return new InselID(id.getXanInt(), id.getZanInt() + 1);
-            } else {
-                return new InselID(id.getXanInt(), id.getZanInt() - 1);
-            }
-        } else if (absY > absX) {
-            if (id.getZanInt() > 0) {
-                return new InselID(id.getXanInt() - 1, id.getZanInt());
-            } else {
-                return new InselID(id.getXanInt() + 1, id.getZanInt());
-            }
-        } else {
-            if (id.getXanInt() == id.getZanInt() && id.getXanInt() > 0) {
-                return new InselID(id.getXanInt(), id.getZanInt() + 1);
-            }
-            if (id.getXanInt() == absX) {
-                return new InselID(id.getXanInt(), id.getZanInt() + 1);
-            }
-            if (id.getZanInt() == absY) {
-                return new InselID(id.getXanInt(), id.getZanInt() - 1);
-            }
-            return new InselID(id.getXanInt() + 1, id.getZanInt());
-        }
-    }
-
-    public static WorldGuardPlugin getWorldGuard() {
-        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
-
-        if (!(plugin instanceof WorldGuardPlugin)) {
-            return null;
-        }
-        return (WorldGuardPlugin) plugin;
-    }
-
-    public static World getInselWorld() {
-        return Bukkit.getWorld("skybeeisland");
-    }
-
-    public static File getSchematic(String schem) {
-        String schematic;
-
-        switch (schem) {
-            case "Blume":
-                schematic = "sbInsel_Blume.schem";
-                break;
-            case "Eis":
-                schematic = "sbInsel_Eis.schem";
-                break;
-            case "Pilz":
-                schematic = "sbInsel_Pilz.schem";
-                break;
-            case "Wüste":
-                schematic = "sbInsel_Wuste.schem";
-                break;
-            default:
-                return null;
-        }
-
-        return new File("plugins/SkyBeeIslandSystem", schematic);
-    }
-
-    public static void printSchematic(Integer x, Integer z, File schematic) {
-        Clipboard cc = null;
-        ClipboardFormat format = ClipboardFormats.findByFile(schematic);
-        if (format == null) {
-            return;
-        }
-        try (ClipboardReader reader = format.getReader(new FileInputStream(schematic))) {
-            cc = reader.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (cc == null) {
-            return;
-        }
-
-        BlockVector3 ctxESBlockVector2 = BlockVector3.at(x, 64, z);
-        EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
-                .world(new BukkitWorld(getInselWorld()))
-                .maxBlocks(-1)
-                .build();
-        try {
-            Operation operation = new ClipboardHolder(cc).createPaste(editSession).to(ctxESBlockVector2).build();
-            Operations.complete(operation);
-        } catch (WorldEditException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static ProtectedRegion protectedRegion(Integer x, Integer z, Integer grosse, String rgName) {
-        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(getInselWorld()));
-        if (rm == null) {
-            return null;
-        }
-
-        BlockVector3 min2 = BlockVector3.at(x - grosse, 0, z - grosse);
-        BlockVector3 max2 = BlockVector3.at(x + grosse, 255, z + grosse);
-        ProtectedCuboidRegion pr = new ProtectedCuboidRegion(rgName, min2, max2);
-        rm.addRegion(pr);
-        return rm.getRegion(rgName);
-    }
-
-    @Nullable
-    public static ProtectedRegion getIslandRegionAt(Location loc) {
-        RegionManager rm = main.getRegionContainer().get(BukkitAdapter.adapt(loc.getWorld()));
-        if (rm == null) {
-            return null;
-        }
-
-        ApplicableRegionSet set = rm.getApplicableRegions(BukkitAdapter.asBlockVector(loc));
-        if (set.getRegions().size() == 0) {
-            return null;
-        }
-
-        ProtectedRegion result = null;
-        for (ProtectedRegion region : set.getRegions()) {
-            if (region.getId().matches("^[s][c][_]\\d{3}$")) {
-                result = region;
-                break;
-            }
-        }
-        return result;
-    }
-
+    /**
+     * Gets the specific in-game view for checking the island limits.
+     * @param region The region where to count entities
+     * @param limitType The category of limit types
+     * @return The created GUI
+     */
     public static @NotNull GUI getLimitGui(ProtectedRegion region, EntityLimitType limitType) {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
@@ -241,7 +42,7 @@ public class Utils {
         if (region == null) {
             for (EntityLimit l : limits) {
                 gui.setItem(i, ItemBuilder.of(l.getSpawnEgg())
-                        .name("§e" + entityTypeToString(l.getType()) + " §6(" + l.getLimit() + ")")
+                        .name("§e" + entityTypeAsString(l.getType()) + " §6(" + l.getLimit() + ")")
                         .asItem(), false);
                 i++;
             }
@@ -257,8 +58,8 @@ public class Utils {
                 }
 
                 gui.setItem(i, ItemBuilder.of(l.getSpawnEgg())
-                        .name("§e" + entityTypeToString(l.getType()) + " " + color + "(" + count + "/" + l.getLimit() + ")")
-                        .asItem(), false);
+                                .name("§e" + entityTypeAsString(l.getType()) + " " + color + "(" + count + "/" + l.getLimit() + ")")
+                                .asItem(), false);
                 i++;
             }
         }
@@ -275,6 +76,10 @@ public class Utils {
         return gui;
     }
 
+    /**
+     * Gets the main in-game view of the island limits.
+     * @return The created GUI
+     */
     public static @NotNull GUI getLimitGui() {
         GUI gui = main.getGuiFactory().createGUI(3, "§6§lSB§f-§lInsel §cLimits");
 
@@ -283,7 +88,7 @@ public class Utils {
             gui.setItem(i, ItemBuilder.of(t.getMat()).name("§6§l" + t.getName()).asItem(), false,
                     (event) -> {
                         Player player = (Player) event.getWhoClicked();
-                        ProtectedRegion region = getIslandRegionAt(player.getLocation());
+                        ProtectedRegion region = IslandUtils.getIslandRegionAt(player.getLocation());
                         getLimitGui(region, t).show(player);
                         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                     });
@@ -296,7 +101,12 @@ public class Utils {
         return gui;
     }
 
-    public static String entityTypeToString(EntityType type) {
+    /**
+     * Transforms a minecraft entity type to a well readable string.
+     * @param type The entity type to transform
+     * @return The result
+     */
+    public static String entityTypeAsString(@NotNull EntityType type) {
         StringJoiner sj = new StringJoiner(" ");
         String[] partial = type.toString().split("_");
         Arrays.stream(partial).forEach(part -> {
@@ -304,6 +114,30 @@ public class Utils {
             sj.add(part);
         });
         return sj.toString();
+    }
+
+    /**
+     * Transforms a location into a string containing the x, y and z components of the location.
+     * @param location The location to transform
+     * @return The result
+     */
+    public static @NotNull String locationAsString(@NotNull Location location) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        return decimalFormat.format(location.getX()) + ", " +
+                decimalFormat.format(location.getY()) + ", " +
+                decimalFormat.format(location.getZ());
+    }
+
+    /**
+     * Transforms a BlockVector3 into a string containing the x, y and z components of the vector.
+     * @param location The BlockVector3 to transform
+     * @return The result
+     */
+    public static @NotNull String locationAsString(@NotNull BlockVector3 location) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        return decimalFormat.format(location.getX()) + ", " +
+                decimalFormat.format(location.getY()) + ", " +
+                decimalFormat.format(location.getZ());
     }
 
 }

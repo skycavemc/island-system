@@ -1,49 +1,53 @@
 package de.leonheuer.skycave.islandsystem.cmd.sbadmin;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
-import de.leonheuer.skycave.islandsystem.models.Insel;
-import de.leonheuer.skycave.islandsystem.util.Utils;
+import de.leonheuer.skycave.islandsystem.models.Island;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class TrustAdmin {
 
-    public TrustAdmin(Player player, String[] args) {
-        if (args.length >= 2) {
-            if (player.getLocation().getWorld().getName().equals("skybeeisland")) {
-                ProtectedRegion r = Utils.getIslandRegionAt(player.getLocation());
-                if (r == null) {
-                    player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
-                    return;
-                }
-
-                Insel insel = new Insel(r.getId());
-                Player other = Bukkit.getPlayerExact(args[1]);
-                if (other == null) {
-                    player.sendMessage(Message.PLAYER_NOONLINE.getString().replace("{player}", args[1]).get());
-                    return;
-                }
-
-                if (player.canSee(other)) {
-                    if (!insel.isOwner(player.getUniqueId())) {
-                        if (!insel.isMember(other.getUniqueId())) {
-                            insel.addMember(other.getUniqueId());
-                            player.sendMessage(Message.SB_SUBCOMMAND_TRUST_ERFOLG.getString().replace("{player}", args[1]).get());
-                        } else {
-                            player.sendMessage(Message.SB_SUBCOMMAND_TRUST_BEREITS.getString().get());
-                        }
-                    } else {
-                        player.sendMessage(Message.SB_SUBCOMMAND_TRUST_NOYOU.getString().get());
-                    }
-                } else {
-                    player.sendMessage(Message.PLAYER_NOONLINE.getString().replace("{player}", args[1]).get());
-                }
-            } else {
-                player.sendMessage(Message.MISC_NOINWORLD.getString().get());
-            }
-        } else {
-            player.sendMessage(Message.SB_SUBCOMMAND_TRUST_SYNTAX.getString().get());
+    public TrustAdmin(Player player, String @NotNull [] args, IslandSystem main) {
+        if (args.length < 2) {
+            player.sendMessage(Message.TRUST_SYNTAX.getString().get());
+            return;
         }
+
+        if (player.getLocation().getWorld() != main.getIslandWorld()) {
+            player.sendMessage(Message.NOT_IN_WORLD.getString().get());
+            return;
+        }
+
+        Island island = Island.at(player.getLocation());
+        if (island == null) {
+            player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
+            return;
+        }
+
+        ProtectedRegion region = island.getRegion();
+        if (region == null) {
+            player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
+            return;
+        }
+
+        OfflinePlayer other = Bukkit.getOfflinePlayerIfCached(args[1]);
+        if (other == null) {
+            player.sendMessage(Message.PLAYER_UNKNOWN.getString().replace("{player}", args[1]).get());
+            return;
+        }
+        UUID uuid = other.getUniqueId();
+
+        if (region.getMembers().contains(uuid) || region.getOwners().contains(uuid)) {
+            player.sendMessage(Message.TRUST_ALREADY.getString().get());
+            return;
+        }
+        region.getMembers().addPlayer(uuid);
+        player.sendMessage(Message.TRUST_SUCCESS.getString().replace("{player}", args[1]).get());
     }
 }

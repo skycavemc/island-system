@@ -14,6 +14,7 @@ public enum EntityLimit {
     ENDERMAN(EntityType.ENDERMAN, 15, Material.ENDERMAN_SPAWN_EGG, EntityLimitType.HOSTILE_FARMING),
     HUSK(EntityType.HUSK, 15, Material.HUSK_SPAWN_EGG, EntityLimitType.HOSTILE_FARMING),
     SKELETON(EntityType.SKELETON, 15, Material.SKELETON_SPAWN_EGG, EntityLimitType.HOSTILE_FARMING),
+    SLIME(EntityType.SLIME, 40, Material.SLIME_SPAWN_EGG, EntityLimitType.HOSTILE_FARMING),
     SPIDER(EntityType.SPIDER, 15, Material.SPIDER_SPAWN_EGG, EntityLimitType.HOSTILE_FARMING),
     STRAY(EntityType.STRAY, 15, Material.STRAY_SPAWN_EGG, EntityLimitType.HOSTILE_FARMING),
     WITCH(EntityType.WITCH, 15, Material.WITCH_SPAWN_EGG, EntityLimitType.HOSTILE_FARMING),
@@ -82,13 +83,13 @@ public enum EntityLimit {
 
     private final EntityType type;
     private final int limit;
-    private final Material spawnegg;
+    private final Material spawnEgg;
     private final EntityLimitType limitType;
 
-    EntityLimit(EntityType type, int limit, Material spawnegg, EntityLimitType limitType) {
+    EntityLimit(EntityType type, int limit, Material spawnEgg, EntityLimitType limitType) {
         this.type = type;
         this.limit = limit;
-        this.spawnegg = spawnegg;
+        this.spawnEgg = spawnEgg;
         this.limitType = limitType;
     }
 
@@ -111,7 +112,7 @@ public enum EntityLimit {
     }
 
     public Material getSpawnEgg() {
-        return spawnegg;
+        return spawnEgg;
     }
 
     public EntityLimitType getLimitType() {
