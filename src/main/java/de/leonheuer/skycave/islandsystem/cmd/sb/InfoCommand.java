@@ -38,15 +38,17 @@ public class InfoCommand {
                 .replace("{nummer}", "" + island.getId()).get(false));
 
         StringJoiner owners = new StringJoiner("&8, &b");
+        int i = 0;
         for (UUID owner: region.getOwners().getUniqueIds()) {
             OfflinePlayer other = Bukkit.getOfflinePlayer(owner);
             if (other.getName() == null) {
                 continue;
             }
             owners.add(other.getName());
+            i++;
         }
         String ownerList;
-        if (owners.length() == 0) {
+        if (i == 0) {
             ownerList = "&bkeine";
         } else {
             ownerList = owners.toString();
@@ -54,6 +56,7 @@ public class InfoCommand {
         player.sendMessage(Message.INFO_OWNER.getString()
                 .replace("{owner}", ownerList).get(false));
 
+        i = 0;
         StringJoiner members = new StringJoiner("&8, &b");
         for (UUID member : region.getMembers().getUniqueIds()) {
             OfflinePlayer other = Bukkit.getOfflinePlayer(member);
@@ -61,9 +64,10 @@ public class InfoCommand {
                 continue;
             }
             members.add(other.getName());
+            i++;
         }
         String memberList;
-        if (owners.length() == 0) {
+        if (i == 0) {
             memberList = "&bkeine";
         } else {
             memberList = members.toString();
@@ -71,6 +75,7 @@ public class InfoCommand {
         player.sendMessage(Message.INFO_MEMBER.getString()
                 .replace("{member}", memberList).get(false));
 
+        i = 0;
         StringJoiner banned = new StringJoiner("&8, &b");
         for (UUID p : island.getBannedPlayers().getUniqueIds()) {
             OfflinePlayer other = Bukkit.getOfflinePlayer(p);
@@ -78,9 +83,10 @@ public class InfoCommand {
                 continue;
             }
             banned.add(other.getName());
+            i++;
         }
         String bannedList;
-        if (owners.length() == 0) {
+        if (i == 0) {
             bannedList = "&bkeine";
         } else {
             bannedList = banned.toString();
