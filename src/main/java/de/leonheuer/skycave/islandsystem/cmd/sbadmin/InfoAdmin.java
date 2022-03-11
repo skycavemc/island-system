@@ -70,8 +70,14 @@ public class InfoAdmin {
             }
             owners.add(other.getName());
         }
+        String ownerList;
+        if (owners.length() == 0) {
+            ownerList = "&bkeine";
+        } else {
+            ownerList = owners.toString();
+        }
         player.sendMessage(Message.INFO_OWNER.getString()
-                .replace("{owner}", owners.toString()).get(false));
+                .replace("{owner}", ownerList).get(false));
 
         StringJoiner members = new StringJoiner("&8, &b");
         for (UUID member : region.getMembers().getUniqueIds()) {
@@ -81,8 +87,14 @@ public class InfoAdmin {
             }
             members.add(other.getName());
         }
+        String memberList;
+        if (owners.length() == 0) {
+            memberList = "&bkeine";
+        } else {
+            memberList = members.toString();
+        }
         player.sendMessage(Message.INFO_MEMBER.getString()
-                .replace("{member}", members.toString()).get(false));
+                .replace("{member}", memberList).get(false));
 
         StringJoiner banned = new StringJoiner("&8, &b");
         for (UUID p : island.getBannedPlayers().getUniqueIds()) {
@@ -92,8 +104,14 @@ public class InfoAdmin {
             }
             banned.add(other.getName());
         }
+        String bannedList;
+        if (owners.length() == 0) {
+            bannedList = "&bkeine";
+        } else {
+            bannedList = banned.toString();
+        }
         player.sendMessage(Message.INFO_BANS.getString()
-                .replace("{players}", banned.toString()).get(false));
+                .replace("{players}", bannedList).get(false));
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm");
         player.sendMessage(Message.INFO_CREATION.getString()

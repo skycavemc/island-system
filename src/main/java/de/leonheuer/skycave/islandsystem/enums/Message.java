@@ -160,7 +160,7 @@ public enum Message {
     INFO_HEADER("&8~~~~ &2Info für Insel Nummer {nummer} &8~~~~"),
     INFO_OWNER("&eBesitzer: &b{owner}"),
     INFO_MEMBER("&eMitglieder: &b{member}"),
-    INFO_BANS("&cGebannt: &b{players}"),
+    INFO_BANS("&cGebannte Spieler: &b{players}"),
     INFO_CREATION("&eGründungsdatum: &b{creation}"),
     INFO_TEMPLATE("&eInseltyp: &b{type}"),
     INFO_RADIUS("&2Radius: &b{radius}"),
