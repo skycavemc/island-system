@@ -1,6 +1,7 @@
 package de.leonheuer.skycave.islandsystem.cmd;
 
 import de.leonheuer.skycave.islandsystem.IslandSystem;
+import de.leonheuer.skycave.islandsystem.cmd.sb.InfoCommand;
 import de.leonheuer.skycave.islandsystem.cmd.sbadmin.*;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import org.bukkit.Bukkit;
@@ -40,7 +41,7 @@ public class SBAdminCommand implements TabExecutor {
                 case "untrust" -> new UntrustAdmin(player, args, main);
                 case "ban" -> new BanAdmin(player, args, main);
                 case "unban" -> new UnbanAdmin(player, args, main);
-                case "info" -> new InfoAdmin(player, args, main);
+                case "info" -> new InfoCommand(player, args, main, true);
                 case "setspawn" -> new SetSpawnAdmin(player, main);
                 case "setowner" -> new SetOwnerAdmin(player, args, main);
                 case "setradius" -> new SetRadiusAdmin(player, args, main);

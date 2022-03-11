@@ -41,7 +41,7 @@ public class SBCommand implements TabExecutor {
                 case "unban", "pardon" -> new UnbanCommand(player, args, main);
                 case "kick" -> new KickCommand(player, args, main);
                 case "list" -> new ListCommand(player, main);
-                case "info" -> new InfoCommand(player, main);
+                case "info" -> new InfoCommand(player, args, main, false);
                 case "setspawn" -> new SetSpawnCommand(player, main);
                 case "tp" -> new TPCommand(player, args);
                 case "spawn" -> new SpawnCommand(player, main);

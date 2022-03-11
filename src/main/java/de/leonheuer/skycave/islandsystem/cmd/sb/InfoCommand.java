@@ -11,89 +11,64 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
 
 public class InfoCommand {
 
-    public InfoCommand(@NotNull Player player, @NotNull IslandSystem main) {
+    public InfoCommand(@NotNull Player player, @NotNull String[] args, @NotNull IslandSystem main, boolean admin) {
         if (player.getLocation().getWorld() != main.getIslandWorld()) {
             player.sendMessage(Message.NOT_IN_WORLD.getString().get());
             return;
         }
 
-        Island island = Island.at(player.getLocation());
-        if (island == null) {
-            player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
-            return;
-        }
+        Island island;
+        ProtectedRegion region;
 
-        ProtectedRegion region = island.getRegion();
-        if (region == null) {
-            player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
-            return;
+        if (admin && args.length >= 2) {
+            int id;
+            try {
+                id = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                player.sendMessage(Message.INVALID_NUMBER.getString().get());
+                return;
+            }
+
+            island = Island.load(id);
+            if (island == null) {
+                player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
+                return;
+            }
+
+            region = island.getRegion();
+            if (region == null) {
+                player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
+                return;
+            }
+        } else {
+            island = Island.at(player.getLocation());
+            if (island == null) {
+                player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
+                return;
+            }
+
+            region = island.getRegion();
+            if (region == null) {
+                player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
+                return;
+            }
         }
 
         player.sendMessage(Message.INFO_HEADER.getString()
                 .replace("{nummer}", "" + island.getId()).get(false));
-
-        StringJoiner owners = new StringJoiner("&8, &b");
-        int i = 0;
-        for (UUID owner: region.getOwners().getUniqueIds()) {
-            OfflinePlayer other = Bukkit.getOfflinePlayer(owner);
-            if (other.getName() == null) {
-                continue;
-            }
-            owners.add(other.getName());
-            i++;
-        }
-        String ownerList;
-        if (i == 0) {
-            ownerList = "&bkeine";
-        } else {
-            ownerList = owners.toString();
-        }
         player.sendMessage(Message.INFO_OWNER.getString()
-                .replace("{owner}", ownerList).get(false));
-
-        i = 0;
-        StringJoiner members = new StringJoiner("&8, &b");
-        for (UUID member : region.getMembers().getUniqueIds()) {
-            OfflinePlayer other = Bukkit.getOfflinePlayer(member);
-            if (other.getName() == null) {
-                continue;
-            }
-            members.add(other.getName());
-            i++;
-        }
-        String memberList;
-        if (i == 0) {
-            memberList = "&bkeine";
-        } else {
-            memberList = members.toString();
-        }
+                .replace("{owner}", uuidsToPlayers(region.getOwners().getUniqueIds())).get(false));
         player.sendMessage(Message.INFO_MEMBER.getString()
-                .replace("{member}", memberList).get(false));
-
-        i = 0;
-        StringJoiner banned = new StringJoiner("&8, &b");
-        for (UUID p : island.getBannedPlayers().getUniqueIds()) {
-            OfflinePlayer other = Bukkit.getOfflinePlayer(p);
-            if (other.getName() == null) {
-                continue;
-            }
-            banned.add(other.getName());
-            i++;
-        }
-        String bannedList;
-        if (i == 0) {
-            bannedList = "&bkeine";
-        } else {
-            bannedList = banned.toString();
-        }
+                .replace("{member}", uuidsToPlayers(region.getMembers().getUniqueIds())).get(false));
         player.sendMessage(Message.INFO_BANS.getString()
-                .replace("{players}", bannedList).get(false));
-
+                .replace("{players}", uuidsToPlayers(island.getBannedPlayers().getUniqueIds())).get(false));
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm");
         player.sendMessage(Message.INFO_CREATION.getString()
                 .replace("{creation}", dtf.format(island.getCreated())).get(false));
@@ -110,4 +85,27 @@ public class InfoCommand {
         player.sendMessage(Message.INFO_END.getString().replace("{end}",
                 Utils.locationAsString(island.getSpiralLocation().getEndVector(island.getRadius()))).get(false));
     }
+
+    private String uuidsToPlayers(@NotNull Collection<UUID> uuidSet) {
+        int i = 0;
+        StringJoiner players = new StringJoiner("&8, &b");
+        for (UUID uuid : uuidSet) {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            if (player.getName() == null) {
+                continue;
+            }
+            players.add(player.getName());
+            i++;
+        }
+
+        String result;
+        if (i == 0) {
+            result = "&7keine";
+        } else {
+            result = players.toString();
+        }
+
+        return result;
+    }
+
 }
