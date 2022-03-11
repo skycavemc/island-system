@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -100,7 +99,7 @@ public class InfoCommand {
 
         String result;
         if (i == 0) {
-            result = "&7keine";
+            result = "&r&7keine";
         } else {
             result = players.toString();
         }

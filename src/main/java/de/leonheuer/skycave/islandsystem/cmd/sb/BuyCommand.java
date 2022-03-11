@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
@@ -258,6 +259,7 @@ public class BuyCommand {
             radius = 250;
         }
 
+        final long start = System.currentTimeMillis();
         CreationResponse response = Island.create(id, radius, profile.getTemplate());
         Island island = response.island();
         CompletableFuture<Boolean> generationTask = response.generationTask();
@@ -290,11 +292,17 @@ public class BuyCommand {
             if (done || !generationTask.isDone()) {
                 return;
             }
+
             region.getOwners().addPlayer(p.getUniqueId());
             main.getConfiguration().set("current_island_id", id);
-            main.getLogger().info(p.getName() + " bought an island. Specifications: ID: " + id + ", Radius: " + radius + ", Type: " + profile.getTemplate().toString());
+            main.getLogger().info(p.getName() +
+                    " bought an island. Specifications: ID: " + id + ", Radius: " + radius + ", Type: " + profile.getTemplate().toString());
 
-            player.sendMessage(Message.BUY_FINISHED.getString().replaceAll("{id}", "" + id).get());
+            long time = (System.currentTimeMillis() - start) / 1000;
+            String timeTook = new DecimalFormat("#.#").format(time);
+            player.sendMessage(Message.BUY_FINISHED.getString()
+                    .replaceAll("{id}", "" + id).replace("{time}", timeTook).get());
+
             p.teleport(island.getSpawn());
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             Location villagerLocation = island.getCenterLocation().add(0, 1, 0);

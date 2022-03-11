@@ -161,8 +161,8 @@ public enum Message {
     INFO_OWNER("&eBesitzer: &b{owner}"),
     INFO_MEMBER("&eMitglieder: &b{member}"),
     INFO_BANS("&cGebannte Spieler: &b{players}"),
-    INFO_CREATION("&eGründungsdatum: &b{creation}"),
-    INFO_TEMPLATE("&eInseltyp: &b{type}"),
+    INFO_CREATION("&2Gründungsdatum: &b{creation}"),
+    INFO_TEMPLATE("&2Inseltyp: &b{type}"),
     INFO_RADIUS("&2Radius: &b{radius}"),
     INFO_SPAWN("&aSpawn: &b{spawn}"),
     INFO_CENTER("&aZentrum: &b{center}"),
@@ -178,7 +178,7 @@ public enum Message {
     BUY_CREATION_ERROR("&cBei der Inselerstellung ist ein Fehler aufgetreten. Fehlercode: &4{type}"),
     BUY_GENERATION_ERROR("&cDie Starter-Insel konnte nicht generiert werden."),
     BUY_WAIT("&eDie Insel wird erstellt, bitte warte einen Moment..."),
-    BUY_FINISHED("&aDu hast dir erfolgreich eine SB-Insel gekauft! Die Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
+    BUY_FINISHED("&aErstellung in {time} Sekunden abgeschlossen. Die Insel-Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
     ;
 
     private final String string;
