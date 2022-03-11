@@ -12,6 +12,7 @@ import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class Island {
 
@@ -207,7 +209,8 @@ public class Island {
         return region;
     }
 
-    private boolean generateDefaultIsland(@NotNull IslandTemplate template) {
+    @Contract("_ -> new")
+    private @NotNull CompletableFuture<Boolean> generateDefaultIsland(@NotNull IslandTemplate template) {
         return IslandUtils.printSchematic(
                 spiralLocation.getX() * main.getIslandDistance(), 64,
                 spiralLocation.getZ() * main.getIslandDistance(), template.getFile());
@@ -249,21 +252,19 @@ public class Island {
     @NotNull
     public static CreationResponse create(int id, int radius, IslandTemplate template) {
         if (main.getIslandWorld() == null) {
-            return new CreationResponse(CreationResponse.ResponseType.ISLAND_WORLD_UNLOADED, null);
+            return new CreationResponse(CreationResponse.ResponseType.ISLAND_WORLD_UNLOADED, null, null);
         }
         File file = IslandUtils.getIslandSaveLocation(id, true);
         if (file == null) {
-            return new CreationResponse(CreationResponse.ResponseType.SAVE_LOCATION_UNDEFINED, null);
+            return new CreationResponse(CreationResponse.ResponseType.SAVE_LOCATION_UNDEFINED, null, null);
         }
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         Island island = new Island(id, radius, config, file);
         island.setSpawn(island.getCenterLocation());
-        if (!island.generateDefaultIsland(template)) {
-            return new CreationResponse(CreationResponse.ResponseType.GENERATION_ERROR, null);
-        }
+        CompletableFuture<Boolean> generationTask = island.generateDefaultIsland(template);
         if (island.createRegion() == null) {
-            return new CreationResponse(CreationResponse.ResponseType.WG_REGION_ERROR, null);
+            return new CreationResponse(CreationResponse.ResponseType.WG_REGION_ERROR, null, generationTask);
         }
         config.set("radius", radius);
         config.set("spawn", island.getSpawn());
@@ -271,10 +272,10 @@ public class Island {
         config.set("template", template.toString());
         try {
             config.save(file);
-            return new CreationResponse(CreationResponse.ResponseType.SUCCESS, island);
+            return new CreationResponse(CreationResponse.ResponseType.SUCCESS, island, generationTask);
         } catch (IOException e) {
             e.printStackTrace();
-            return new CreationResponse(CreationResponse.ResponseType.FILE_ERROR, null);
+            return new CreationResponse(CreationResponse.ResponseType.FILE_ERROR, null, generationTask);
         }
     }
 

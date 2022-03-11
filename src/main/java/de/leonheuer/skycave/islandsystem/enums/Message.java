@@ -160,6 +160,7 @@ public enum Message {
     INFO_HEADER("&8~~~~ &2Info für Insel Nummer {nummer} &8~~~~"),
     INFO_OWNER("&eBesitzer: &b{owner}"),
     INFO_MEMBER("&eMitglieder: &b{member}"),
+    INFO_BANS("&cGebannt: &b{players}"),
     INFO_CREATION("&eGründungsdatum: &b{creation}"),
     INFO_TEMPLATE("&eInseltyp: &b{type}"),
     INFO_RADIUS("&2Radius: &b{radius}"),
@@ -169,11 +170,13 @@ public enum Message {
     INFO_END("&aEnde: &b{end}"),
 
     // Buy
-    BUY_NOT_ENOUGH("&cDu hast nicht genug Geld. Dir fehlen noch {diff}"),
+    BUY_NOT_ENOUGH_MONEY("&cDu hast nicht genug Geld. Dir fehlen noch {diff}"),
+    BUY_NOT_ENOUGH_NESTS("&cDu brauchst {amount} Level 300 Bienennester."),
     BUY_TEMPLATE_ERROR("&cDie Starter-Insel konnte nicht geladen werden."),
     BUY_REGION_ERROR("&cDie Insel-Region konnte nicht geladen werden."),
     BUY_TRANSACTION_FAILED("&cDas Geld konnte nicht eingezogen werden."),
     BUY_CREATION_ERROR("&cBei der Inselerstellung ist ein Fehler aufgetreten. Fehlercode: &4{type}"),
+    BUY_GENERATION_ERROR("&cDie Starter-Insel konnte nicht generiert werden."),
     BUY_WAIT("&eDie Insel wird erstellt, bitte warte einen Moment..."),
     BUY_FINISHED("&aDu hast dir erfolgreich eine SB-Insel gekauft! Die Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
     ;

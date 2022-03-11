@@ -19,6 +19,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 public class IslandUtils {
 
@@ -128,36 +132,39 @@ public class IslandUtils {
      * @param schematic The file to load the schematic from
      * @return Whether the operation succeeded
      */
-    public static boolean printSchematic(int x, int y, int z, File schematic) {
-        ClipboardFormat format = ClipboardFormats.findByFile(schematic);
-        if (format == null) {
-            return false;
-        }
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull CompletableFuture<Boolean> printSchematic(int x, int y, int z, File schematic) {
+         return CompletableFuture.supplyAsync(() -> {
+            ClipboardFormat format = ClipboardFormats.findByFile(schematic);
+            if (format == null) {
+                return false;
+            }
 
-        Clipboard cc;
-        try (ClipboardReader reader = format.getReader(new FileInputStream(schematic))) {
-            cc = reader.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        if (cc == null) {
-            return false;
-        }
+            Clipboard cc;
+            try (ClipboardReader reader = format.getReader(new FileInputStream(schematic))) {
+                cc = reader.read();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            if (cc == null) {
+                return false;
+            }
 
-        BlockVector3 location = BlockVector3.at(x, y, z);
-        EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
-                .world(BukkitAdapter.adapt(main.getIslandWorld()))
-                .maxBlocks(-1)
-                .build();
-        try {
-            Operation operation = new ClipboardHolder(cc).createPaste(editSession).to(location).build();
-            Operations.complete(operation);
-        } catch (WorldEditException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+            BlockVector3 location = BlockVector3.at(x, y, z);
+            EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(BukkitAdapter.adapt(main.getIslandWorld()))
+                    .maxBlocks(-1)
+                    .build();
+            try {
+                Operation operation = new ClipboardHolder(cc).createPaste(editSession).to(location).build();
+                Operations.complete(operation);
+            } catch (WorldEditException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        });
     }
 
     /**

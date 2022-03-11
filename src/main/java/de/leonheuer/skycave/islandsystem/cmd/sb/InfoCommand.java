@@ -59,6 +59,17 @@ public class InfoCommand {
         player.sendMessage(Message.INFO_MEMBER.getString()
                 .replace("{member}", members.toString()).get(false));
 
+        StringJoiner banned = new StringJoiner("&8, &b");
+        for (UUID p : island.getBannedPlayers().getUniqueIds()) {
+            OfflinePlayer other = Bukkit.getOfflinePlayer(p);
+            if (other.getName() == null) {
+                continue;
+            }
+            banned.add(other.getName());
+        }
+        player.sendMessage(Message.INFO_BANS.getString()
+                .replace("{players}", banned.toString()).get(false));
+
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm");
         player.sendMessage(Message.INFO_CREATION.getString()
                 .replace("{creation}", dtf.format(island.getCreated())).get(false));

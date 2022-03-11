@@ -87,9 +87,9 @@ public class CreateAdmin {
         player.sendMessage(Message.ADMIN_CREATE_WAIT.getString().get());
         int id = main.getConfiguration().getInt("current_island_id") + 1;
         CreationResponse response = Island.create(id, radius, template);
-        Island island = response.getIsland();
-        if (response.getType() != CreationResponse.ResponseType.SUCCESS || island == null) {
-            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().replace("{type}", response.getType().toString()).get());
+        Island island = response.island();
+        if (response.type() != CreationResponse.ResponseType.SUCCESS || island == null) {
+            player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().replace("{type}", response.type().toString()).get());
             return;
         }
         ProtectedRegion region = island.getRegion();

@@ -10,6 +10,7 @@ import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.CreationResponse;
 import de.leonheuer.skycave.islandsystem.models.Island;
 import de.leonheuer.skycave.islandsystem.models.SelectionProfile;
+import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,16 +19,20 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class BuyCommand {
 
     private final IslandSystem main;
     private final Player player;
+    private volatile boolean done = false;
 
     public BuyCommand(@NotNull Player player, @NotNull IslandSystem main) {
         this.main = main;
@@ -111,14 +116,19 @@ public class BuyCommand {
         ).setItem(6, 8, getConfirmItemStack(), event -> {
                     event.setCancelled(true);
                     Player p = (Player) event.getWhoClicked();
-                    if (economy.has(p, getCost())) {
-                        // TODO check bee nests
-                        buy(p);
-                    } else {
+                    if (!economy.has(p, getCost())) {
                         p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
                         String diff = format.format(getCost() - economy.getBalance(p)) + "$";
-                        p.sendMessage(Message.BUY_NOT_ENOUGH.getString().replace("{diff}", diff).get());
+                        p.sendMessage(Message.BUY_NOT_ENOUGH_MONEY.getString().replace("{diff}", diff).get());
+                        return;
                     }
+                    int required = nestsRequired(p);
+                    if (!hasNests(p, required)) {
+                        p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+                        p.sendMessage(Message.BUY_NOT_ENOUGH_NESTS.getString().replace("{amount}", "" + required).get());
+                        return;
+                    }
+                    buy(p, required);
                 }
         ).show(player);
     }
@@ -151,7 +161,79 @@ public class BuyCommand {
                 ).asItem();
     }
 
-    private void buy(@NotNull Player p) {
+    private int nestsRequired(@NotNull Player p) {File dir = new File(main.getDataFolder(), "islands/");
+        if (!dir.isDirectory()) {
+            return -1;
+        }
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return -1;
+        }
+
+        int islandCount = 0;
+
+        for (File f : files) {
+            String name = f.getName().replace(".yml", "");
+            if (!IslandUtils.isValidName(name)) {
+                continue;
+            }
+            Island island = Island.load(IslandUtils.nameToId(name));
+            if (island == null) {
+                continue;
+            }
+            ProtectedRegion region = island.getRegion();
+            if (region == null) {
+                continue;
+            }
+
+            if (region.getOwners().contains(p.getUniqueId())) {
+                islandCount++;
+            }
+        }
+        return 3 * (islandCount + 1);
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean isNest(ItemStack item) {
+        if (item == null) {
+            return false;
+        }
+        boolean isHive = item.getType() == Material.BEEHIVE &&
+                item.getItemMeta().getDisplayName().contains("§6Bienenstock §8» §eLevel §a300");
+        boolean isNest = item.getType() == Material.BEE_NEST &&
+                item.getItemMeta().getDisplayName().contains("§6Bienennest §8» §eLevel §a300");
+        return isHive || isNest;
+    }
+
+    private boolean hasNests(@NotNull Player p, int required) {
+        int amount = 0;
+        for (ItemStack item : p.getInventory()) {
+            if (isNest(item)) {
+                amount = amount + item.getAmount();
+            }
+        }
+        return amount >= required;
+    }
+
+    private void removeNests(@NotNull Player p, int required) {
+        int amount = 0;
+        for (ItemStack item : p.getInventory().getContents()) {
+            if (!isNest(item)) {
+                continue;
+            }
+            if (amount + item.getAmount() > required) {
+                item.setAmount(item.getAmount() - (required - amount));
+                return;
+            }
+            amount = amount + item.getAmount();
+            item.setAmount(0);
+            if (amount >= required) {
+                return;
+            }
+        }
+    }
+
+    private void buy(@NotNull Player p, int required) {
         SelectionProfile profile = main.getSelectionProfiles().get(p.getUniqueId());
         if (!profile.getTemplate().getFile().exists()) {
             p.sendMessage(Message.BUY_TEMPLATE_ERROR.getString().get());
@@ -160,45 +242,68 @@ public class BuyCommand {
 
         p.closeInventory();
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+        if (!main.getEconomy().withdrawPlayer(p, getCost()).transactionSuccess()) {
+            p.sendMessage(Message.BUY_TRANSACTION_FAILED.getString().get());
+            return;
+        }
+        removeNests(p, required);
 
         player.sendMessage(Message.BUY_WAIT.getString().get());
         int id = main.getConfiguration().getInt("current_island_id") + 1;
-        int radius = 250;
+        int radius;
         if (profile.isLarge()) {
-            radius = radius * 2;
+            radius = 500;
+        } else {
+            radius = 250;
         }
 
         CreationResponse response = Island.create(id, radius, profile.getTemplate());
-        Island island = response.getIsland();
-        if (response.getType() != CreationResponse.ResponseType.SUCCESS || island == null) {
-            player.sendMessage(Message.BUY_CREATION_ERROR.getString().replace("{type}", response.getType().toString()).get());
+        Island island = response.island();
+        CompletableFuture<Boolean> generationTask = response.generationTask();
+        if (response.type() != CreationResponse.ResponseType.SUCCESS || island == null) {
+            player.sendMessage(Message.BUY_CREATION_ERROR.getString().replace("{type}", response.type().toString()).get());
+            if (generationTask != null) {
+                generationTask.cancel(true);
+            }
             return;
         }
 
         ProtectedRegion region = island.getRegion();
         if (region == null) {
             player.sendMessage(Message.BUY_REGION_ERROR.getString().get());
+            if (generationTask != null) {
+                generationTask.cancel(true);
+            }
             return;
         }
 
-        if (main.getEconomy().withdrawPlayer(p, getCost()).transactionSuccess()) {
-            // TODO remove bee nests
+        if (generationTask == null) {
+            p.sendMessage(Message.BUY_GENERATION_ERROR.getString().get());
+            return;
+        }
+
+        BukkitTask completer = main.getServer().getScheduler().runTaskTimer(main, () -> {
+            if (done || !generationTask.isDone()) {
+                return;
+            }
             region.getOwners().addPlayer(p.getUniqueId());
             main.getConfiguration().set("current_island_id", id);
             main.getLogger().info(p.getName() + " bought an island. Specifications: ID: " + id + ", Radius: " + radius + ", Type: " + profile.getTemplate().toString());
 
-            main.getServer().getScheduler().runTaskLater(main, () -> {
-                player.sendMessage(Message.BUY_FINISHED.getString().replaceAll("{id}", "" + id).get());
-                p.teleport(island.getSpawn());
-                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-                Location villagerLocation = island.getCenterLocation().add(0, 1, 0);
-                main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
-                main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
-            }, 20);
-
-        } else {
-            p.sendMessage(Message.BUY_TRANSACTION_FAILED.getString().get());
-        }
+            player.sendMessage(Message.BUY_FINISHED.getString().replaceAll("{id}", "" + id).get());
+            p.teleport(island.getSpawn());
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+            Location villagerLocation = island.getCenterLocation().add(0, 1, 0);
+            main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
+            main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
+            done = true;
+        }, 0, 2);
+        main.getServer().getScheduler().runTaskLater(main, () -> {
+            completer.cancel();
+            if (!done) {
+                p.sendMessage(Message.BUY_GENERATION_ERROR.getString().get());
+            }
+        }, 1200);
     }
 
 }
