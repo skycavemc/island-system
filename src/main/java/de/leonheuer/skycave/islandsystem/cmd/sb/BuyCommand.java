@@ -27,6 +27,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 public class BuyCommand {
@@ -289,7 +290,16 @@ public class BuyCommand {
         }
 
         BukkitTask completer = main.getServer().getScheduler().runTaskTimer(main, () -> {
-            if (done || !generationTask.isDone()) {
+            try {
+                if (done || !generationTask.isDone() || !generationTask.get()) {
+                    int diff = Math.round((System.currentTimeMillis() - start) / 1000f);
+                    if (diff % 60 == 0) {
+                        p.sendMessage(Message.BUY_WAIT_STILL.getString().replace("{min}", "" + diff / 60).get());
+                    }
+                    return;
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
                 return;
             }
 
@@ -309,14 +319,14 @@ public class BuyCommand {
             main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
             main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
             done = true;
-        }, 0, 2);
+        }, 0, 20);
         main.getServer().getScheduler().runTaskLater(main, () -> {
             completer.cancel();
             if (!done) {
-                p.sendMessage(Message.BUY_GENERATION_ERROR.getString().get());
+                p.sendMessage(Message.BUY_GENERATION_TOO_LONG.getString().get());
                 giveBack(p, cost, required);
             }
-        }, 1200);
+        }, 60 * 20 * 15);
     }
 
     private void giveBack(Player p, int cost, int required) {

@@ -177,7 +177,9 @@ public enum Message {
     BUY_TRANSACTION_FAILED("&cDas Geld konnte nicht eingezogen werden."),
     BUY_CREATION_ERROR("&cBei der Inselerstellung ist ein Fehler aufgetreten. Fehlercode: &4{type}"),
     BUY_GENERATION_ERROR("&cDie Starter-Insel konnte nicht generiert werden."),
-    BUY_WAIT("&eDie Insel wird erstellt, bitte warte einen Moment..."),
+    BUY_GENERATION_TOO_LONG("&cDie Generierung wurde abgebrochen, weil sie zu lang gedauert hat."),
+    BUY_WAIT("&eDie Insel wird generiert, dies kann mehrere Minuten dauern."),
+    BUY_WAIT_STILL("&eZeit verstrichen: {min} Minuten"),
     BUY_FINISHED("&aErstellung in {time} Sekunden abgeschlossen. Die Insel-Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
     ;
 
