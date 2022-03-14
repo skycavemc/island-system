@@ -2,6 +2,7 @@ package de.leonheuer.skycave.islandsystem.cmd.sbadmin;
 
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +22,7 @@ public class TPAdmin {
             return;
         }
 
-        Island island = Island.load(id);
+        Island island = Islands.load(id);
         if (island == null) {
             player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
             return;

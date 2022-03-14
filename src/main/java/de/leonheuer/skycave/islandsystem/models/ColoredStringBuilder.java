@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
  * Class that stores a raw string and returns the string with translated color codes and prefix.
  */
 @SuppressWarnings("unused")
-public class ColoredString {
+public class ColoredStringBuilder {
 
     private final PrefixHolder prefixHolder;
     private String base;
@@ -16,7 +16,7 @@ public class ColoredString {
      * @param prefixHolder A class that holds a prefix
      * @param base The raw string to save
      */
-    public ColoredString(PrefixHolder prefixHolder, String base) {
+    public ColoredStringBuilder(PrefixHolder prefixHolder, String base) {
         this.prefixHolder = prefixHolder;
         this.base = base;
     }
@@ -27,7 +27,7 @@ public class ColoredString {
      * @param to New string
      * @return The ColoredString instance
      */
-    public ColoredString replace(String from, String to) {
+    public ColoredStringBuilder replace(String from, String to) {
         base = base.replace(from, to);
         return this;
     }
@@ -38,7 +38,7 @@ public class ColoredString {
      * @param to New string
      * @return The ColoredString instance
      */
-    public ColoredString replaceAll(String from, String to) {
+    public ColoredStringBuilder replaceAll(String from, String to) {
         while (base.contains(from)) {
             base = base.replace(from, to);
         }

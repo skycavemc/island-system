@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,7 +30,7 @@ public class EntryListener implements Listener {
         if (event.getTo().getWorld() != main.getIslandWorld()) {
             return;
         }
-        Island island = Island.at(event.getTo());
+        Island island = Islands.at(event.getTo());
         if (island == null) {
             return;
         }
@@ -60,7 +61,7 @@ public class EntryListener implements Listener {
         if (player.getLocation().getWorld() != main.getIslandWorld()) {
             return;
         }
-        Island island = Island.at(player.getLocation());
+        Island island = Islands.at(player.getLocation());
         if (island == null) {
             return;
         }

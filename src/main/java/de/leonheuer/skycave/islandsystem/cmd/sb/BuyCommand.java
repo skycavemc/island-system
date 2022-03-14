@@ -9,6 +9,7 @@ import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.CreationResponse;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import de.leonheuer.skycave.islandsystem.models.SelectionProfile;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import net.milkbowl.vault.economy.Economy;
@@ -116,8 +117,11 @@ public class BuyCommand {
                     p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
                 }
         ).setItem(6, 8, getConfirmItemStack(), event -> {
-                    event.setCancelled(true);
                     Player p = (Player) event.getWhoClicked();
+                    if (main.isWorking()) {
+                        p.sendMessage(Message.ISLAND_CREATION_IN_PROCESS.getString().get());
+                        return;
+                    }
                     if (!economy.has(p, getCost())) {
                         p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
                         String diff = format.format(getCost() - economy.getBalance(p)) + "$";
@@ -163,36 +167,18 @@ public class BuyCommand {
                 ).asItem();
     }
 
-    private int nestsRequired(@NotNull Player p) {File dir = new File(main.getDataFolder(), "islands/");
-        if (!dir.isDirectory()) {
-            return -1;
-        }
-        File[] files = dir.listFiles();
-        if (files == null) {
-            return -1;
-        }
-
-        int islandCount = 0;
-
-        for (File f : files) {
-            String name = f.getName().replace(".yml", "");
-            if (!IslandUtils.isValidName(name)) {
-                continue;
-            }
-            Island island = Island.load(IslandUtils.nameToId(name));
-            if (island == null) {
-                continue;
-            }
+    private int nestsRequired(@NotNull Player p) {
+        int count = 3;
+        for (Island island : Islands.listAll()) {
             ProtectedRegion region = island.getRegion();
             if (region == null) {
                 continue;
             }
-
             if (region.getOwners().contains(p.getUniqueId())) {
-                islandCount++;
+                count = count + 3;
             }
         }
-        return 3 * (islandCount + 1);
+        return count;
     }
 
     @SuppressWarnings("deprecation")
@@ -260,8 +246,9 @@ public class BuyCommand {
             radius = 250;
         }
 
+        main.setWorking(true);
         final long start = System.currentTimeMillis();
-        CreationResponse response = Island.create(id, radius, profile.getTemplate());
+        CreationResponse response = Islands.create(id, radius, profile.getTemplate());
         Island island = response.island();
         CompletableFuture<Boolean> generationTask = response.generationTask();
         if (response.type() != CreationResponse.ResponseType.SUCCESS || island == null) {
@@ -270,6 +257,7 @@ public class BuyCommand {
                 generationTask.cancel(true);
             }
             giveBack(p, cost, required);
+            main.setWorking(false);
             return;
         }
 
@@ -280,12 +268,14 @@ public class BuyCommand {
                 generationTask.cancel(true);
             }
             giveBack(p, cost, required);
+            main.setWorking(false);
             return;
         }
 
         if (generationTask == null) {
             p.sendMessage(Message.BUY_GENERATION_ERROR.getString().get());
             giveBack(p, cost, required);
+            main.setWorking(false);
             return;
         }
 
@@ -319,12 +309,14 @@ public class BuyCommand {
             main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
             main.getIslandWorld().spawnEntity(villagerLocation, EntityType.VILLAGER);
             done = true;
+            main.setWorking(false);
         }, 0, 20);
         main.getServer().getScheduler().runTaskLater(main, () -> {
             completer.cancel();
             if (!done) {
                 p.sendMessage(Message.BUY_GENERATION_TOO_LONG.getString().get());
                 giveBack(p, cost, required);
+                main.setWorking(false);
             }
         }, 60 * 20 * 15);
     }

@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -35,7 +36,7 @@ public class InfoCommand {
                 return;
             }
 
-            island = Island.load(id);
+            island = Islands.load(id);
             if (island == null) {
                 player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
                 return;
@@ -47,7 +48,7 @@ public class InfoCommand {
                 return;
             }
         } else {
-            island = Island.at(player.getLocation());
+            island = Islands.at(player.getLocation());
             if (island == null) {
                 player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
                 return;

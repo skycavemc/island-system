@@ -4,42 +4,23 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
-import de.leonheuer.skycave.islandsystem.util.IslandUtils;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.StringJoiner;
 
 public class ListCommand {
 
-    public ListCommand(Player player, IslandSystem main) {
-        File dir = new File(main.getDataFolder(), "islands/");
-        if (!dir.isDirectory()) {
-            return;
-        }
-
-        File[] files = dir.listFiles();
-        if (files == null) {
-            return;
-        }
-
+    public ListCommand(Player player, @NotNull IslandSystem main) {
         StringJoiner ownerMessage = new StringJoiner(", ");
         StringJoiner memberMessage = new StringJoiner(", ");
 
-        for (File f : files) {
-            String name = f.getName().replace(".yml", "");
-            if (!IslandUtils.isValidName(name)) {
-                continue;
-            }
-            Island island = Island.load(IslandUtils.nameToId(name));
-            if (island == null) {
-                continue;
-            }
+        for (Island island : Islands.listAll()) {
             ProtectedRegion region = island.getRegion();
             if (region == null) {
                 continue;
             }
-
             if (region.getOwners().contains(player.getUniqueId())) {
                 ownerMessage.add("" + island.getId());
             }
