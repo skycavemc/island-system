@@ -2,11 +2,10 @@ package de.leonheuer.skycave.islandsystem.models;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Consumer;
 
-public class BannedPlayerList {
+public class BannedPlayerList implements Iterable<UUID> {
 
     private final Island island;
     private final List<UUID> bannedPlayers;
@@ -73,5 +72,17 @@ public class BannedPlayerList {
     @NotNull
     public List<UUID> getUniqueIds() {
         return Collections.unmodifiableList(bannedPlayers);
+    }
+
+    @NotNull
+    @Override
+    public Iterator<UUID> iterator() {
+        return getUniqueIds().iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super UUID> action) {
+        Iterable.super.forEach(action);
+        island.save();
     }
 }

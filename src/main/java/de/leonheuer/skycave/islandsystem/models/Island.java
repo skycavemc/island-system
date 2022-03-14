@@ -228,7 +228,7 @@ public class Island {
         config.set("spawn", spawn);
         config.set("creation_timestamp", getCreated().toString());
         List<String> banned = new ArrayList<>();
-        for (UUID uuid : bannedPlayers.getUniqueIds()) {
+        for (UUID uuid : bannedPlayers) {
             banned.add(uuid.toString());
         }
         config.set("banned_uuids", banned);
