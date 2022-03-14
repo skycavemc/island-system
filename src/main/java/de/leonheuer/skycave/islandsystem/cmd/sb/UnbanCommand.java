@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ public class UnbanCommand {
             return;
         }
 
-        Island island = Island.at(player.getLocation());
+        Island island = Islands.at(player.getLocation());
         if (island == null) {
             player.sendMessage(Message.NOT_ON_ISLAND.getString().get());
             return;
