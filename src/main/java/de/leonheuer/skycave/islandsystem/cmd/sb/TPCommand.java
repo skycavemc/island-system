@@ -3,6 +3,7 @@ package de.leonheuer.skycave.islandsystem.cmd.sb;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import org.bukkit.entity.Player;
 
 public class TPCommand {
@@ -21,7 +22,7 @@ public class TPCommand {
             return;
         }
 
-        Island island = Island.load(id);
+        Island island = Islands.load(id);
         if (island == null) {
             player.sendMessage(Message.ISLAND_UNKNOWN.getString().get());
             return;

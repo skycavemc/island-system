@@ -1,10 +1,12 @@
 package de.leonheuer.skycave.islandsystem.listener;
 
+import com.mongodb.client.model.Filters;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.manager.LimitManager;
+import de.leonheuer.skycave.islandsystem.models.User;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import de.leonheuer.skycave.islandsystem.util.Utils;
 import org.bukkit.Bukkit;
@@ -16,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
@@ -63,8 +66,14 @@ public class CreatureSpawnListener implements Listener {
         }
     }
 
-    private void sendLimitMessage(UUID uuid, EntityLimit limit, ProtectedRegion region) {
-        // TODO options for notifications
+    private void sendLimitMessage(@NotNull UUID uuid, EntityLimit limit, ProtectedRegion region) {
+        User user = main.getUsers().find(Filters.eq("uuid", uuid.toString())).first();
+        if (user != null) {
+            List<String> ignored = user.getIgnoredEntityLimits().get(IslandUtils.nameToId(region.getId()));
+            if (ignored != null && ignored.contains(limit.toString())) {
+                return;
+            }
+        }
         Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline()) {
             return;

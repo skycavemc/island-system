@@ -1,5 +1,10 @@
 package de.leonheuer.skycave.islandsystem;
 
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
@@ -14,8 +19,12 @@ import de.leonheuer.skycave.islandsystem.manager.WarpManager;
 import de.leonheuer.skycave.islandsystem.models.AutoSaveConfig;
 import de.leonheuer.skycave.islandsystem.models.PrefixHolder;
 import de.leonheuer.skycave.islandsystem.models.SelectionProfile;
+import de.leonheuer.skycave.islandsystem.models.User;
 import de.leonheuer.skycave.islandsystem.util.FileUtils;
 import net.milkbowl.vault.economy.Economy;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
@@ -42,6 +51,8 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
     private LimitManager limitManager;
     private World islandWorld;
     private AutoSaveConfig config;
+    private MongoCollection<User> users;
+    private boolean working = false;
 
     @Override
     public void onEnable() {
@@ -52,6 +63,16 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
         if ((economy = setupEconomy()) == null) {
             getLogger().severe("Vault Economy no initialized. Some features of this plugin will not work.");
         }
+
+        // database
+        CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(
+                PojoCodecProvider.builder().automatic(true).build());
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
+                MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
+        MongoClientSettings clientSettings = MongoClientSettings.builder().codecRegistry(codecRegistry).build();
+        MongoClient client = MongoClients.create(clientSettings);
+        MongoDatabase db = client.getDatabase("island_system");
+        users = db.getCollection("users", User.class);
 
         // managers
         warpManager = new WarpManager(this);
@@ -183,6 +204,19 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
     @NotNull
     public AutoSaveConfig getConfiguration() {
         return config;
+    }
+
+    @NotNull
+    public MongoCollection<User> getUsers() {
+        return users;
+    }
+
+    public void setWorking(boolean working) {
+        this.working = working;
+    }
+
+    public boolean isWorking() {
+        return working;
     }
 
     @Override

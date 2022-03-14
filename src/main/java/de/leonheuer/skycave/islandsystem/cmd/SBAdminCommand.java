@@ -27,7 +27,6 @@ public class SBAdminCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String arg, String[] args) {
-
         if (!(sender instanceof Player player)) {
             sender.sendMessage("Du musst ein Spieler sein!");
             return true;

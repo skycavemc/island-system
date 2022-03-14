@@ -26,7 +26,6 @@ public class SBCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] args) {
-
         if (!(sender instanceof Player player)) {
             sender.sendMessage("Du musst ein Spieler sein!");
             return true;
@@ -47,6 +46,7 @@ public class SBCommand implements TabExecutor {
                 case "spawn" -> new SpawnCommand(player, main);
                 case "warp", "warps" -> new WarpCommand(player, args, main);
                 case "limits" -> new LimitsCommand(player);
+                case "notify" -> new NotifyCommand(player, args, main);
                 default -> sendHelp(player);
             }
         } else {
@@ -71,6 +71,7 @@ public class SBCommand implements TabExecutor {
         player.sendMessage(Message.HELP_SPAWN.getString().get(false));
         player.sendMessage(Message.HELP_WARP.getString().get(false));
         player.sendMessage(Message.HELP_LIMITS.getString().get(false));
+        player.sendMessage(Message.HELP_NOTIFY.getString().get(false));
     }
 
     @Override
@@ -94,6 +95,7 @@ public class SBCommand implements TabExecutor {
             arguments.add("warp");
             arguments.add("warps");
             arguments.add("limits");
+            arguments.add("notify");
 
             StringUtil.copyPartialMatches(args[0], arguments, completions);
         } else if (args.length == 2) {
@@ -107,6 +109,11 @@ public class SBCommand implements TabExecutor {
                     StringUtil.copyPartialMatches(args[1], arguments, completions);
                 }
                 case "warp", "warps" -> StringUtil.copyPartialMatches(args[1], main.getWarpManager().getNames(), completions);
+                case "notify" -> {
+                    arguments.add("on");
+                    arguments.add("off");
+                    StringUtil.copyPartialMatches(args[1], arguments, completions);
+                }
             }
         }
 

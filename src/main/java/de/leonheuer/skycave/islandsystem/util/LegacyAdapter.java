@@ -2,6 +2,7 @@ package de.leonheuer.skycave.islandsystem.util;
 
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -94,7 +95,7 @@ public class LegacyAdapter {
             }
             YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(file);
 
-            Island island = Island.importAndSave(IslandUtils.nameToId(name) ,newConfig, file, new ArrayList<>(), radius,
+            Island island = Islands.importAndSave(IslandUtils.nameToId(name) ,newConfig, file, new ArrayList<>(), radius,
                     spawn, LocalDateTime.ofInstant(created, ZoneId.systemDefault()), null);
             if (island == null) {
                 continue;

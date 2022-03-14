@@ -20,7 +20,9 @@ public enum Message {
     REGION_ACCESS("&4Achtung! Jeder Eingriff kann die Funktion des Plugins beeinträchtigen!"),
     TEMP_DISABLED("&cDiese Funktion ist deaktiviert."),
     LIMIT_REACHED("&cDas Limit von &4{count} {entity} &cwurde auf der Insel &4{id} &cüberschritten."),
+    LIMIT_UNKNOWN("&cFür dieses Entity existiert kein Limit."),
     SPECIAL_PERMS("&cDieser Vorgang erfordert Sonderberechtigungen."),
+    ISLAND_CREATION_IN_PROCESS("&cEs wird bereits eine Insel von einem anderen Spieler erstellt, bitte warte einen Moment."),
 
 
 
@@ -96,6 +98,7 @@ public enum Message {
     HELP_SPAWN("&e/sb spawn &8- &7&oTeleportiert dich zur Spawn-Insel"),
     HELP_WARP("&e/sb warp <Name> &8- &7&oTeleportiert dich zur einem Warp"),
     HELP_LIMITS("&e/sb limits &8- &7&oZeigt dir die Limits für deine Insel an"),
+    HELP_NOTIFY("&e/sb notify [on|off] [Nummer] [Limit] &8- &7&oSchaltet Limit Benachrichtigungen an oder aus"),
 
     // Trust
     TRUST_SYNTAX("&e/sb trust <Spieler>"),
@@ -181,6 +184,11 @@ public enum Message {
     BUY_WAIT("&eDie Insel wird generiert, dies kann mehrere Minuten dauern."),
     BUY_WAIT_STILL("&eZeit verstrichen: {min} Minuten"),
     BUY_FINISHED("&aErstellung in {time} Sekunden abgeschlossen. Die Insel-Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
+
+    // Notify
+    NOTIFY_STATUS("&aDu erhältst momentan folgende Benachrichtigungen &8(&7Nummer &8-> &7Limits&8): &7{notify}"),
+    NOTIFY_OPTIONS("&eMögliche Optionen: on, off"),
+    NOTIFY_SUCCESS("&aEinstellungen für Limit Benachrichtigungen geändert. Du erhältst nun folgende Benachrichtigungen &8(&7Nummer &8-> &7Limits&8)&a: {notify}"),
     ;
 
     private final String string;

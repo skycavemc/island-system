@@ -8,6 +8,7 @@ import de.leonheuer.skycave.islandsystem.enums.IslandTemplate;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import de.leonheuer.skycave.islandsystem.models.CreationResponse;
 import de.leonheuer.skycave.islandsystem.models.Island;
+import de.leonheuer.skycave.islandsystem.models.Islands;
 import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -86,7 +87,7 @@ public class CreateAdmin {
 
         player.sendMessage(Message.ADMIN_CREATE_WAIT.getString().get());
         int id = main.getConfiguration().getInt("current_island_id") + 1;
-        CreationResponse response = Island.create(id, radius, template);
+        CreationResponse response = Islands.create(id, radius, template);
         Island island = response.island();
         if (response.type() != CreationResponse.ResponseType.SUCCESS || island == null) {
             player.sendMessage(Message.ADMIN_CREATE_ERROR.getString().replace("{type}", response.type().toString()).get());
