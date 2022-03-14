@@ -69,7 +69,7 @@ public class CreatureSpawnListener implements Listener {
     private void sendLimitMessage(@NotNull UUID uuid, EntityLimit limit, ProtectedRegion region) {
         User user = main.getUsers().find(Filters.eq("uuid", uuid.toString())).first();
         if (user != null) {
-            List<String> ignored = user.getIgnoredEntityLimits().get(IslandUtils.nameToId(region.getId()));
+            List<String> ignored = user.getIgnoredEntityLimits().get(region.getId());
             if (ignored != null && ignored.contains(limit.toString())) {
                 return;
             }

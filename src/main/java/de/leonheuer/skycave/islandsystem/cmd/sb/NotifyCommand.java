@@ -12,7 +12,6 @@ import de.leonheuer.skycave.islandsystem.util.IslandUtils;
 import org.bson.conversions.Bson;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -29,7 +28,8 @@ public class NotifyCommand {
         }
         
         if (args.length < 2) {
-            player.sendMessage(Message.NOTIFY_STATUS.getString().replace("{notify}", listNotifications(user)).get());
+            player.sendMessage(Message.NOTIFY_STATUS.getString()
+                    .replace("{notify}", listNotifications(player, user)).get());
             return;
         }
 
@@ -38,7 +38,8 @@ public class NotifyCommand {
                 if (args.length == 2) {
                     user.getIgnoredEntityLimits().clear();
                     main.getUsers().replaceOne(filter, user);
-                    player.sendMessage(Message.NOTIFY_SUCCESS.getString().replace("{notify}", "&aalle &8-> &7alle").get());
+                    player.sendMessage(Message.NOTIFY_SUCCESS.getString()
+                            .replace("{notify}", listNotifications(player, user)).get());
                     return;
                 }
                 if (args.length == 3) {
@@ -63,9 +64,10 @@ public class NotifyCommand {
                         player.sendMessage(Message.NO_MEMBER.getString().get());
                     }
 
-                    user.getIgnoredEntityLimits().remove(id);
+                    user.getIgnoredEntityLimits().remove(target.getName());
                     main.getUsers().replaceOne(filter, user);
-                    player.sendMessage(Message.NOTIFY_SUCCESS.getString().replace("{notify}", listNotifications(user)).get());
+                    player.sendMessage(Message.NOTIFY_SUCCESS.getString()
+                            .replace("{notify}", listNotifications(player, user)).get());
                     return;
                 }
 
@@ -92,19 +94,20 @@ public class NotifyCommand {
 
                 EntityLimit limit;
                 try {
-                    limit = EntityLimit.valueOf(args[3]);
+                    limit = EntityLimit.valueOf(args[3].toUpperCase());
                 } catch (IllegalArgumentException e) {
                     player.sendMessage(Message.LIMIT_UNKNOWN.getString().get());
                     return;
                 }
 
-                List<String> ignored = user.getIgnoredEntityLimits().get(id);
+                List<String> ignored = user.getIgnoredEntityLimits().get(target.getName());
                 if (ignored != null) {
                     ignored.remove(limit.toString());
                 }
-                user.getIgnoredEntityLimits().put(id, ignored);
+                user.getIgnoredEntityLimits().put(target.getName(), ignored);
                 main.getUsers().replaceOne(filter, user);
-                player.sendMessage(Message.NOTIFY_SUCCESS.getString().replace("{notify}", listNotifications(user)).get());
+                player.sendMessage(Message.NOTIFY_SUCCESS.getString()
+                        .replace("{notify}", listNotifications(player, user)).get());
             }
             case "off" -> {
                 if (args.length == 2) {
@@ -116,11 +119,12 @@ public class NotifyCommand {
                         if (!region.getOwners().contains(uuid) && !region.getMembers().contains(uuid)) {
                             continue;
                         }
-                        user.getIgnoredEntityLimits().put(island.getId(),
+                        user.getIgnoredEntityLimits().put(island.getName(),
                                 Arrays.stream(EntityLimit.values()).map(Enum::toString).toList());
                     }
                     main.getUsers().replaceOne(filter, user);
-                    player.sendMessage(Message.NOTIFY_SUCCESS.getString().replace("{notify}", "&akeine &8-> &7keine").get());
+                    player.sendMessage(Message.NOTIFY_SUCCESS.getString()
+                            .replace("{notify}", listNotifications(player, user)).get());
                     return;
                 }
                 if (args.length == 3) {
@@ -145,9 +149,11 @@ public class NotifyCommand {
                         player.sendMessage(Message.NO_MEMBER.getString().get());
                     }
 
-                    user.getIgnoredEntityLimits().put(id, Arrays.stream(EntityLimit.values()).map(Enum::toString).toList());
+                    user.getIgnoredEntityLimits().put(target.getName(),
+                            Arrays.stream(EntityLimit.values()).map(Enum::toString).toList());
                     main.getUsers().replaceOne(filter, user);
-                    player.sendMessage(Message.NOTIFY_SUCCESS.getString().replace("{notify}", listNotifications(user)).get());
+                    player.sendMessage(Message.NOTIFY_SUCCESS.getString()
+                            .replace("{notify}", listNotifications(player, user)).get());
                     return;
                 }
 
@@ -174,39 +180,62 @@ public class NotifyCommand {
 
                 EntityLimit limit;
                 try {
-                    limit = EntityLimit.valueOf(args[3]);
+                    limit = EntityLimit.valueOf(args[3].toUpperCase());
                 } catch (IllegalArgumentException e) {
                     player.sendMessage(Message.LIMIT_UNKNOWN.getString().get());
                     return;
                 }
 
-                List<String> ignored = user.getIgnoredEntityLimits().get(id);
+                List<String> ignored = user.getIgnoredEntityLimits().get(target.getName());
                 if (ignored == null) {
                     ignored = new ArrayList<>();
                 }
                 if (!ignored.contains(limit.toString())) {
                     ignored.add(limit.toString());
                 }
-                user.getIgnoredEntityLimits().put(id, ignored);
+                user.getIgnoredEntityLimits().put(target.getName(), ignored);
                 main.getUsers().replaceOne(filter, user);
-                player.sendMessage(Message.NOTIFY_SUCCESS.getString().replace("{notify}", listNotifications(user)).get());
+                player.sendMessage(Message.NOTIFY_SUCCESS.getString()
+                        .replace("{notify}", listNotifications(player, user)).get());
             }
             default -> player.sendMessage(Message.NOTIFY_OPTIONS.getString().get());
         }
     }
 
     @NotNull
-    private String listNotifications(@NotNull User user) {
+    private String listNotifications(Player player, @NotNull User user) {
         if (user.getIgnoredEntityLimits().isEmpty()) {
-            return "&7alle &8-> &7alle";
+            return "&aalle &8-> &dalle";
         }
-        StringJoiner sj = new StringJoiner("&8, ");
-        for (Map.Entry<Integer, List<String>> list : user.getIgnoredEntityLimits().entrySet()) {
-            StringJoiner listSj = new StringJoiner("&8, ");
-            for (String limit : list.getValue()) {
-                listSj.add("&7" + limit);
+        StringJoiner sj = new StringJoiner("\n");
+        for (Island island : Islands.listAll(Comparator.comparingInt(Island::getId))) {
+            ProtectedRegion region = island.getRegion();
+            if (region == null || (
+                    !region.getOwners().contains(player.getUniqueId()) &&
+                    !region.getMembers().contains(player.getUniqueId())
+            )) {
+                continue;
             }
-            sj.add("&a" + list.getKey() + " &8-> (" + listSj + "&8)");
+
+            List<String> all = new ArrayList<>(
+                    Arrays.stream(EntityLimit.values()).map(Enum::toString).toList());
+            List<String> ignore = user.getIgnoredEntityLimits().get(island.getName());
+
+            String limits;
+            if (ignore == null) {
+                limits = "&dalle";
+            } else {
+                for (String limit : ignore) {
+                    all.remove(limit);
+                }
+                if (all.isEmpty()) {
+                    limits = "&dkeine";
+                } else {
+                    limits = String.join("&8, &d", all);
+                }
+            }
+
+            sj.add("&a" + island.getId() + " &8-> (&d" + limits + "&8)");
         }
         return sj.toString();
     }

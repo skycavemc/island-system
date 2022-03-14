@@ -12,10 +12,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
 
 public class Islands {
 
@@ -143,7 +143,6 @@ public class Islands {
         return new Island(id, config, file, bannedPlayers, config.getInt("radius"),
                 config.getObject("spawn", Location.class), created, template);
     }
-
     /**
      * Returns a list of all known islands.
      * @return The list of islands
@@ -169,6 +168,18 @@ public class Islands {
                 result.add(island);
             }
         }
+        return result;
+    }
+
+    /**
+     * Returns a list of all known islands, optionally with filter.
+     * @param sort The comparator to sort items according to
+     * @return The list of islands
+     */
+    @NotNull
+    public static List<Island> listAll(@NotNull Comparator<Island> sort) {
+        List<Island> result = listAll();
+        result.sort(sort);
         return result;
     }
 

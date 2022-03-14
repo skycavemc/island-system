@@ -11,6 +11,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import de.leonheuer.mcguiapi.gui.GUIFactory;
 import de.leonheuer.skycave.islandsystem.cmd.SBAdminCommand;
 import de.leonheuer.skycave.islandsystem.cmd.SBCommand;
+import de.leonheuer.skycave.islandsystem.listener.CreatureSpawnListener;
 import de.leonheuer.skycave.islandsystem.listener.EntryListener;
 import de.leonheuer.skycave.islandsystem.listener.PlayerCommandListener;
 import de.leonheuer.skycave.islandsystem.listener.WorldLoadListener;
@@ -98,6 +99,7 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
         pm.registerEvents(new PlayerCommandListener(this), this);
         pm.registerEvents(new WorldLoadListener(this), this);
         pm.registerEvents(new EntryListener(this), this);
+        pm.registerEvents(new CreatureSpawnListener(this), this);
     }
 
     /**

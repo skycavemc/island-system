@@ -2,6 +2,7 @@ package de.leonheuer.skycave.islandsystem.cmd;
 
 import de.leonheuer.skycave.islandsystem.IslandSystem;
 import de.leonheuer.skycave.islandsystem.cmd.sb.*;
+import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import de.leonheuer.skycave.islandsystem.enums.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -12,6 +13,7 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -99,7 +101,7 @@ public class SBCommand implements TabExecutor {
 
             StringUtil.copyPartialMatches(args[0], arguments, completions);
         } else if (args.length == 2) {
-            switch (args[0]) {
+            switch (args[0].toLowerCase()) {
                 case "trust", "untrust", "ban", "unban", "pardon", "kick" -> {
                     for (Player other : Bukkit.getOnlinePlayers()) {
                         if (player.canSee(other)) {
@@ -114,6 +116,11 @@ public class SBCommand implements TabExecutor {
                     arguments.add("off");
                     StringUtil.copyPartialMatches(args[1], arguments, completions);
                 }
+            }
+        } else if (args.length == 4) {
+            if (args[0].equalsIgnoreCase("notify")) {
+                arguments.addAll(Arrays.stream(EntityLimit.values()).map(limit -> limit.toString().toLowerCase()).toList());
+                StringUtil.copyPartialMatches(args[3], arguments, completions);
             }
         }
 

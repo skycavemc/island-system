@@ -1,6 +1,5 @@
 package de.leonheuer.skycave.islandsystem.models;
 
-import de.leonheuer.skycave.islandsystem.enums.EntityLimit;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
@@ -14,7 +13,10 @@ public class User {
     private ObjectId id;
     private String uuid;
     @BsonProperty(value = "ignored_entity_limits")
-    private HashMap<Integer, List<String>> ignoredEntityLimits;
+    private HashMap<String, List<String>> ignoredEntityLimits;
+
+    public User() {
+    }
 
     public User(String uuid) {
         this.uuid = uuid;
@@ -37,11 +39,11 @@ public class User {
         this.uuid = uuid;
     }
 
-    public HashMap<Integer, List<String>> getIgnoredEntityLimits() {
+    public HashMap<String, List<String>> getIgnoredEntityLimits() {
         return ignoredEntityLimits;
     }
 
-    public void setIgnoredEntityLimits(HashMap<Integer, List<String>> ignoredEntityLimitTypes) {
+    public void setIgnoredEntityLimits(HashMap<String, List<String>> ignoredEntityLimitTypes) {
         this.ignoredEntityLimits = ignoredEntityLimitTypes;
     }
 }

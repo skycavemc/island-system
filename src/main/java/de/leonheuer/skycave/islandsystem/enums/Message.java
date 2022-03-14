@@ -1,7 +1,7 @@
 package de.leonheuer.skycave.islandsystem.enums;
 
 import de.leonheuer.skycave.islandsystem.IslandSystem;
-import de.leonheuer.skycave.islandsystem.models.ColoredString;
+import de.leonheuer.skycave.islandsystem.models.ColoredStringBuilder;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -186,9 +186,9 @@ public enum Message {
     BUY_FINISHED("&aErstellung in {time} Sekunden abgeschlossen. Die Insel-Nummer lautet {id}. &7Du kannst dich jederzeit mit &2/sb tp {id} &7dorthin teleportieren."),
 
     // Notify
-    NOTIFY_STATUS("&aDu erhältst momentan folgende Benachrichtigungen &8(&7Nummer &8-> &7Limits&8): &7{notify}"),
+    NOTIFY_STATUS("&aDu erhältst momentan Benachrichtigungen für:\n&7{notify}"),
     NOTIFY_OPTIONS("&eMögliche Optionen: on, off"),
-    NOTIFY_SUCCESS("&aEinstellungen für Limit Benachrichtigungen geändert. Du erhältst nun folgende Benachrichtigungen &8(&7Nummer &8-> &7Limits&8)&a: {notify}"),
+    NOTIFY_SUCCESS("&aEinstellungen für Limit Benachrichtigungen geändert. Du erhältst nun folgende Benachrichtigungen:\n&7{notify}"),
     ;
 
     private final String string;
@@ -197,8 +197,8 @@ public enum Message {
         this.string = string;
     }
 
-    public ColoredString getString() {
-        return new ColoredString(JavaPlugin.getPlugin(IslandSystem.class), string);
+    public ColoredStringBuilder getString() {
+        return new ColoredStringBuilder(JavaPlugin.getPlugin(IslandSystem.class), string);
     }
 
 }
