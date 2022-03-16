@@ -52,6 +52,7 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
     private LimitManager limitManager;
     private World islandWorld;
     private AutoSaveConfig config;
+    private MongoClient mongoClient;
     private MongoCollection<User> users;
     private boolean working = false;
 
@@ -71,8 +72,8 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
         MongoClientSettings clientSettings = MongoClientSettings.builder().codecRegistry(codecRegistry).build();
-        MongoClient client = MongoClients.create(clientSettings);
-        MongoDatabase db = client.getDatabase("island_system");
+        mongoClient = MongoClients.create(clientSettings);
+        MongoDatabase db = mongoClient.getDatabase("island_system");
         users = db.getCollection("users", User.class);
 
         // managers
@@ -100,6 +101,12 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
         pm.registerEvents(new WorldLoadListener(this), this);
         pm.registerEvents(new EntryListener(this), this);
         pm.registerEvents(new CreatureSpawnListener(this), this);
+    }
+
+    @Override
+    public void onDisable() {
+        limitManager.stopAll();
+        mongoClient.close();
     }
 
     /**
@@ -160,11 +167,6 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
             return;
         }
         cmd.setExecutor(executor);
-    }
-
-    @Override
-    public void onDisable() {
-        limitManager.stopAll();
     }
 
     public HashMap<UUID, SelectionProfile> getSelectionProfiles() {
