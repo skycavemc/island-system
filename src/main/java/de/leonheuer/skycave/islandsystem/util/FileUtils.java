@@ -3,6 +3,7 @@ package de.leonheuer.skycave.islandsystem.util;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class FileUtils {
      * @return Whether the operation succeeded. Will also return true if the file already exists in the data folder.
      */
     @SuppressWarnings("UnstableApiUsage")
-    public static boolean copyResource(JavaPlugin main, String resourceName) {
+    public static boolean copyResource(@NotNull JavaPlugin main, String resourceName) {
         File destination = new File(main.getDataFolder(), resourceName);
         URL resource = main.getClass().getClassLoader().getResource(resourceName);
 
