@@ -105,7 +105,9 @@ public class IslandSystem extends JavaPlugin implements PrefixHolder {
 
     @Override
     public void onDisable() {
-        limitManager.stopAll();
+        if (limitManager != null) {
+            limitManager.stopAll();
+        }
         mongoClient.close();
     }
 
